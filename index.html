@@ -6,6 +6,22 @@
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="raphael.js"></script>
 <script type="text/javascript" src="jsrobowar.js"></script>
+<style type="text/css">
+  body {
+    padding: 1em;
+    font-family: sans-serif;
+    background: #ddd;
+  }
+  textarea {
+    width: 45%;
+    height: 20em;
+    font-family: 'Menlo', 'Monaco', 'Bitstream Vera Sans Mono', 'Lucida Sans Console', monospace;
+    font-size: 11px;
+  }
+  .errors {
+    color: #c00;
+  }
+</style>
 </head>
 <body>
 
@@ -17,34 +33,70 @@
 
 <section>
 <h1>Robot 1</h1>
-<textarea id="code1"></textarea>
-<textarea id="errors1" class="errors"></textarea>
+<textarea id="code1">
+#   Stationary Gun Turret
+#   by [your name here]
+
+Main:
+    range 0 &gt; shoot if
+    aim 5 + aim' store
+    Main jump
+
+Shoot:
+    20 fire' store
+    return
+</textarea>
+<textarea id="errors1" class="errors" readonly></textarea>
 </section>
 
 <section>
 <h1>Robot 2</h1>
-<textarea id="code2"></textarea>
-<textarea id="errors2" class="errors"></textarea>
+<textarea id="code2">
+#   Wall Seeker
+#	by [your name]
+
+Start:
+    -5 speedx' store
+Loop:
+    x 30 &lt; AtWall ifg
+    Loop jump
+
+AtWall:
+    0 speedx' store
+SetAim:
+    0 aim' store
+WallLoop:
+    aim 5 + aim' store
+    range 0 &gt; Shoot if
+    aim 180 &gt; SetAim WallLoop ifeg
+
+Shoot:
+    energy fire' store
+    return
+</textarea>
+<textarea id="errors2" class="errors" readonly></textarea>
 </section>
 
 <script type="text/javascript">
   $(document).ready(function() {
 
-    $('#play').click(function() {
+    //$('#play').click(function() {
       var canvas = Raphael('arena', 500, 500);
-      var game = Game(canvas);
+      var game = new Game(canvas);
 
-      var program1 = Program(Robot($('#code1').val()));
+      var program1 = new Program();
+      program1.parse($('#code1').val());
       $('#errors1').val(program1.errors);
 
-      var program2 = Program(Robot($('#code2').val()));
+      var program2 = new Program();
+      program2.parse($('#code2').val());
       $('#errors2').val(program2.errors);
 
-      game.add(Robot('Player 1', program1));
-      game.add(Robot('Player 2', program2));
+      game.add(new Robot('Player 1', program1));
+      game.add(new Robot('Player 2', program2));
 
       game.start();
-    });
+    //});
 
   });
 </script>
