@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>JSRoboWar</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="raphael.js"></script>
+<script type="text/javascript" src="jsrobowar.js"></script>
+</head>
+<body>
+
+<div>
+  <canvas id="arena"></canvas>
+</div>
+
+<button id="play">Play</button>
+
+<section>
+<h1>Robot 1</h1>
+<textarea id="code1"></textarea>
+<textarea id="errors1" class="errors"></textarea>
+</section>
+
+<section>
+<h1>Robot 2</h1>
+<textarea id="code2"></textarea>
+<textarea id="errors2" class="errors"></textarea>
+</section>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    $('#play').click(function() {
+      var canvas = Raphael('arena', 500, 500);
+      var game = Game(canvas);
+
+      var program1 = Program(Robot($('#code1').val()));
+      $('#errors1').val(program1.errors);
+
+      var program2 = Program(Robot($('#code2').val()));
+      $('#errors2').val(program2.errors);
+
+      game.add(Robot('Player 1', program1));
+      game.add(Robot('Player 2', program2));
+
+      game.start();
+    });
+
+  });
+</script>
+
+</body>
+</html>
