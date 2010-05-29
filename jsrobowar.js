@@ -75,16 +75,18 @@ var Game = Class.extend({
     var loop;
     loop = function() {
       chronons++;
-      console.log('Chronon: ' + chronons);
+      console.log('--------------------- Chronon: ' + chronons);
 
       var num_running = 0;
       for (var i = 0, robot; robot = self.robots[i]; i++) {
-        console.log('Robot: ', robot.name);
-        robot.vm.step();
-        if (robot.vm.running) num_running++;
+        console.log('---------- Robot: ', robot.name);
+        robot.step();
+        if (robot.running) num_running++;
       }
       if (num_running > 1) {
         setTimeout(loop, 1000);
+      } else {
+        console.info('Done!');
       }
     };
     loop();
@@ -168,14 +170,14 @@ var Operator = Instruction.extend({
 
 });
 
-var Value = Instruction.extend({
+var Literal = Instruction.extend({
 
   init: function(value) {
     this.value = value;
   },
 
   toString: function() {
-    return "Value: " + this.value;
+    return "Literal: " + this.value;
   },
 
 });
@@ -213,6 +215,7 @@ var Program = Class.extend({
     }
 
     function parse_token(token) {
+      // Label
       var match = token.match(/(\w+):$/);
       if (match) {
         var name = match[1];
@@ -223,22 +226,34 @@ var Program = Class.extend({
         return;
       }
 
+      // Operator
       if (token in OPERATIONS) {
         push_instruction(new Operator(token));
         return;
       }
 
+      // Literal
       var value = parseInt(token);
       if (!isNaN(value)) {
-        push_instruction(new Value(value));
+        push_instruction(new Literal(value));
         return;
       }
 
+      // Pointer
+      match = token.match(/(\w+)'$/);
+      if (match) {
+        push_instruction(new Variable(match[1]));
+        return;
+      }
+
+      // Variable
       if (token.match(/^\w+$/)) {
         push_instruction(new Variable(token));
-      } else {
-        self.errors += 'Unknown token "' + token + '" on line ' + line_number + "\n";
+        push_instruction(new Operator('RECALL'));
+        return;
       }
+
+      self.errors += 'Unknown token "' + token + '" on line ' + line_number + "\n";
     }
 
     var lines = source.split(/\n/);
@@ -249,14 +264,7 @@ var Program = Class.extend({
       for (var j = 0; j < tokens.length; j++) {
         var token = tokens[j].toUpperCase();
         if (token == '') continue;
-
-        var match = token.match(/(\w+)'$/);
-        if (match) {
-          parse_token(match[1])
-          parse_token('RECALL')
-        } else {
-          parse_token(token);
-        }
+        parse_token(token);
       }
     }
   },
@@ -267,16 +275,8 @@ var Robot = Class.extend({
 
   init: function(name, program) {
     this.name = name;
-    this.vm = new VirtualMachine(program, 10);
-  },
-
-});
-
-var VirtualMachine = Class.extend({
-
-  init: function(program, speed) {
     this.program = program;
-    this.speed = speed;
+    this.speed = 30;
     this.running = true;
     this.chronons = 0;
 
@@ -294,6 +294,14 @@ var VirtualMachine = Class.extend({
     this.y = 0;
     this.vx = 0;
     this.vy = 0;
+  },
+
+  debug_stack: function() {
+    var output = [];
+    for (var i = 0; i < this.stack.length; i++) {
+      output.push(this.stack[i].toString());
+    }
+    console.log('Stack:', output);
   },
 
   set_variable: function(name, value) {
@@ -405,18 +413,19 @@ var VirtualMachine = Class.extend({
   },
 
   step_one: function() {
+    this.debug_stack();
     var instruction = this.program.instructions[this.ptr];
     if (instruction == undefined) {
       throw new Error('Program finished');
     }
-    console.log(instruction.toString());
+    console.log('Instruction:', instruction.toString());
 
     this.ptr++;
 
     if (instruction instanceof Variable) {
       this.stack.push(instruction);
       return 1;
-    } else if (instruction instanceof Value) {
+    } else if (instruction instanceof Literal) {
       var value = instruction.value || 0;
       this.stack.push(value);
       return 1;
@@ -525,27 +534,27 @@ var VirtualMachine = Class.extend({
         this.push(this.pop_variable_value());
         return 1;
       case 'VSTORE':
-        var index = this.pop_variable_value();
-        var value = this.pop_variable_value();
+        var index = this.pop_number();
+        var value = this.pop_number();
         this.vector[index] = value;
         return 1;
       case 'VRECALL':
-        var index = this.pop_variable_value();
+        var index = this.pop_number();
         var value = this.vector[index] || 0;
         this.push((value < 0 || value > 100) ? 0 : value);
         return 1;
 
 
       case 'IF':
-        var first = this.pop_variable_value();
+        var first = this.pop_number();
         var second = this.pop_number();
         if (second) {
           return this.op_call(second);
         }
         return 1;
       case 'IFE':
-        var first = this.pop_variable_value();
-        var second = this.pop_variable_value();
+        var first = this.pop_number();
+        var second = this.pop_number();
         var third = this.pop_number();
         if (third) {
           return this.op_call(second);
@@ -553,15 +562,15 @@ var VirtualMachine = Class.extend({
           return this.op_call(first);
         }
       case 'IFG':
-        var first = this.pop_variable_value();
+        var first = this.pop_number();
         var second = this.pop_number();
         if (second) {
           return this.op_call(second);
         }
         return 1;
       case 'IFEG':
-        var first = this.pop_variable_value();
-        var second = this.pop_variable_value();
+        var first = this.pop_number();
+        var second = this.pop_number();
         var third = this.pop_number();
         if (third) {
           return this.op_call(second);
@@ -570,7 +579,7 @@ var VirtualMachine = Class.extend({
         }
 
       case 'CALL':
-        return op_call(this.pop_number());
+        return this.op_call(this.pop_number());
       case 'JUMP':
       case 'RETURN':
         return this.op_jump(this.pop_number());
@@ -586,10 +595,12 @@ var VirtualMachine = Class.extend({
         this.stack = [];
         return 1;
       case 'SWAP':
-        var first = this.pop_variable_value();
-        var second = this.pop_variable_value();
+        var first = this.pop_number();
+        var second = this.pop_number();
         this.push(first);
         this.push(second);
+        return 1;
+
       case 'ROLL': throw new Error('TODO: ' + op.name);
 
       case 'INTOFF': throw new Error('TODO: ' + op.name);
@@ -612,8 +623,7 @@ var VirtualMachine = Class.extend({
         return 0;
 
       default:
-        console.log('Skipping', op.toString());
-        return 1;
+        throw new Error('Unknown instruction:', op);
     }
   },
 
