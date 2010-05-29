@@ -133,6 +133,7 @@ var OPERATIONS = {
   NOT: 36,
   OR: 37,
   PRINT: 38,
+  RECALL: 54,
   RETURN: 39,
   ROLL: 40,
   RTI: 41,
@@ -277,20 +278,116 @@ var VirtualMachine = Class.extend({
     this.program = program;
     this.speed = speed;
     this.running = true;
+    this.chronons = 0;
 
     this.registers = {};
     this.vector = [];
     this.stack = [];
     this.ptr = 0;
 
+    this.aim = 0;
     this.max_energy = 50;
     this.energy = 50;
-    this.armor = 150;
+    this.damage = 150;
+    this.shield = 0;
     this.x = 0;
     this.y = 0;
     this.vx = 0;
     this.vy = 0;
-    this.chronons = 0;
+  },
+
+  set_variable: function(name, value) {
+    switch (name) {
+      default:
+        this.registers[name] = value;
+    };
+  },
+
+  get_variable: function(name) {
+    switch (name) {
+      case 'AIM':
+        return this.aim;
+      case 'BULLET':
+        return 0;
+      case 'BOTTOM':
+      case 'BOT':
+        return 0;
+      case 'CHANNEL':
+        throw new Error('Teamplay not yet implemented');
+      case 'CHRONONS':
+        return this.chronons;
+      case 'COLLISION':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'DAMAGE':
+        return this.damage;
+      case 'DOPPLER':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'ENERGY':
+        return this.energy;
+      case 'FIRE':
+        return 0;
+      case 'FRIEND':
+        throw new Error('Teamplay not yet implemented');
+      case 'HISTORY':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'HELLBORE':
+        return 0;
+      case 'ID':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'KILLS':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'LEFT':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'MINE':
+      case 'MISSILE':
+      case 'MOVEX':
+      case 'MOVEY':
+      case 'NUKE':
+        return 0;
+      case 'PROBE':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'RADAR':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'RANDOM':
+        return Math.floor(Math.random() * 360);
+      case 'RANGE':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'RIGHT':
+        return 0;
+      case 'ROBOTS':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'SCAN':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'SHIELD':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'SIGNAL':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'SPEEDX':
+        return this.vx;
+      case 'SPEEDY':
+        return this.vy;
+      case 'STUNNER':
+        return 0;
+      case 'TEAMMATES':
+        throw new Error('Teamplay not yet implemented');
+      case 'TOP':
+        return 0;
+      case 'WALL':
+        throw new Error('TODO: get_variable(' + name + ')');
+      case 'X':
+        return this.x;
+      case 'Y':
+        return this.y;
+
+      default:
+        if (name in this.registers) {
+          return this.registers[name];
+        }
+        if (name in this.program.labels) {
+          return this.program.labels[name];
+        }
+        throw new Error('Unknown variable or label: "' + name + '"');
+    }
   },
 
   step: function() {
@@ -301,7 +398,7 @@ var VirtualMachine = Class.extend({
       } catch (e) {
         var line = this.program.instruction_lines[this.ptr];
         var debug = this.program.instructions[this.ptr];
-        console.error('Robot error on line ' + line + ' near ' + debug + ' - ' + e);
+        console.error('Robot error on line ' + line + ' before ' + debug + ' - ' + e);
         this.running = false;
       }
     }
@@ -329,7 +426,6 @@ var VirtualMachine = Class.extend({
   },
 
   push: function(value) {
-    console.log('   -> push: ', value);
     this.stack.push(value);
     if (this.stack.length > 100) {
       throw new Error("Stack overflow");
@@ -363,23 +459,6 @@ var VirtualMachine = Class.extend({
   pop_variable_value: function() {
     var variable = this.pop_variable();
     return this.get_variable(variable.name);
-  },
-
-  set_variable: function(name, value) {
-    switch (name) {
-      default:
-        this.registers[name] = value;
-    };
-  },
-
-  get_variable: function(name) {
-    if (name in this.registers) {
-      return this.registers[name];
-    }
-    if (name in this.program.labels) {
-      return this.program.labels[name];
-    }
-    throw new Error('Unknown variable or label: "' + name + '"');
   },
 
   op_apply1: function(func) {
