@@ -361,6 +361,8 @@ var Robot = Class.extend({
     this.running = true;
     this.chronons = 0;
     this.radius = 16;
+    this.max_energy = 50;
+    this.max_shield = 10;
 
     this.registers = {};
     this.vector = [];
@@ -368,7 +370,7 @@ var Robot = Class.extend({
     this.ptr = 0;
 
     this.aim = 0;
-    this.max_energy = 50;
+    this.scan = 0;
     this.energy = 50;
     this.damage = 150;
     this.shield = 0;
@@ -386,8 +388,143 @@ var Robot = Class.extend({
     console.log('Stack:', output);
   },
 
+  shoot: function(type, amount) {
+    if (this.energy >= amount) {
+      this.arena.shoot(this, type, amount);
+      this.energy -= amount;
+    }
+    // TOOD can't move and shoot
+  },
+
+  move: function(axis, distance) {
+    // TODO max distance?
+    var cost = Math.abs(distance * 2);
+    if (this.energy >= cost) {
+      this.energy -= cost;
+      switch (axis) {
+        case 'x':
+          this.x = Math.max(0, Math.min(this.arena.width, this.x + distance));
+          break;
+        case 'y':
+          this.y = Math.max(0, Math.min(this.arena.height, this.y + distance));
+          break;
+      }
+    }
+    // TOOD can't move and shoot
+  },
+
+  accelerate: function(axis, delta) {
+    var cost = Math.abs(delta * 2);
+    delta = Math.max(-20, Math.min(20, delta)); // TODO warn here?
+    if (this.energy >= cost) {
+      this.energy -= cost;
+      switch (axis) {
+        case 'x':
+          this.vx += delta;
+          break;
+        case 'y':
+          this.vy += delta;
+          break;
+      }
+    }
+    // TOOD can't move and shoot
+  },
+
   set_variable: function(name, value) {
     switch (name) {
+      case 'AIM':
+        this.aim = fit360(value);
+        return;
+      case 'BULLET':
+        this.shoot(name, value); // same as FIRE???
+        return;
+      case 'BOTTOM':
+      case 'BOT':
+        return;
+      case 'CHANNEL':
+        throw new Error('Teamplay not yet implemented');
+      case 'CHRONONS':
+      case 'COLLISION':
+      case 'DAMAGE':
+      case 'DOPPLER':
+      case 'ENERGY':
+        return;
+      case 'FIRE':
+        this.shoot('BULLET', value); // same as BULLET???
+        return;
+      case 'FRIEND':
+        throw new Error('Teamplay not yet implemented');
+      case 'HISTORY':
+        return;
+      case 'HELLBORE':
+        this.shoot(name, value);
+        return;
+      case 'ID':
+      case 'KILLS':
+      case 'LEFT':
+        return;
+      case 'MINE':
+        this.shoot(name, value);
+        return;
+      case 'MISSILE':
+        this.shoot(name, value);
+        return;
+      case 'MOVEX':
+        this.move('x', value);
+        return;
+      case 'MOVEY':
+        this.move('y', value);
+        return;
+      case 'NUKE':
+        this.shoot(name, value);
+        return;
+      case 'PROBE':
+      case 'RADAR':
+      case 'RANDOM':
+      case 'RANGE':
+      case 'RIGHT':
+      case 'ROBOTS':
+        return;
+      case 'SCAN':
+        this.scan = value;
+      case 'SHIELD':
+        value = Math.max(0, value);
+        if (this.shield < value) {
+          var cost = value - this.shield;
+          if (this.energy < cost) {
+            this.shield += (this.energy);
+            this.energy = 0;
+          } else {
+            this.shield = value;
+            this.energy -= cost;
+          }
+        } else if (this.shield > value) {
+          var gain = this.shield - value;
+          this.shield = value;
+          this.energy += gain;
+        }
+        // TODO: storing energy in shield, decays at 2 pts per chronon
+        return;
+      case 'SIGNAL':
+        throw new Error('Teamplay not yet implemented');
+      case 'SPEEDX':
+        this.accelerate('x', value);
+        return;
+      case 'SPEEDY':
+        this.accelerate('y', value);
+        return;
+      case 'STUNNER':
+        this.shoot(name, value);
+        return;
+      case 'TEAMMATES':
+        throw new Error('Teamplay not yet implemented');
+      case 'TOP':
+      case 'WALL':
+        return;
+      case 'X':
+      case 'Y':
+        throw new Error('Robot tried to teleport by setting X or Y');
+
       default:
         this.registers[name] = value;
     };
@@ -447,9 +584,9 @@ var Robot = Class.extend({
       case 'ROBOTS':
         throw new Error('TODO: get_variable(' + name + ')');
       case 'SCAN':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.scan;
       case 'SHIELD':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.shield;
       case 'SIGNAL':
         throw new Error('TODO: get_variable(' + name + ')');
       case 'SPEEDX':
@@ -484,6 +621,7 @@ var Robot = Class.extend({
     this.chronons++;
     for (var i = this.speed; i > 0 && this.running; ) {
       try {
+        // Some instructions have no cost, like DEBUG, thus they return 0.
         i -= this.step_one();
       } catch (e) {
         var line = this.program.line_numbers[this.ptr];
@@ -671,6 +809,7 @@ var Robot = Class.extend({
       case 'NOP':
         return 1;
       case 'SYNC':
+        // To pause until end of chronon we return maximum "cost".
         return Number.MAX_VALUE;
       case 'DROP':
         this.stack.pop();

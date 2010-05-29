@@ -80,7 +80,7 @@ Shoot:
 <script type="text/javascript">
   $(document).ready(function() {
 
-    //$('#play').click(function() {
+    $('#play').click(function() {
       var paper = Raphael('arena', 300, 300);
       var game = new Game(paper);
 
@@ -96,7 +96,7 @@ Shoot:
       game.add(new Robot('Player 2', program2));
 
       game.start();
-    //});
+    });
 
   });
 </script>
