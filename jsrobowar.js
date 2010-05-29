@@ -199,19 +199,20 @@ var Program = Class.extend({
   init: function() {
     this.errors = '';
     this.instructions = [];
-    this.instruction_lines = [];
-    this.labels = {};
+    this.line_numbers = [];
+    this.label_to_address = {};
+    this.address_to_label = {};
   },
 
   parse: function(source) {
-    var counter = 0;
+    var address = 0;
     var line_number = 0;
     var self = this;
 
     function push_instruction(i) {
       self.instructions.push(i);
-      self.instruction_lines.push(line_number);
-      counter++;
+      self.line_numbers.push(line_number);
+      address++;
     }
 
     function parse_token(token) {
@@ -219,10 +220,11 @@ var Program = Class.extend({
       var match = token.match(/(\w+):$/);
       if (match) {
         var name = match[1];
-        if (name in self.labels) {
+        if (name in self.label_to_address) {
           this.errors += 'Label "' + name + '" redefined on line ' + line_number + "\n";
         }
-        self.labels[name] = counter;
+        self.label_to_address[name] = address;
+        self.address_to_label[address] = name;
         return;
       }
 
@@ -391,8 +393,8 @@ var Robot = Class.extend({
         if (name in this.registers) {
           return this.registers[name];
         }
-        if (name in this.program.labels) {
-          return this.program.labels[name];
+        if (name in this.program.label_to_address) {
+          return this.program.label_to_address[name];
         }
         throw new Error('Unknown variable or label: "' + name + '"');
     }
@@ -404,7 +406,7 @@ var Robot = Class.extend({
       try {
         i -= this.step_one();
       } catch (e) {
-        var line = this.program.instruction_lines[this.ptr];
+        var line = this.program.line_numbers[this.ptr];
         var debug = this.program.instructions[this.ptr];
         console.error('Robot error on line ' + line + ' before ' + debug + ' - ' + e);
         this.running = false;
@@ -482,14 +484,16 @@ var Robot = Class.extend({
     return 1;
   },
 
-  op_jump: function(new_ptr) {
-    this.ptr = new_ptr;
+  op_jump: function(address) {
+    console.log('Go to', this.program.address_to_label[address]);
+    this.ptr = address;
     return 1;
   },
 
-  op_call: function(new_ptr) {
+  op_call: function(address) {
+    console.log('Jumping to', this.program.address_to_label[address], 'with return');
     var return_addr = this.ptr;
-    this.ptr = new_ptr;
+    this.ptr = address;
     this.push(return_addr);
     return 1;
   },
@@ -549,7 +553,7 @@ var Robot = Class.extend({
         var first = this.pop_number();
         var second = this.pop_number();
         if (second) {
-          return this.op_call(second);
+          return this.op_call(first);
         }
         return 1;
       case 'IFE':
@@ -565,7 +569,7 @@ var Robot = Class.extend({
         var first = this.pop_number();
         var second = this.pop_number();
         if (second) {
-          return this.op_call(second);
+          return this.op_jump(first);
         }
         return 1;
       case 'IFEG':
@@ -573,9 +577,9 @@ var Robot = Class.extend({
         var second = this.pop_number();
         var third = this.pop_number();
         if (third) {
-          return this.op_call(second);
+          return this.op_jump(second);
         } else {
-          return this.op_call(first);
+          return this.op_jump(first);
         }
 
       case 'CALL':
