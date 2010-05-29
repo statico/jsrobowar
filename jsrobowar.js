@@ -58,6 +58,9 @@
   };
 })();
 
+function trace(a, b, c, d) { console.log(a, b, c, d) }
+function trace() {}
+
 var Game = Class.extend({
 
   init: function(paper) {
@@ -86,11 +89,11 @@ var Game = Class.extend({
     var loop;
     loop = function() {
       this.chronons++;
-      //console.log('--------------------- Chronon: ' + chronons);
+      trace('--------------------- Chronon: ' + this.chronons);
 
       var num_running = 0;
       for (var i = 0, robot; robot = self.robots[i]; i++) {
-        //console.log('---------- Robot: ', robot.name);
+        trace('---------- Robot: ', robot.name);
         robot.step();
         if (robot.running) num_running++;
       }
@@ -130,7 +133,7 @@ var Arena = Class.extend({
   },
 
   do_range: function() {
-    //console.log('TODO: do_range');
+    trace('TODO: do_range');
     return 0;
   },
 
@@ -335,12 +338,11 @@ var RobotView = Actor.extend({
   init: function(paper, robot) {
     this.robot = robot;
 
-    var hue = Math.floor(Math.random() * 256);
     var x = robot.x;
     var y = robot.y;
 
     this.body = paper.circle(x, y, robot.radius);
-    this.body.attr({ stroke: 'hsb(' + hue + ', 255, 255)', 'stroke-width': '2px' });
+    this.body.attr({ stroke: robot.color, 'stroke-width': '2px' });
 
     this.turret = paper.path('M' + x + ' ' + y + 'L' + x + ' ' + (y - robot.radius));
     this.turret.attr({ stroke: 'white', 'stroke-width': '2px' });
@@ -370,8 +372,9 @@ var RobotView = Actor.extend({
 
 var Robot = Class.extend({
 
-  init: function(name, program) {
+  init: function(name, color, program) {
     this.name = name;
+    this.color = color;
     this.program = program;
     this.speed = 30;
     this.running = true;
@@ -401,7 +404,7 @@ var Robot = Class.extend({
     for (var i = 0; i < this.stack.length; i++) {
       output.push(this.stack[i].toString());
     }
-    //console.log('Stack:', output);
+    trace('Stack:', output);
   },
 
   shoot: function(type, amount) {
@@ -443,7 +446,8 @@ var Robot = Class.extend({
   set_variable: function(name, value) {
     switch (name) {
       case 'AIM':
-        this.aim = Math.max(0, Math.min(359, value));
+        value %= 360;
+        this.aim = (value < 0) ? 360 + value : value;
         return;
       case 'BULLET':
         this.shoot(name, value); // same as FIRE???
@@ -656,7 +660,7 @@ var Robot = Class.extend({
     if (instruction == undefined) {
       throw new Error('Program finished');
     }
-    //console.log('Instruction:', instruction.toString());
+    trace('Instruction:', instruction.toString());
 
     this.ptr++;
 
@@ -721,13 +725,13 @@ var Robot = Class.extend({
   },
 
   op_jump: function(address) {
-    //console.log('Go to', this.program.address_to_label[address]);
+    trace('Go to', this.program.address_to_label[address]);
     this.ptr = address;
     return 1;
   },
 
   op_call: function(address) {
-    //console.log('Jumping to', this.program.address_to_label[address], 'with return');
+    trace('Jumping to', this.program.address_to_label[address], 'with return');
     var return_addr = this.ptr;
     this.ptr = address;
     this.push(return_addr);
@@ -738,12 +742,12 @@ var Robot = Class.extend({
     var s = this.stack;
 
     switch (op.name) {
-      case '+': return this.op_apply2(function(a, b) { return a + b });
-      case '-': return this.op_apply2(function(a, b) { return a - b });
-      case '*': return this.op_apply2(function(a, b) { return a * b });
-      case '/': return this.op_apply2(function(a, b) { return a / b });
-      case '=': return this.op_apply2(function(a, b) { return a == b ? 1 : 0 });
-      case '!': return this.op_apply2(function(a, b) { return a != b ? 1 : 0 });
+      case '+': return this.op_apply2(function(a, b) { return b + a });
+      case '-': return this.op_apply2(function(a, b) { return b - a });
+      case '*': return this.op_apply2(function(a, b) { return b * a });
+      case '/': return this.op_apply2(function(a, b) { return b / a });
+      case '=': return this.op_apply2(function(a, b) { return b == a ? 1 : 0 });
+      case '!': return this.op_apply2(function(a, b) { return b != a ? 1 : 0 });
       case '>': return this.op_apply2(function(a, b) { return b > a ? 1 : 0 });
       case '<': return this.op_apply2(function(a, b) { return b < a ? 1 : 0 });
       case 'AND': return this.op_apply2(function(a, b) { return a && b ? 1 : 0 });

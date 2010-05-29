@@ -48,6 +48,8 @@ Shoot:
     return
 </textarea>
 <textarea id="errors1" class="errors" readonly></textarea>
+<br/>
+<label for="color1">Color: </label><input type="text" id="color1" value="yellow"/>
 </section>
 
 <section>
@@ -76,6 +78,8 @@ Shoot:
     return
 </textarea>
 <textarea id="errors2" class="errors" readonly></textarea>
+<br/>
+<label for="color2">Color: </label><input type="text" id="color2" value="cyan"/>
 </section>
 
 <script type="text/javascript">
@@ -99,8 +103,8 @@ Shoot:
       program2.parse($('#code2').val());
       $('#errors2').val(program2.errors);
 
-      game.add(new Robot('Player 1', program1));
-      game.add(new Robot('Player 2', program2));
+      game.add(new Robot('Player 1', $('#color1').val(), program1));
+      game.add(new Robot('Player 2', $('#color2').val(), program2));
 
       game.start();
     //});
