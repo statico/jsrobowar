@@ -26,7 +26,7 @@
 <body>
 
 <div>
-  <canvas id="arena"></canvas>
+  <div id="arena"></div>
 </div>
 
 <button id="play">Play</button>
@@ -81,8 +81,8 @@ Shoot:
   $(document).ready(function() {
 
     //$('#play').click(function() {
-      var canvas = Raphael('arena', 500, 500);
-      var game = new Game(canvas);
+      var paper = Raphael('arena', 300, 300);
+      var game = new Game(paper);
 
       var program1 = new Program();
       program1.parse($('#code1').val());

@@ -60,21 +60,32 @@
 
 var Game = Class.extend({
 
-  init: function(canvas) {
-    this.canvas = canvas;
+  init: function(paper) {
+    this.paper = paper;
     this.robots = [];
+    this.chronons = 0;
+    this.arena = new Arena(paper.width, paper.height);
+    this.actors = [[new ArenaView(paper, arena)], [], []]
   },
 
   add: function(robot) {
+    robot.arena = this.arena;
+
+    // Position randomly but away from the edges.
+    var w = this.arena.width;
+    var h = this.arena.height;
+    robot.x = Math.floor(Math.random() * w * .8 + w * .1);
+    robot.y = Math.floor(Math.random() * h * .8 + h * .1);
+
+    this.actors[1].push(new RobotView(this.paper, robot));
     this.robots.push(robot);
   },
 
   start: function() {
     var self = this;
-    var chronons = 0;
     var loop;
     loop = function() {
-      chronons++;
+      this.chronons++;
       console.log('--------------------- Chronon: ' + chronons);
 
       var num_running = 0;
@@ -83,6 +94,9 @@ var Game = Class.extend({
         robot.step();
         if (robot.running) num_running++;
       }
+
+      self.draw();
+
       if (num_running > 1) {
         setTimeout(loop, 1000);
       } else {
@@ -92,6 +106,43 @@ var Game = Class.extend({
     loop();
   },
 
+  draw: function() {
+    for (var i = 0, group; group = this.actors[i]; i++) {
+      for (var j = 0, actor; actor = group[j]; j++) {
+        actor.update();
+      }
+    }
+  },
+
+});
+
+var Arena = Class.extend({
+
+  init: function(width, height) {
+    this.width = width;
+    this.height = height;
+  },
+
+  do_range: function() {
+    console.log('TODO: do_range');
+    return 0;
+  },
+
+});
+
+var Actor = Class.extend({
+  init: function(paper) {},
+  update: function() {},
+  remove: function() {
+    if (this.el) this.el.remove();
+  },
+});
+
+var ArenaView = Actor.extend({
+  init: function(paper, arena) {
+    this.el = paper.rect(0, 0, paper.width, paper.height);
+    this.el.attr({ fill: '#666' });
+  },
 });
 
 var OPERATIONS = {
@@ -273,6 +324,34 @@ var Program = Class.extend({
 
 });
 
+var RobotView = Actor.extend({
+
+  init: function(paper, robot) {
+    this.robot = robot;
+
+    var hue = Math.floor(Math.random() * 256);
+    var x = robot.x;
+    var y = robot.y;
+
+    this.body = paper.circle(x, y, robot.radius);
+    this.body.attr({ stroke: 'hsb(' + hue + ', 255, 255)', 'stroke-width': '2px' });
+
+    this.turret = paper.path('M' + x + ' ' + y + 'L' + x + ' ' + (y - robot.radius));
+    this.turret.attr({ stroke: 'white', 'stroke-width': '2px' });
+  },
+
+  update: function() {
+    this.body.attr({ x: this.robot.x, y: this.robot.y });
+    this.turret.rotate(this.robot.aim);
+  },
+
+  remove: function() {
+    this.body.remove();
+    this.turret.remove();
+  },
+
+});
+
 var Robot = Class.extend({
 
   init: function(name, program) {
@@ -281,6 +360,7 @@ var Robot = Class.extend({
     this.speed = 30;
     this.running = true;
     this.chronons = 0;
+    this.radius = 16;
 
     this.registers = {};
     this.vector = [];
@@ -361,7 +441,7 @@ var Robot = Class.extend({
       case 'RANDOM':
         return Math.floor(Math.random() * 360);
       case 'RANGE':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.arena.do_range(this);
       case 'RIGHT':
         return 0;
       case 'ROBOTS':
