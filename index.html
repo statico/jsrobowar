@@ -21,16 +21,26 @@
   .errors {
     color: #c00;
   }
+  #game div {
+    float: left;
+    padding-right: 1em;
+  }
+  #controls {
+    clear: both;
+  }
 </style>
 </head>
 <body>
 
-<div>
+<div id="game">
   <div id="arena"></div>
+  <div id="scoreboard"></div>
 </div>
 
-<button id="play">Play</button>
-<button id="stop">Stop</button>
+<div id="controls">
+  <button id="play">Play</button>
+  <button id="stop">Stop</button>
+</div>
 
 <section>
 <h1>Robot 1</h1>
@@ -56,7 +66,7 @@ Shoot:
 <h1>Robot 2</h1>
 <textarea id="code2">
 #   Wall Seeker
-#	by [your name]
+#   by [your name]
 
 Start:
     -5 speedx' store
@@ -92,8 +102,7 @@ Shoot:
     });
 
     //$('#play').click(function() {
-      var paper = Raphael('arena', 300, 300);
-      game = new Game(paper);
+      game = new Game($('#arena')[0], $('#scoreboard')[0]);
 
       var program1 = new Program();
       program1.parse($('#code1').val());

@@ -61,14 +61,67 @@
 function trace(a, b, c, d) { console.log(a, b, c, d) }
 function trace() {}
 
+function fix360(value) {
+  value %= 360;
+  return (value < 0) ? 360 + value : value;
+}
+
+var Scoreboard = Class.extend({
+
+  init: function(scoreboard_el, game) {
+    this.paper = Raphael(scoreboard_el, 300, 150);
+    this.game = game;
+
+  },
+
+  start: function() {
+    var p = this.paper;
+    p.clear();
+
+    var PAD = 10;
+    var y = PAD * 2;
+    var attr = {fill: 'black', 'text-anchor': 'start'};
+
+    var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
+
+    var title = p.text(PAD, y, 'RoboWar').attr(attr).attr('font-size', '30px');
+    y += PAD * 3;
+
+    var labels = [];
+    for (var i = 0, robot; robot = this.game.robots[i]; i++) {
+      p.rect(0, y - PAD, this.paper.width, PAD * 5).attr({fill: robot.color, stroke: null});
+      labels.push({
+        robot: robot,
+        name: p.text(PAD, y + PAD * 0, robot.name).attr(attr).attr('font-weight', 'bold'),
+        energy: p.text(PAD, y + PAD * 1, '').attr(attr),
+        damage: p.text(PAD, y + PAD * 2, '').attr(attr),
+        status: p.text(PAD, y + PAD * 3, '').attr(attr),
+      });
+      y += PAD * 5;
+    }
+    this.labels = labels;
+  },
+
+  update: function() {
+    for (var i = 0, label; label = this.labels[i]; i++) {
+      var robot = label['robot'];
+      label['energy'].attr('text', 'Energy: ' + robot.energy);
+      label['damage'].attr('text', 'Damage: ' + robot.damage);
+      label['status'].attr('text', 'Status: ' + (robot.running ? 'running' : 'DEAD'));
+    }
+  },
+
+});
+
 var Game = Class.extend({
 
-  init: function(paper) {
-    this.paper = paper;
+  init: function(arena_el, scoreboard_el) {
+    this.paper = Raphael(arena_el, 300, 300);
+    this.scoreboard = new Scoreboard(scoreboard_el, this);
     this.robots = [];
     this.chronons = 0;
-    this.arena = new Arena(paper.width, paper.height);
-    this.actors = [[new ArenaView(paper, arena)], [], []]
+    this.arena = new Arena(this.paper.width, this.paper.height);
+    this.actors = [[new ArenaView(this.paper, arena)], [], []]
   },
 
   add: function(robot) {
@@ -85,6 +138,8 @@ var Game = Class.extend({
   },
 
   start: function() {
+    this.scoreboard.start();
+
     var self = this;
     var loop;
     loop = function() {
@@ -99,9 +154,10 @@ var Game = Class.extend({
       }
 
       self.draw();
+      self.scoreboard.update();
 
       if (num_running > 1) {
-        setTimeout(loop, 100);
+        setTimeout(loop, 50);
       } else {
         console.info('Done!');
       }
@@ -149,8 +205,7 @@ var Actor = Class.extend({
 
 var ArenaView = Actor.extend({
   init: function(paper, arena) {
-    this.el = paper.rect(0, 0, paper.width, paper.height);
-    this.el.attr({ fill: '#666' });
+    this.el = paper.rect(0, 0, paper.width, paper.height).attr({ fill: '#666', stroke: null });
   },
 });
 
@@ -382,6 +437,8 @@ var Robot = Class.extend({
     this.radius = 16;
     this.max_energy = 50;
     this.max_shield = 10;
+    this.starting_damage = 150;
+    this.explosive_bullets = false;
 
     this.registers = {};
     this.vector = [];
@@ -390,8 +447,8 @@ var Robot = Class.extend({
 
     this.aim = 0;
     this.scan = 0;
-    this.energy = 50;
-    this.damage = 150;
+    this.energy = this.max_energy;
+    this.damage = this.starting_damage;
     this.shield = 0;
     this.x = 0;
     this.y = 0;
@@ -418,12 +475,13 @@ var Robot = Class.extend({
   move: function(axis, distance) {
     // TODO max distance?
     this.energy -= Math.abs(distance * 2);
+    var r = this.radius;
     switch (axis) {
       case 'x':
-        this.x = Math.max(0, Math.min(this.arena.width, this.x + distance));
+        this.x = Math.max(r, Math.min(this.arena.width - r, this.x + distance));
         break;
       case 'y':
-        this.y = Math.max(0, Math.min(this.arena.height, this.y + distance));
+        this.y = Math.max(r, Math.min(this.arena.height - r, this.y + distance));
         break;
     }
     // TOOD can't move and shoot
@@ -446,11 +504,10 @@ var Robot = Class.extend({
   set_variable: function(name, value) {
     switch (name) {
       case 'AIM':
-        value %= 360;
-        this.aim = (value < 0) ? 360 + value : value;
+        this.aim = fix360(value);
         return;
       case 'BULLET':
-        this.shoot(name, value); // same as FIRE???
+        this.shoot(name, value);
         return;
       case 'BOTTOM':
       case 'BOT':
@@ -464,7 +521,7 @@ var Robot = Class.extend({
       case 'ENERGY':
         return;
       case 'FIRE':
-        this.shoot('BULLET', value); // same as BULLET???
+        this.shoot(this.explosive_bullets ? 'EXPLOSIVE' : 'BULLET', value);
         return;
       case 'FRIEND':
         throw new Error('Teamplay not yet implemented');
@@ -500,7 +557,7 @@ var Robot = Class.extend({
       case 'ROBOTS':
         return;
       case 'SCAN':
-        this.scan = value;
+        this.scan = fix360(value);
       case 'SHIELD':
         value = Math.max(0, value);
         if (this.shield < value) {
@@ -515,7 +572,7 @@ var Robot = Class.extend({
         } else if (this.shield > value) {
           var gain = this.shield - value;
           this.shield = value;
-          this.energy += gain;
+          this.energy = Math.min(this.energy + gain, this.max_energy);
         }
         // TODO: storing energy in shield, decays at 2 pts per chronon
         return;
@@ -633,7 +690,7 @@ var Robot = Class.extend({
 
   step: function() {
     this.chronons++;
-    this.energy = Math.max(this.max_energy, this.energy + 2);
+    this.energy = Math.min(this.max_energy, this.energy + 2);
 
     for (var i = this.speed; i > 0 && this.running && this.energy > 0; ) {
       try {
@@ -650,8 +707,9 @@ var Robot = Class.extend({
       throw new Error('Robot meltdown! Energy less than -200');
     }
 
-    this.x = Math.max(0, Math.min(this.arena.width, this.x + this.vx));
-    this.y = Math.max(0, Math.min(this.arena.height, this.y + this.vy));
+    var r = this.radius;
+    this.x = Math.max(r, Math.min(this.arena.width - r, this.x + this.vx));
+    this.y = Math.max(r, Math.min(this.arena.height - r, this.y + this.vy));
   },
 
   step_one: function() {
