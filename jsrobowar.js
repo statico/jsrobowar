@@ -79,6 +79,7 @@ var Game = Class.extend({
 
       var num_running = 0;
       for (var i = 0, robot; robot = self.robots[i]; i++) {
+        console.log('Robot: ', robot.name);
         robot.vm.step();
         if (robot.vm.running) num_running++;
       }
@@ -278,6 +279,7 @@ var VirtualMachine = Class.extend({
     this.running = true;
 
     this.registers = {};
+    this.vector = [];
     this.stack = [];
     this.ptr = 0;
 
@@ -310,6 +312,7 @@ var VirtualMachine = Class.extend({
     if (instruction == undefined) {
       throw new Error('Program finished');
     }
+    console.log(instruction.toString());
 
     this.ptr++;
 
@@ -326,6 +329,7 @@ var VirtualMachine = Class.extend({
   },
 
   push: function(value) {
+    console.log('   -> push: ', value);
     this.stack.push(value);
     if (this.stack.length > 100) {
       throw new Error("Stack overflow");
@@ -333,21 +337,32 @@ var VirtualMachine = Class.extend({
   },
 
   pop_number: function() {
+    if (this.stack.length == 0) {
+      throw new Error("Stack is empty");
+    }
     var value = this.stack.pop();
-    if (!(value instanceof Number)) {
-      throw new Error("Invalid value on stack: " + value + " is not a Number.");
+    if (isNaN(value)) {
+      throw new Error("Invalid value on stack: " + value + " is not a Number");
     } else {
       return value;
     }
   },
 
   pop_variable: function() {
+    if (this.stack.length == 0) {
+      throw new Error("Stack is empty");
+    }
     var value = this.stack.pop();
     if (!(value instanceof Variable)) {
-      throw new Error("Invalid value on stack: " + value + " is not a Variable.");
+      throw new Error("Invalid value on stack: " + value + " is not a Variable");
     } else {
       return value;
     }
+  },
+
+  pop_variable_value: function() {
+    var variable = this.pop_variable();
+    return this.get_variable(variable.name);
   },
 
   set_variable: function(name, value) {
@@ -367,33 +382,159 @@ var VirtualMachine = Class.extend({
     throw new Error('Unknown variable or label: "' + name + '"');
   },
 
+  op_apply1: function(func) {
+    this.push(func(this.pop_number()));
+    return 1;
+  },
+
+  op_apply2: function(func) {
+    var first = this.pop_number();
+    var second = this.pop_number();
+    this.push(func(first, second));
+    return 1;
+  },
+
+  op_jump: function(new_ptr) {
+    this.ptr = new_ptr;
+    return 1;
+  },
+
+  op_call: function(new_ptr) {
+    var return_addr = this.ptr;
+    this.ptr = new_ptr;
+    this.push(return_addr);
+    return 1;
+  },
+
   handle_operation: function(op) {
     var s = this.stack;
+
     switch (op.name) {
-      case '+':
-        this.push(this.pop_number() + this.pop_number());
-        return 1;
+      case '+': return this.op_apply2(function(a, b) { return a + b });
+      case '-': return this.op_apply2(function(a, b) { return a - b });
+      case '*': return this.op_apply2(function(a, b) { return a * b });
+      case '/': return this.op_apply2(function(a, b) { return a / b });
+      case '=': return this.op_apply2(function(a, b) { return a == b ? 1 : 0 });
+      case '!': return this.op_apply2(function(a, b) { return a != b ? 1 : 0 });
+      case '>': return this.op_apply2(function(a, b) { return b > a ? 1 : 0 });
+      case '<': return this.op_apply2(function(a, b) { return b < a ? 1 : 0 });
+      case 'AND': return this.op_apply2(function(a, b) { return a && b ? 1 : 0 });
+      case 'OR': return this.op_apply2(function(a, b) { return a || b ? 1 : 0 });
+      case 'XOR': case 'EOR': return this.op_apply2(function(a, b) { return (a ? !b : !!b) ? 1 : 0 });
+
+      case 'ABS': return this.op_apply1(Math.abs);
+      case 'CHS': return this.op_apply1(function(x) {return x * -1});
+      case 'MAX': return this.op_apply2(function(a, b) { return Math.max(a, b) });
+      case 'MIN': return this.op_apply2(function(a, b) { return Math.min(a, b) });
+      case 'MOD': return this.op_apply2(function(a, b) { return b % a });
+      case 'NOT': return this.op_apply1(function(x) {x ? 1 : 0});
+      case 'SQRT': return this.op_apply1(Math.sqrt);
+
+      case 'ARCCOS': throw new Error('TODO: ' + op.name);
+      case 'ARCSIN': throw new Error('TODO: ' + op.name);
+      case 'ARCTAN': throw new Error('TODO: ' + op.name);
+      case 'DIST': throw new Error('TODO: ' + op.name);
+      case 'SIN': case 'SINE': throw new Error('TODO: ' + op.name);
+      case 'TAN': case 'TANGENT': throw new Error('TODO: ' + op.name);
+
       case 'STO':
       case 'STORE':
         var v = this.pop_variable();
         this.set_variable(v.name, this.pop_number());
         return 1;
       case 'RECALL':
-        var v = this.pop_variable();
-        this.push(this.get_variable(v.name));
+        this.push(this.pop_variable_value());
         return 1;
+      case 'VSTORE':
+        var index = this.pop_variable_value();
+        var value = this.pop_variable_value();
+        this.vector[index] = value;
+        return 1;
+      case 'VRECALL':
+        var index = this.pop_variable_value();
+        var value = this.vector[index] || 0;
+        this.push((value < 0 || value > 100) ? 0 : value);
+        return 1;
+
+
+      case 'IF':
+        var first = this.pop_variable_value();
+        var second = this.pop_number();
+        if (second) {
+          return this.op_call(second);
+        }
+        return 1;
+      case 'IFE':
+        var first = this.pop_variable_value();
+        var second = this.pop_variable_value();
+        var third = this.pop_number();
+        if (third) {
+          return this.op_call(second);
+        } else {
+          return this.op_call(first);
+        }
+      case 'IFG':
+        var first = this.pop_variable_value();
+        var second = this.pop_number();
+        if (second) {
+          return this.op_call(second);
+        }
+        return 1;
+      case 'IFEG':
+        var first = this.pop_variable_value();
+        var second = this.pop_variable_value();
+        var third = this.pop_number();
+        if (third) {
+          return this.op_call(second);
+        } else {
+          return this.op_call(first);
+        }
+
+      case 'CALL':
+        return op_call(this.pop_number());
       case 'JUMP':
-        var return_addr = this.ptr;
-        this.ptr = this.pop_number();
-        this.push(return_addr);
-        return 1;
       case 'RETURN':
-        this.ptr = this.pop_number();
+        return this.op_jump(this.pop_number());
+
+      case 'NOP':
         return 1;
+      case 'SYNC':
+        return Number.MAX_VALUE;
+      case 'DROP':
+        this.stack.pop();
+        return 1;
+      case 'DROPALL':
+        this.stack = [];
+        return 1;
+      case 'SWAP':
+        var first = this.pop_variable_value();
+        var second = this.pop_variable_value();
+        this.push(first);
+        this.push(second);
+      case 'ROLL': throw new Error('TODO: ' + op.name);
+
+      case 'INTOFF': throw new Error('TODO: ' + op.name);
+      case 'INTON': throw new Error('TODO: ' + op.name);
+      case 'RTI': throw new Error('TODO: ' + op.name);
+      case 'SETINT': throw new Error('TODO: ' + op.name);
+      case 'SETPARAM': throw new Error('TODO: ' + op.name);
+
       case 'BEEP':
         console.log('BEEP!');
+        return 0;
+
+      case 'PRINT':
+        var size = this.stack.length;
+        if (size) {
+          console.info('Stack size ' + size + ', top value: ' + this.stack[size - 1]);
+        } else {
+          console.info('Stack is empty.');
+        }
+        return 0;
+
       default:
         console.log('Skipping', op.toString());
+        return 1;
     }
   },
 
