@@ -86,11 +86,11 @@ var Game = Class.extend({
     var loop;
     loop = function() {
       this.chronons++;
-      console.log('--------------------- Chronon: ' + chronons);
+      //console.log('--------------------- Chronon: ' + chronons);
 
       var num_running = 0;
       for (var i = 0, robot; robot = self.robots[i]; i++) {
-        console.log('---------- Robot: ', robot.name);
+        //console.log('---------- Robot: ', robot.name);
         robot.step();
         if (robot.running) num_running++;
       }
@@ -98,12 +98,18 @@ var Game = Class.extend({
       self.draw();
 
       if (num_running > 1) {
-        setTimeout(loop, 1000);
+        setTimeout(loop, 100);
       } else {
         console.info('Done!');
       }
     };
     loop();
+  },
+
+  stop: function() {
+    for (var i = 0, robot; robot = this.robots[i]; i++) {
+      robot.running = false;
+    }
   },
 
   draw: function() {
@@ -124,7 +130,7 @@ var Arena = Class.extend({
   },
 
   do_range: function() {
-    console.log('TODO: do_range');
+    //console.log('TODO: do_range');
     return 0;
   },
 
@@ -338,11 +344,21 @@ var RobotView = Actor.extend({
 
     this.turret = paper.path('M' + x + ' ' + y + 'L' + x + ' ' + (y - robot.radius));
     this.turret.attr({ stroke: 'white', 'stroke-width': '2px' });
+
+    this.old_x = x;
+    this.old_y = y;
   },
 
   update: function() {
-    this.body.attr({ x: this.robot.x, y: this.robot.y });
-    this.turret.rotate(this.robot.aim);
+    var dx = this.robot.x - this.old_x;
+    var dy = this.robot.y - this.old_y;
+
+    this.body.translate(dx, dy);
+    this.turret.translate(dx, dy);
+    this.turret.rotate(this.robot.aim, this.robot.x, this.robot.y);
+
+    this.old_x = this.robot.x;
+    this.old_y = this.robot.y;
   },
 
   remove: function() {
@@ -385,7 +401,7 @@ var Robot = Class.extend({
     for (var i = 0; i < this.stack.length; i++) {
       output.push(this.stack[i].toString());
     }
-    console.log('Stack:', output);
+    //console.log('Stack:', output);
   },
 
   shoot: function(type, amount) {
@@ -398,34 +414,28 @@ var Robot = Class.extend({
 
   move: function(axis, distance) {
     // TODO max distance?
-    var cost = Math.abs(distance * 2);
-    if (this.energy >= cost) {
-      this.energy -= cost;
-      switch (axis) {
-        case 'x':
-          this.x = Math.max(0, Math.min(this.arena.width, this.x + distance));
-          break;
-        case 'y':
-          this.y = Math.max(0, Math.min(this.arena.height, this.y + distance));
-          break;
-      }
+    this.energy -= Math.abs(distance * 2);
+    switch (axis) {
+      case 'x':
+        this.x = Math.max(0, Math.min(this.arena.width, this.x + distance));
+        break;
+      case 'y':
+        this.y = Math.max(0, Math.min(this.arena.height, this.y + distance));
+        break;
     }
     // TOOD can't move and shoot
   },
 
   accelerate: function(axis, delta) {
-    var cost = Math.abs(delta * 2);
     delta = Math.max(-20, Math.min(20, delta)); // TODO warn here?
-    if (this.energy >= cost) {
-      this.energy -= cost;
-      switch (axis) {
-        case 'x':
-          this.vx += delta;
-          break;
-        case 'y':
-          this.vy += delta;
-          break;
-      }
+    this.energy -= Math.abs(delta * 2);
+    switch (axis) {
+      case 'x':
+        this.vx += delta;
+        break;
+      case 'y':
+        this.vy += delta;
+        break;
     }
     // TOOD can't move and shoot
   },
@@ -433,7 +443,7 @@ var Robot = Class.extend({
   set_variable: function(name, value) {
     switch (name) {
       case 'AIM':
-        this.aim = fit360(value);
+        this.aim = Math.max(0, Math.min(359, value));
         return;
       case 'BULLET':
         this.shoot(name, value); // same as FIRE???
@@ -619,7 +629,9 @@ var Robot = Class.extend({
 
   step: function() {
     this.chronons++;
-    for (var i = this.speed; i > 0 && this.running; ) {
+    this.energy = Math.max(this.max_energy, this.energy + 2);
+
+    for (var i = this.speed; i > 0 && this.running && this.energy > 0; ) {
       try {
         // Some instructions have no cost, like DEBUG, thus they return 0.
         i -= this.step_one();
@@ -630,6 +642,12 @@ var Robot = Class.extend({
         this.running = false;
       }
     }
+    if (this.energy < -200) {
+      throw new Error('Robot meltdown! Energy less than -200');
+    }
+
+    this.x = Math.max(0, Math.min(this.arena.width, this.x + this.vx));
+    this.y = Math.max(0, Math.min(this.arena.height, this.y + this.vy));
   },
 
   step_one: function() {
@@ -638,7 +656,7 @@ var Robot = Class.extend({
     if (instruction == undefined) {
       throw new Error('Program finished');
     }
-    console.log('Instruction:', instruction.toString());
+    //console.log('Instruction:', instruction.toString());
 
     this.ptr++;
 
@@ -703,13 +721,13 @@ var Robot = Class.extend({
   },
 
   op_jump: function(address) {
-    console.log('Go to', this.program.address_to_label[address]);
+    //console.log('Go to', this.program.address_to_label[address]);
     this.ptr = address;
     return 1;
   },
 
   op_call: function(address) {
-    console.log('Jumping to', this.program.address_to_label[address], 'with return');
+    //console.log('Jumping to', this.program.address_to_label[address], 'with return');
     var return_addr = this.ptr;
     this.ptr = address;
     this.push(return_addr);

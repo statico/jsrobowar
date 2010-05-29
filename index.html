@@ -30,6 +30,7 @@
 </div>
 
 <button id="play">Play</button>
+<button id="stop">Stop</button>
 
 <section>
 <h1>Robot 1</h1>
@@ -80,9 +81,15 @@ Shoot:
 <script type="text/javascript">
   $(document).ready(function() {
 
-    $('#play').click(function() {
+    var game;
+
+    $('#stop').click(function() {
+      if (game) game.stop();
+    });
+
+    //$('#play').click(function() {
       var paper = Raphael('arena', 300, 300);
-      var game = new Game(paper);
+      game = new Game(paper);
 
       var program1 = new Program();
       program1.parse($('#code1').val());
@@ -96,7 +103,7 @@ Shoot:
       game.add(new Robot('Player 2', program2));
 
       game.start();
-    });
+    //});
 
   });
 </script>
