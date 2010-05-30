@@ -165,10 +165,33 @@ var Game = Class.extend({
         var x = robot.x, y = robot.y, r = robot.radius;
         robot.wall = (x <= r || y <= r || x >= w - r || y >= h - r);
 
+        // Save the current X and Y of the robot in case one tries to move while touching.
+        robot.old_x = x;
+        robot.old_y = y;
+
         robot.step();
 
         if (!robot.running) {
           self.remove_robot(robot);  // Remove robot if dead.
+        }
+
+        robot.collision = false; // Updated below.
+      }
+
+      // Check robot collisions.
+      // TODO: Optimize -- quadtree or something.
+      for (var i = 0, a; a = self.robots[i]; i++) {
+        for (var j = 0, b; b = self.robots[j]; j++) {
+          if (a == b) continue;
+          if (a.is_touching(b)) {
+            a.collision = b.collision = true;
+            a.speedx = b.speedx = 0;
+            a.speedy = b.speedy = 0;
+            a.x = a.old_x;
+            a.y = a.old_y;
+            b.x = b.old_x;
+            b.y = b.old_y;
+          }
         }
       }
 
@@ -180,8 +203,6 @@ var Game = Class.extend({
           self.remove_projectile(p);  // Remove if outside arena.
         }
       }
-
-      // Check wall collisions.
 
       // Draw.
       self.draw();
@@ -633,6 +654,7 @@ var Robot = Class.extend({
     this.damage = this.starting_damage;
     this.shield = 0;
     this.wall = false;
+    this.collision = false;
     this.x = 0;
     this.y = 0;
     this.vx = 0;
@@ -653,6 +675,21 @@ var Robot = Class.extend({
       output.push(this.stack[i].toString());
     }
     this.trace('Stack:', output);
+  },
+
+  distance_to: function(other) {
+    var a = this;
+    var b = other;
+    if (a == b) return 0;
+
+    var dx = a.x - b.x;
+    var dy = a.y - b.y;
+    return Math.sqrt( (dx * dx) + (dy * dy) ) - a.radius - b.radius - 1; // TODO: is 1 ok?
+  },
+
+  is_touching: function(other) {
+    if (this == other) return false;
+    return this.distance_to(other) <= 0;
   },
 
   shoot: function(type, amount) {
@@ -807,7 +844,7 @@ var Robot = Class.extend({
       case 'CHRONONS':
         return this.chronons;
       case 'COLLISION':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.collision;
       case 'DAMAGE':
         return this.damage;
       case 'DOPPLER':
@@ -865,7 +902,7 @@ var Robot = Class.extend({
       case 'TOP':
         return 0;
       case 'WALL':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.wall ? 1 : 0;
       case 'X':
         return this.x;
       case 'Y':
@@ -886,15 +923,10 @@ var Robot = Class.extend({
     this.chronons++;
     this.energy = Math.min(this.max_energy, this.energy + 2);
 
-    if (this.wall) {
-      this.damage -= 5;
-    }
-    if (this.damage <= 0) {
-      this.running = false;
-    }
-    if (this.energy < -200) {
-      this.running = false;
-    }
+    if (this.wall) this.damage -= 5;
+    if (this.collision) this.damage -= 1;
+    if (this.damage <= 0) this.running = false;
+    if (this.energy < -200) this.running = false;
 
     for (var i = this.speed; i > 0 && this.running; ) {
       try {
