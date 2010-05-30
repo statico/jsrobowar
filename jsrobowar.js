@@ -139,11 +139,18 @@ var Game = Class.extend({
   add_robot: function(robot) {
     robot.arena = this.arena;
 
-    // Position randomly but away from the edges.
+    // Position randomly but away from the edges and not on top of another robot.
     var w = this.arena.width;
     var h = this.arena.height;
-    robot.x = Math.floor(Math.random() * w * .8 + w * .1);
-    robot.y = Math.floor(Math.random() * h * .8 + h * .1);
+    var overlap = true;
+    while (overlap) {
+      robot.x = Math.floor(Math.random() * w * .8 + w * .1);
+      robot.y = Math.floor(Math.random() * h * .8 + h * .1);
+      overlap = false;
+      for (var i = 0, other; other = this.robots[i]; i++) {
+        overlap = overlap || robot.is_touching(other);
+      }
+    };
 
     this.actors[LAYER_ROBOTS].push(new RobotView(this.paper, robot));
     this.robots.push(robot);
@@ -178,6 +185,18 @@ var Game = Class.extend({
         robot.collision = false; // Updated below.
       }
 
+      // Draw.
+      self.draw();
+
+      // Update projectiles.
+      for (var i = 0, p; p = self.projectiles[i]; i++) {
+        p.step();
+        var x = p.x, y = p.y, r = p.radius;
+        if (x < -r || y < -r || x > w + r || y > h + r) {
+          self.remove_projectile(p, false);  // Remove if outside arena.
+        }
+      }
+
       // Check robot collisions.
       // TODO: Optimize -- quadtree or something.
       for (var i = 0, a; a = self.robots[i]; i++) {
@@ -193,19 +212,16 @@ var Game = Class.extend({
             b.y = b.old_y;
           }
         }
-      }
 
-      // Update projectiles.
-      for (var i = 0, p; p = self.projectiles[i]; i++) {
-        p.step();
-        var x = p.x, y = p.y, r = p.radius;
-        if (x < -r || y < -r || x > w + r || y > h + r) {
-          self.remove_projectile(p);  // Remove if outside arena.
+        for (var j = 0, p; p = self.projectiles[j]; j++) {
+          if (a.is_touching(p)) {
+            self.remove_projectile(p, true);  // Remove if outside arena.
+            a.damage -= p.energy;
+          }
         }
       }
 
-      // Draw.
-      self.draw();
+      // Update scoreboard.
       self.scoreboard.update();
 
       // Keep going if more than one bot is alive.
@@ -258,7 +274,7 @@ var Game = Class.extend({
     this.actors[LAYER_PROJECTILES].push(new ProjectileView(this.paper, p));
   },
 
-  remove_projectile: function(given) {
+  remove_projectile: function(given, animate) {
     // TODO: Optimize. (Duh.)
     var index;
     for (var i = 0; i < this.projectiles.length; i++) {
@@ -277,7 +293,13 @@ var Game = Class.extend({
     if (index == undefined) {
       throw new Error("Couldn't remove unknown ProjectileView for: " + given);
     }
-    actors[index].remove();
+
+    if (animate) {
+      actors[index].animated_remove();
+    } else {
+      actors[index].remove();
+    }
+
     actors.splice(index, 1);
   },
 
@@ -338,6 +360,7 @@ var Arena = Class.extend({
     var p = this.create_projectile(type);
     p.x = robot.x + Math.sin(aim_radians) * (robot.radius + 1);
     p.y = robot.y - Math.cos(aim_radians) * (robot.radius + 1);
+    p.energy = energy;
     p.set_velocity(aim_radians, 12); // TODO 12?
     this.game.add_projectile(p);
   },
@@ -350,6 +373,11 @@ var Actor = Class.extend({
   remove: function() {
     if (this.el) this.el.remove();
   },
+  animated_remove: function() {
+    var self = this;
+    var attr = {scale: 3, opacity: 0};
+    this.el.animate(attr, 500, function() {self.remove()});
+  },
 });
 
 var Projectile = Class.extend({
@@ -358,6 +386,7 @@ var Projectile = Class.extend({
     this.x = 0;
     this.y = 0;
     this.radius = 2;
+    this.energy = 0;
   },
 
   set_velocity: function(aim_radians, speed) {
@@ -382,7 +411,8 @@ var ProjectileView = Actor.extend({
 
   init: function(paper, projectile) {
     this.projectile = projectile;
-    this.el = paper.circle(projectile.x, projectile.y, projectile.radius).attr('fill', 'black');
+    var attr = {fill: 'black', stroke: null};
+    this.el = paper.circle(projectile.x, projectile.y, projectile.radius).attr(attr);
     // TODO: Other projectile types
   },
 
@@ -390,6 +420,13 @@ var ProjectileView = Actor.extend({
     var dx = this.projectile.x - this.el.getBBox().x + this.el.getBBox().width / 2;
     var dy = this.projectile.y - this.el.getBBox().y + this.el.getBBox().height / 2;
     this.el.translate(dx, dy);
+  },
+
+  animated_remove: function() {
+    var self = this;
+    this.el.attr({scale: 2, fill: 'orange'});
+    var attr = {scale: 7, opacity: 0, fill: 'white'};
+    this.el.animate(attr, 500, function() {self.remove()});
   },
 
 });
@@ -604,7 +641,6 @@ var RobotView = Actor.extend({
   update: function() {
     var dx = this.robot.x - this.old_x;
     var dy = this.robot.y - this.old_y;
-
     this.el.translate(dx, dy);
     this.turret.rotate(this.robot.aim, this.robot.x, this.robot.y);
 
@@ -620,7 +656,7 @@ var RobotView = Actor.extend({
 
   animated_remove: function() {
     var self = this;
-    var attr = {scale: 2, opacity: 0, fill: 'whitj'};
+    var attr = {scale: 2, opacity: 0, fill: 'white'};
     this.el.animate(attr, 1000, function() {self.remove()});
   },
 
