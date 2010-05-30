@@ -131,6 +131,7 @@ var Game = Class.extend({
     this.robots = [];
     this.projectiles = [];
     this.chronons = 0;
+    this.speed = 40;  // 1 chronon is this many ms, minimum.
 
     this.scoreboard = new Scoreboard(scoreboard_el, this);
     this.arena = new Arena(this, this.paper.width, this.paper.height);
@@ -164,6 +165,8 @@ var Game = Class.extend({
     var self = this;
     var loop;
     loop = function() {
+      var start_time = new Date();
+
       // Increment chronons.
       self.chronons++;
 
@@ -221,12 +224,12 @@ var Game = Class.extend({
         }
       }
 
-      // Update scoreboard.
       self.scoreboard.update();
-
       // Keep going if more than one bot is alive.
       if (self.robots.length > 1) {
-        setTimeout(loop, 50);
+        var elapsed = new Date() - start_time;
+        var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed));
+        setTimeout(loop, delay);
       };
     };
     loop();
@@ -358,8 +361,9 @@ var Arena = Class.extend({
   shoot: function(robot, type, energy) {
     var aim_radians = robot.aim * (Math.PI + Math.PI) / 360;
     var p = this.create_projectile(type);
-    p.x = robot.x + Math.sin(aim_radians) * (robot.radius + 1);
-    p.y = robot.y - Math.cos(aim_radians) * (robot.radius + 1);
+    var radius = robot.radius + 7;
+    p.x = robot.x + Math.sin(aim_radians) * radius;
+    p.y = robot.y - Math.cos(aim_radians) * radius;
     p.energy = energy;
     p.set_velocity(aim_radians, 12); // TODO 12?
     this.game.add_projectile(p);
@@ -414,19 +418,28 @@ var ProjectileView = Actor.extend({
     var attr = {fill: 'black', stroke: null};
     this.el = paper.circle(projectile.x, projectile.y, projectile.radius).attr(attr);
     // TODO: Other projectile types
+    //this.XXX = paper;
+
+    this.old_x = this.projectile.x;
+    this.old_y = this.projectile.y;
   },
 
   update: function() {
-    var dx = this.projectile.x - this.el.getBBox().x + this.el.getBBox().width / 2;
-    var dy = this.projectile.y - this.el.getBBox().y + this.el.getBBox().height / 2;
+    var dx = this.projectile.x - this.old_x;
+    var dy = this.projectile.y - this.old_y;
+
     this.el.translate(dx, dy);
+    //this.XXX.circle(this.projectile.x, this.projectile.y, 1).attr({fill: '#0f0', stroke: null});
+
+    this.old_x = this.projectile.x;
+    this.old_y = this.projectile.y;
   },
 
   animated_remove: function() {
     var self = this;
     this.el.attr({scale: 2, fill: 'orange'});
-    var attr = {scale: 7, opacity: 0, fill: 'white'};
-    this.el.animate(attr, 500, function() {self.remove()});
+    var attr = {scale: 7, opacity: 0};
+    this.el.animate(attr, 200, function() {self.remove()});
   },
 
 });

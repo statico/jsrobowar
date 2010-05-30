@@ -95,29 +95,29 @@ Shoot:
 <script type="text/javascript">
   $(document).ready(function() {
 
-    var game;
+    var game = new Game($('#arena')[0], $('#scoreboard')[0]);
+
+    var program1 = new Program();
+    program1.parse($('#code1').val());
+    $('#errors1').val(program1.errors);
+
+    var program2 = new Program();
+    program2.parse($('#code2').val());
+    $('#errors2').val(program2.errors);
+
+    game.add_robot(new Robot('Player 1', $('#color1').val(), program1));
+    game.add_robot(new Robot('Player 2', $('#color2').val(), program2));
+    //game.robots[1].set_trace(true); //XXX
 
     $('#stop').click(function() {
       if (game) game.stop();
     });
 
-    //$('#play').click(function() {
-      game = new Game($('#arena')[0], $('#scoreboard')[0]);
-
-      var program1 = new Program();
-      program1.parse($('#code1').val());
-      $('#errors1').val(program1.errors);
-
-      var program2 = new Program();
-      program2.parse($('#code2').val());
-      $('#errors2').val(program2.errors);
-
-      game.add_robot(new Robot('Player 1', $('#color1').val(), program1));
-      game.add_robot(new Robot('Player 2', $('#color2').val(), program2));
-      //game.robots[1].set_trace(true); //XXX
-
+    $('#play').click(function() {
       game.start();
-    //});
+    });
+
+    $('#play').click(); //XXX
 
   });
 </script>
