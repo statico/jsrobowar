@@ -58,9 +58,6 @@
   };
 })();
 
-function trace(a, b, c, d) { console.log(a, b, c, d) }
-function trace() {}
-
 function fix360(value) {
   value %= 360;
   return (value < 0) ? 360 + value : value;
@@ -152,6 +149,60 @@ var Game = Class.extend({
     this.robots.push(robot);
   },
 
+  start: function() {
+    this.scoreboard.start();
+
+    var w = this.arena.width;
+    var h = this.arena.height;
+    var self = this;
+    var loop;
+    loop = function() {
+      // Increment chronons.
+      self.chronons++;
+
+      // Update robots.
+      for (var i = 0, robot; robot = self.robots[i]; i++) {
+        robot.step();
+        if (!robot.running) {
+          self.remove_robot(robot);  // Remove robot if dead.
+        }
+      }
+
+      // Update projectiles.
+      for (var i = 0, p; p = self.projectiles[i]; i++) {
+        p.step();
+        var r = p.radius;
+        if (p.x < -r || p.y < -r || p.x > w + r || p.y > h + r) {
+          self.remove_projectile(p);  // Remove if outside arena.
+        }
+      }
+
+      // Draw.
+      self.draw();
+      self.scoreboard.update();
+
+      // Keep going if more than one bot is alive.
+      if (self.robots.length > 1) {
+        setTimeout(loop, 50);
+      };
+    };
+    loop();
+  },
+
+  stop: function() {
+    for (var i = 0, robot; robot = this.robots[i]; i++) {
+      robot.running = false;
+    }
+  },
+
+  draw: function() {
+    for (var i = 0, group; group = this.actors[i]; i++) {
+      for (var j = 0, actor; actor = group[j]; j++) {
+        actor.update();
+      }
+    }
+  },
+
   remove_robot: function(given) {
     // TODO: Optimize. (Duh.)
     var index;
@@ -203,63 +254,6 @@ var Game = Class.extend({
     actors.splice(index, 1);
   },
 
-  start: function() {
-    this.scoreboard.start();
-
-    var w = this.arena.width;
-    var h = this.arena.height;
-    var self = this;
-    var loop;
-    loop = function() {
-      // Increment chronons.
-      self.chronons++;
-
-      // Update robot and projectile models.
-      var num_running = 0;
-      for (var i = 0, robot; robot = self.robots[i]; i++) {
-        robot.step();
-        if (robot.running) {
-          num_running++;
-        } else {
-          self.remove_robot(robot);
-        }
-      }
-      for (var i = 0, p; p = self.projectiles[i]; i++) {
-        p.step();
-        var r = p.radius;
-        if (p.x < -r || p.y < -r || p.x > w + r || p.y > h + r) {
-          self.remove_projectile(p);
-        }
-      }
-
-      // Draw.
-      self.draw();
-      self.scoreboard.update();
-
-      // Keep going if more than one bot is alive.
-      if (num_running > 1) {
-        setTimeout(loop, 50);
-      } else {
-        trace('Done!');
-      }
-    };
-    loop();
-  },
-
-  stop: function() {
-    for (var i = 0, robot; robot = this.robots[i]; i++) {
-      robot.running = false;
-    }
-  },
-
-  draw: function() {
-    for (var i = 0, group; group = this.actors[i]; i++) {
-      for (var j = 0, actor; actor = group[j]; j++) {
-        actor.update();
-      }
-    }
-  },
-
 });
 
 var Arena = Class.extend({
@@ -272,7 +266,7 @@ var Arena = Class.extend({
   },
 
   do_range: function(observer) {
-    var SCAN_DEGREES = 30; // Somewhere in robowar.pdf...
+    var SCAN_DEGREES = 40;  // In robowar.pdf under 'RADAR'.
     var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
     var aim_radians = fix360(observer.aim + observer.look) * (Math.PI + Math.PI) / 360;
 
@@ -599,7 +593,7 @@ var RobotView = Actor.extend({
 
   animated_remove: function() {
     var self = this;
-    var attr = {scale: 2, opacity: 0, fill: 'white'};
+    var attr = {scale: 2, opacity: 0, fill: 'whitj'};
     this.el.animate(attr, 1000, function() {self.remove()});
   },
 
@@ -619,6 +613,7 @@ var Robot = Class.extend({
     this.max_shield = 10;
     this.starting_damage = 150;
     this.explosive_bullets = false;
+    this.set_trace(false);
 
     this.registers = {};
     this.vector = [];
@@ -637,12 +632,20 @@ var Robot = Class.extend({
     this.vy = 0;
   },
 
+  set_trace: function(enabled) {
+    if (enabled) {
+      this.trace = function() {console.log.apply(console, arguments)};
+    } else {
+      this.trace = function() {};
+    }
+  },
+
   debug_stack: function() {
     var output = [];
     for (var i = 0; i < this.stack.length; i++) {
       output.push(this.stack[i].toString());
     }
-    trace('Stack:', output);
+    this.trace('Stack:', output);
   },
 
   shoot: function(type, amount) {
@@ -651,7 +654,7 @@ var Robot = Class.extend({
     // TOOD can't move and shoot
   },
 
-  move: function(axis, distance) {
+  translate: function(axis, distance) {
     // TODO max distance?
     this.energy -= Math.abs(distance * 2);
     var r = this.radius;
@@ -666,15 +669,15 @@ var Robot = Class.extend({
     // TOOD can't move and shoot
   },
 
-  accelerate: function(axis, delta) {
-    delta = Math.max(-20, Math.min(20, delta)); // TODO warn here?
-    this.energy -= Math.abs(delta * 2);
+  set_speed: function(axis, value) {
+    value = Math.max(-20, Math.min(20, value)); // TODO warn here?
+    this.energy -= Math.abs(value * 2);
     switch (axis) {
       case 'x':
-        this.vx += delta;
+        this.vx = value;
         break;
       case 'y':
-        this.vy += delta;
+        this.vy = value;
         break;
     }
     // TOOD can't move and shoot
@@ -723,10 +726,10 @@ var Robot = Class.extend({
         this.shoot(name, value);
         return;
       case 'MOVEX':
-        this.move('x', value);
+        this.translate('x', value);
         return;
       case 'MOVEY':
-        this.move('y', value);
+        this.translate('y', value);
         return;
       case 'NUKE':
         this.shoot(name, value);
@@ -761,10 +764,10 @@ var Robot = Class.extend({
       case 'SIGNAL':
         throw new Error('Teamplay not yet implemented');
       case 'SPEEDX':
-        this.accelerate('x', value);
+        this.set_speed('x', value);
         return;
       case 'SPEEDY':
-        this.accelerate('y', value);
+        this.set_speed('y', value);
         return;
       case 'STUNNER':
         this.shoot(name, value);
@@ -906,7 +909,7 @@ var Robot = Class.extend({
     if (instruction == undefined) {
       throw new Error('Program finished');
     }
-    trace('Instruction:', instruction.toString());
+    this.trace('Instruction:', instruction.toString());
 
     this.ptr++;
 
@@ -971,13 +974,13 @@ var Robot = Class.extend({
   },
 
   op_jump: function(address) {
-    trace('Go to', this.program.address_to_label[address]);
+    this.trace('Go to', this.program.address_to_label[address]);
     this.ptr = address;
     return 1;
   },
 
   op_call: function(address) {
-    trace('Jumping to', this.program.address_to_label[address], 'with return');
+    this.trace('Jumping to', this.program.address_to_label[address], 'with return');
     var return_addr = this.ptr;
     this.ptr = address;
     this.push(return_addr);
