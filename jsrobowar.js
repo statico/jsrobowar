@@ -69,23 +69,25 @@ function fix360(value) {
 var Scoreboard = Class.extend({
 
   init: function(scoreboard_el, game) {
-    this.paper = Raphael(scoreboard_el, 300, 150);
+    this.paper = Raphael(scoreboard_el, 250, 250);
     this.game = game;
-
   },
 
   start: function() {
     var p = this.paper;
     p.clear();
 
-    var PAD = 10;
+    var PAD = 12;
     var y = PAD * 2;
-    var attr = {fill: 'black', 'text-anchor': 'start'};
+    var attr = {fill: 'black', 'text-anchor': 'start', 'font-size': PAD + 'px'};
 
     var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
 
     var title = p.text(PAD, y, 'RoboWar').attr(attr).attr('font-size', '30px');
     y += PAD * 3;
+
+    this.counter = p.text(PAD, y, 'Chronons: 0').attr(attr);
+    y += PAD * 2;
 
     var labels = [];
     for (var i = 0, robot; robot = this.game.robots[i]; i++) {
@@ -103,6 +105,7 @@ var Scoreboard = Class.extend({
   },
 
   update: function() {
+    this.counter.attr('text', 'Chronons: ' + this.game.chronons);
     for (var i = 0, label; label = this.labels[i]; i++) {
       var robot = label['robot'];
       label['energy'].attr('text', 'Energy: ' + robot.energy);
@@ -113,18 +116,30 @@ var Scoreboard = Class.extend({
 
 });
 
+var LAYER_ARENA = 0;
+var LAYER_ROBOTS = 1;
+var LAYER_PROJECTILES = 2;
+// TODO: Remove layers -- they're not needed.
+
 var Game = Class.extend({
 
   init: function(arena_el, scoreboard_el) {
     this.paper = Raphael(arena_el, 300, 300);
-    this.scoreboard = new Scoreboard(scoreboard_el, this);
+
+    this.actors = [];
+    this.actors[LAYER_ARENA] = [new ArenaView(this.paper, arena)];
+    this.actors[LAYER_ROBOTS] = [];
+    this.actors[LAYER_PROJECTILES] = [];
+
     this.robots = [];
+    this.projectiles = [];
     this.chronons = 0;
-    this.arena = new Arena(this.robots, this.paper.width, this.paper.height);
-    this.actors = [[new ArenaView(this.paper, arena)], [], []]
+
+    this.scoreboard = new Scoreboard(scoreboard_el, this);
+    this.arena = new Arena(this, this.paper.width, this.paper.height);
   },
 
-  add: function(robot) {
+  add_robot: function(robot) {
     robot.arena = this.arena;
 
     // Position randomly but away from the edges.
@@ -133,33 +148,99 @@ var Game = Class.extend({
     robot.x = Math.floor(Math.random() * w * .8 + w * .1);
     robot.y = Math.floor(Math.random() * h * .8 + h * .1);
 
-    this.actors[1].push(new RobotView(this.paper, robot));
+    this.actors[LAYER_ROBOTS].push(new RobotView(this.paper, robot));
     this.robots.push(robot);
+  },
+
+  remove_robot: function(given) {
+    // TODO: Optimize. (Duh.)
+    var index;
+    for (var i = 0; i < this.robots.length; i++) {
+      if (this.robots[i] == given) index = i;
+    }
+    if (index == undefined) {
+      throw new Error("Couldn't remove unknown Robot: " + given);
+    }
+    this.robots.splice(index, 1);
+
+    index = undefined;
+    var actors = this.actors[LAYER_ROBOTS];
+    for (var i = 0; i < actors.length; i++) {
+      if (actors[i].robot == given) index = i;
+    }
+    if (index == undefined) {
+      throw new Error("Couldn't remove unknown RobotView for: " + given);
+    }
+    actors[index].animated_remove();
+    actors.splice(index, 1);
+  },
+
+  add_projectile: function(p) {
+    this.projectiles.push(p);
+    this.actors[LAYER_PROJECTILES].push(new ProjectileView(this.paper, p));
+  },
+
+  remove_projectile: function(given) {
+    // TODO: Optimize. (Duh.)
+    var index;
+    for (var i = 0; i < this.projectiles.length; i++) {
+      if (this.projectiles[i] == given) index = i;
+    }
+    if (index == undefined) {
+      throw new Error("Couldn't remove unknown Projectile: " + given);
+    }
+    this.projectiles.splice(index, 1);
+
+    index = undefined;
+    var actors = this.actors[LAYER_PROJECTILES];
+    for (var i = 0; i < actors.length; i++) {
+      if (actors[i].projectile == given) index = i;
+    }
+    if (index == undefined) {
+      throw new Error("Couldn't remove unknown ProjectileView for: " + given);
+    }
+    actors[index].remove();
+    actors.splice(index, 1);
   },
 
   start: function() {
     this.scoreboard.start();
 
+    var w = this.arena.width;
+    var h = this.arena.height;
     var self = this;
     var loop;
     loop = function() {
-      this.chronons++;
-      trace('--------------------- Chronon: ' + this.chronons);
+      // Increment chronons.
+      self.chronons++;
 
+      // Update robot and projectile models.
       var num_running = 0;
       for (var i = 0, robot; robot = self.robots[i]; i++) {
-        trace('---------- Robot: ', robot.name);
         robot.step();
-        if (robot.running) num_running++;
+        if (robot.running) {
+          num_running++;
+        } else {
+          self.remove_robot(robot);
+        }
+      }
+      for (var i = 0, p; p = self.projectiles[i]; i++) {
+        p.step();
+        var r = p.radius;
+        if (p.x < -r || p.y < -r || p.x > w + r || p.y > h + r) {
+          self.remove_projectile(p);
+        }
       }
 
+      // Draw.
       self.draw();
       self.scoreboard.update();
 
+      // Keep going if more than one bot is alive.
       if (num_running > 1) {
         setTimeout(loop, 50);
       } else {
-        console.info('Done!');
+        trace('Done!');
       }
     };
     loop();
@@ -183,8 +264,9 @@ var Game = Class.extend({
 
 var Arena = Class.extend({
 
-  init: function(robots, width, height) {
-    this.robots = robots;
+  init: function(game, width, height) {
+    this.game = game;
+    this.robots = game.robots;
     this.width = width;
     this.height = height;
   },
@@ -217,8 +299,26 @@ var Arena = Class.extend({
     return closest;
   },
 
+  create_projectile: function(type) {
+    switch (type) {
+      case 'BULLET': return new RegularBullet();
+      case 'EXPLOSIVE_BULLET': return new ExplosiveBullet();
+      case 'HELLBORE':
+      case 'MINE':
+      case 'MISSILE':
+      case 'NUKE':
+      case 'STUNNER':
+      default: throw new Error('Unknown bullet type: ' + type);
+    }
+  },
+
   shoot: function(robot, type, energy) {
-    //console.log('TODO', robot.name, 'shoots', type);
+    var aim_radians = robot.aim * (Math.PI + Math.PI) / 360;
+    var p = this.create_projectile(type);
+    p.x = robot.x + Math.sin(aim_radians) * (robot.radius + 1);
+    p.y = robot.y - Math.cos(aim_radians) * (robot.radius + 1);
+    p.set_velocity(aim_radians, 12); // TODO 12?
+    this.game.add_projectile(p);
   },
 
 });
@@ -229,6 +329,48 @@ var Actor = Class.extend({
   remove: function() {
     if (this.el) this.el.remove();
   },
+});
+
+var Projectile = Class.extend({
+
+  init: function() {
+    this.x = 0;
+    this.y = 0;
+    this.radius = 2;
+  },
+
+  set_velocity: function(aim_radians, speed) {
+    this.speedx = Math.sin(aim_radians) * speed;
+    this.speedy = -Math.cos(aim_radians) * speed;
+  },
+
+  step: function() {
+    this.x += this.speedx;
+    this.y += this.speedy;
+  },
+
+});
+
+var RegularBullet = Projectile.extend({
+});
+
+var ExplosiveBullet = Projectile.extend({
+});
+
+var ProjectileView = Actor.extend({
+
+  init: function(paper, projectile) {
+    this.projectile = projectile;
+    this.el = paper.circle(projectile.x, projectile.y, projectile.radius).attr('fill', 'black');
+    // TODO: Other projectile types
+  },
+
+  update: function() {
+    var dx = this.projectile.x - this.el.getBBox().x + this.el.getBBox().width / 2;
+    var dy = this.projectile.y - this.el.getBBox().y + this.el.getBBox().height / 2;
+    this.el.translate(dx, dy);
+  },
+
 });
 
 var ArenaView = Actor.extend({
@@ -430,6 +572,10 @@ var RobotView = Actor.extend({
     this.turret = paper.path('M' + x + ' ' + y + 'L' + x + ' ' + (y - robot.radius));
     this.turret.attr({ stroke: 'white', 'stroke-width': '2px' });
 
+    this.el = paper.set();
+    this.el.push(this.body);
+    this.el.push(this.turret);
+
     this.old_x = x;
     this.old_y = y;
   },
@@ -438,8 +584,7 @@ var RobotView = Actor.extend({
     var dx = this.robot.x - this.old_x;
     var dy = this.robot.y - this.old_y;
 
-    this.body.translate(dx, dy);
-    this.turret.translate(dx, dy);
+    this.el.translate(dx, dy);
     this.turret.rotate(this.robot.aim, this.robot.x, this.robot.y);
 
     this.old_x = this.robot.x;
@@ -452,9 +597,10 @@ var RobotView = Actor.extend({
     }
   },
 
-  remove: function() {
-    this.body.remove();
-    this.turret.remove();
+  animated_remove: function() {
+    var self = this;
+    var attr = {scale: 2, opacity: 0, fill: 'white'};
+    this.el.animate(attr, 1000, function() {self.remove()});
   },
 
 });

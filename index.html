@@ -112,11 +112,13 @@ Shoot:
       program2.parse($('#code2').val());
       $('#errors2').val(program2.errors);
 
-      game.add(new Robot('Player 1', $('#color1').val(), program1));
-      game.add(new Robot('Player 2', $('#color2').val(), program2));
+      game.add_robot(new Robot('Player 1', $('#color1').val(), program1));
+      game.add_robot(new Robot('Player 2', $('#color2').val(), program2));
 
       game.start();
     //});
+
+    setTimeout(function(){game.stop()}, 4000);//XXX
 
   });
 </script>
