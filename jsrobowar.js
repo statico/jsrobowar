@@ -120,7 +120,7 @@ var Game = Class.extend({
     this.scoreboard = new Scoreboard(scoreboard_el, this);
     this.robots = [];
     this.chronons = 0;
-    this.arena = new Arena(this.paper.width, this.paper.height);
+    this.arena = new Arena(this.robots, this.paper.width, this.paper.height);
     this.actors = [[new ArenaView(this.paper, arena)], [], []]
   },
 
@@ -183,14 +183,42 @@ var Game = Class.extend({
 
 var Arena = Class.extend({
 
-  init: function(width, height) {
+  init: function(robots, width, height) {
+    this.robots = robots;
     this.width = width;
     this.height = height;
   },
 
-  do_range: function() {
-    trace('TODO: do_range');
-    return 0;
+  do_range: function(observer) {
+    var SCAN_DEGREES = 30; // Somewhere in robowar.pdf...
+    var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
+    var aim_radians = fix360(observer.aim + observer.look) * (Math.PI + Math.PI) / 360;
+
+    var closest = 0;
+
+    for (var i = 0, enemy; enemy = this.robots[i]; i++) {
+      if (enemy == observer) continue;
+
+      // Stolen from JRoboWar (lucas@elmorian.zetnet.co.uk), who got it right.
+      var dx = observer.x - enemy.x;
+      var dy = observer.y - enemy.y;
+      if (dx != 0 && dy != 0 && enemy.radius > 0) {
+        var distance = Math.sqrt( (dx * dx) + (dy * dy) );
+        var enemy_dir = Math.atan2(dx, -dy) + Math.PI;
+
+        if (Math.abs(aim_radians - enemy_dir) < theta / 2) {
+          if (closest == 0 || closest > distance) {
+            closest = distance;
+          }
+        }
+      }
+    }
+
+    return closest;
+  },
+
+  shoot: function(robot, type, energy) {
+    //console.log('TODO', robot.name, 'shoots', type);
   },
 
 });
@@ -416,6 +444,12 @@ var RobotView = Actor.extend({
 
     this.old_x = this.robot.x;
     this.old_y = this.robot.y;
+
+    if (this.robot.energy <= 0) {
+      this.body.attr('fill', 'red');
+    } else {
+      this.body.attr('fill', 'none');
+    }
   },
 
   remove: function() {
@@ -447,6 +481,7 @@ var Robot = Class.extend({
 
     this.aim = 0;
     this.scan = 0;
+    this.look = 0;
     this.energy = this.max_energy;
     this.damage = this.starting_damage;
     this.shield = 0;
@@ -465,10 +500,8 @@ var Robot = Class.extend({
   },
 
   shoot: function(type, amount) {
-    if (this.energy >= amount) {
-      this.arena.shoot(this, type, amount);
-      this.energy -= amount;
-    }
+    this.arena.shoot(this, type, amount);
+    this.energy -= amount;
     // TOOD can't move and shoot
   },
 
@@ -533,6 +566,9 @@ var Robot = Class.extend({
       case 'ID':
       case 'KILLS':
       case 'LEFT':
+        return;
+      case 'LOOK':
+        this.look = value;
         return;
       case 'MINE':
         this.shoot(name, value);
@@ -636,6 +672,8 @@ var Robot = Class.extend({
         throw new Error('TODO: get_variable(' + name + ')');
       case 'LEFT':
         throw new Error('TODO: get_variable(' + name + ')');
+      case 'LOOK':
+        return this.look;
       case 'MINE':
       case 'MISSILE':
       case 'MOVEX':
@@ -692,24 +730,28 @@ var Robot = Class.extend({
     this.chronons++;
     this.energy = Math.min(this.max_energy, this.energy + 2);
 
-    for (var i = this.speed; i > 0 && this.running && this.energy > 0; ) {
+    if (this.energy < -200) {
+      throw new Error('Robot meltdown! Energy less than -200');
+    }
+
+    for (var i = this.speed; i > 0 && this.running; ) {
       try {
         // Some instructions have no cost, like DEBUG, thus they return 0.
         i -= this.step_one();
       } catch (e) {
         var line = this.program.line_numbers[this.ptr];
         var debug = this.program.instructions[this.ptr];
-        console.error('Robot error on line ' + line + ' before ' + debug + ' - ' + e);
+        console.error(this.name, 'error on line ' + line + ', before ' + debug + ' - ' + e);
         this.running = false;
       }
-    }
-    if (this.energy < -200) {
-      throw new Error('Robot meltdown! Energy less than -200');
+      if (this.energy <= 0) break;
     }
 
-    var r = this.radius;
-    this.x = Math.max(r, Math.min(this.arena.width - r, this.x + this.vx));
-    this.y = Math.max(r, Math.min(this.arena.height - r, this.y + this.vy));
+    if (this.energy > 0) {
+      var r = this.radius;
+      this.x = Math.max(r, Math.min(this.arena.width - r, this.x + this.vx));
+      this.y = Math.max(r, Math.min(this.arena.height - r, this.y + this.vy));
+    };
   },
 
   step_one: function() {
