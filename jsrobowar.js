@@ -162,7 +162,11 @@ var Game = Class.extend({
 
       // Update robots.
       for (var i = 0, robot; robot = self.robots[i]; i++) {
+        var x = robot.x, y = robot.y, r = robot.radius;
+        robot.wall = (x <= r || y <= r || x >= w - r || y >= h - r);
+
         robot.step();
+
         if (!robot.running) {
           self.remove_robot(robot);  // Remove robot if dead.
         }
@@ -171,11 +175,13 @@ var Game = Class.extend({
       // Update projectiles.
       for (var i = 0, p; p = self.projectiles[i]; i++) {
         p.step();
-        var r = p.radius;
-        if (p.x < -r || p.y < -r || p.x > w + r || p.y > h + r) {
+        var x = p.x, y = p.y, r = p.radius;
+        if (x < -r || y < -r || x > w + r || y > h + r) {
           self.remove_projectile(p);  // Remove if outside arena.
         }
       }
+
+      // Check wall collisions.
 
       // Draw.
       self.draw();
@@ -626,6 +632,7 @@ var Robot = Class.extend({
     this.energy = this.max_energy;
     this.damage = this.starting_damage;
     this.shield = 0;
+    this.wall = false;
     this.x = 0;
     this.y = 0;
     this.vx = 0;
@@ -879,8 +886,14 @@ var Robot = Class.extend({
     this.chronons++;
     this.energy = Math.min(this.max_energy, this.energy + 2);
 
+    if (this.wall) {
+      this.damage -= 5;
+    }
+    if (this.damage <= 0) {
+      this.running = false;
+    }
     if (this.energy < -200) {
-      throw new Error('Robot meltdown! Energy less than -200');
+      this.running = false;
     }
 
     for (var i = this.speed; i > 0 && this.running; ) {
