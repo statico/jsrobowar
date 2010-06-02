@@ -81,7 +81,7 @@ var Game = Class.extend({
     this.robots = [];
     this.projectiles = [];
     this.chronons = 0;
-    this.speed = 40;  // 1 chronon is this many ms, minimum.
+    this.speed = 50;  // 1 chronon is this many ms, minimum.
 
     this.scoreboard = new Scoreboard(scoreboard_el, this);
     this.arena = new Arena(this, this.paper.width, this.paper.height);
@@ -277,10 +277,10 @@ var Arena = Class.extend({
     this.height = height;
   },
 
-  calculate_nearest_distance: function(observer, objects) {
-    var SCAN_DEGREES = 40;  // In robowar.pdf under 'RADAR'.
+  calculate_nearest_distance: function(observer, direction, objects) {
+    var SCAN_DEGREES = 5;  // In robowar.pdf under 'RADAR'.
     var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
-    var aim_radians = fix360(observer.aim + observer.look) * (Math.PI + Math.PI) / 360;
+    var aim_radians = direction * (Math.PI + Math.PI) / 360;
 
     var closest = 0;
 
@@ -305,12 +305,14 @@ var Arena = Class.extend({
     return closest;
   },
 
-  do_range: function(observer) {
-    return this.calculate_nearest_distance(observer, this.robots);
+  do_range: function(robot) {
+    var direction = fix360(robot.aim + robot.scan);
+    return this.calculate_nearest_distance(robot, direction, this.robots);
   },
 
-  do_radar: function(observer) {
-    return this.calculate_nearest_distance(observer, this.game.projectiles);
+  do_radar: function(robot) {
+    var direction = fix360(robot.aim + robot.look);
+    return this.calculate_nearest_distance(robot, direction, this.game.projectiles);
   },
 
   create_projectile: function(type) {
@@ -653,13 +655,13 @@ var Robot = Class.extend({
     this.name = name;
     this.color = color;
     this.program = program;
-    this.speed = 30;
+    this.speed = 10;
     this.running = true;
     this.chronons = 0;
-    this.radius = 16;
-    this.max_energy = 50;
-    this.max_shield = 10;
-    this.starting_damage = 150;
+    this.radius = 8;
+    this.max_energy = 100;
+    this.max_shield = 30;
+    this.starting_damage = 100;
     this.explosive_bullets = false;
     this.set_trace(false);
 
