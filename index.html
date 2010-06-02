@@ -93,28 +93,40 @@ Shoot:
 </section>
 
 <script type="text/javascript">
+  var game = undefined; // Really? I have to set this as undefined? C'mon...
+
   $(document).ready(function() {
 
-    var game = new Game($('#arena')[0], $('#scoreboard')[0]);
+    $('#play').click(function() {
+      $(this).text('Restart');
 
-    var program1 = new Program();
-    program1.parse($('#code1').val());
-    $('#errors1').val(program1.errors);
+      if (game) {
+        game.stop();
+        $('#arena').add('#scoreboard').children().remove();
+      }
+      game = new Game($('#arena')[0], $('#scoreboard')[0]);
 
-    var program2 = new Program();
-    program2.parse($('#code2').val());
-    $('#errors2').val(program2.errors);
+      var program1 = new Program();
+      program1.parse($('#code1').val());
 
-    game.add_robot(new Robot('Player 1', $('#color1').val(), program1));
-    game.add_robot(new Robot('Player 2', $('#color2').val(), program2));
-    //game.robots[1].set_trace(true); //XXX
+      var program2 = new Program();
+      program2.parse($('#code2').val());
+
+      if (program1.errors || program2.errors) {
+        $('#errors1').val(program1.errors);
+        $('#errors2').val(program2.errors);
+        return;
+      }
+
+      game.add_robot(new Robot('Player 1', $('#color1').val(), program1));
+      game.add_robot(new Robot('Player 2', $('#color2').val(), program2));
+      //game.robots[1].set_trace(true); //XXX
+
+      game.start();
+    });
 
     $('#stop').click(function() {
       if (game) game.stop();
-    });
-
-    $('#play').click(function() {
-      game.start();
     });
 
     $('#play').click(); //XXX

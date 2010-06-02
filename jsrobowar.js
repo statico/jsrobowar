@@ -137,6 +137,10 @@ var Game = Class.extend({
     this.arena = new Arena(this, this.paper.width, this.paper.height);
   },
 
+  destroy: function() {
+    this.stop();
+  },
+
   add_robot: function(robot) {
     robot.arena = this.arena;
 
