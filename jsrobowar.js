@@ -63,56 +63,6 @@ function fix360(value) {
   return (value < 0) ? 360 + value : value;
 }
 
-var Scoreboard = Class.extend({
-
-  init: function(scoreboard_el, game) {
-    this.paper = Raphael(scoreboard_el, 250, 250);
-    this.game = game;
-  },
-
-  start: function() {
-    var p = this.paper;
-    p.clear();
-
-    var PAD = 12;
-    var y = PAD * 2;
-    var attr = {fill: 'black', 'text-anchor': 'start', 'font-size': PAD + 'px'};
-
-    var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
-
-    var title = p.text(PAD, y, 'RoboWar').attr(attr).attr('font-size', '30px');
-    y += PAD * 3;
-
-    this.counter = p.text(PAD, y, 'Chronons: 0').attr(attr);
-    y += PAD * 2;
-
-    var labels = [];
-    for (var i = 0, robot; robot = this.game.robots[i]; i++) {
-      p.rect(0, y - PAD, this.paper.width, PAD * 5).attr({fill: robot.color, stroke: null});
-      labels.push({
-        robot: robot,
-        name: p.text(PAD, y + PAD * 0, robot.name).attr(attr).attr('font-weight', 'bold'),
-        energy: p.text(PAD, y + PAD * 1, '').attr(attr),
-        damage: p.text(PAD, y + PAD * 2, '').attr(attr),
-        status: p.text(PAD, y + PAD * 3, '').attr(attr),
-      });
-      y += PAD * 5;
-    }
-    this.labels = labels;
-  },
-
-  update: function() {
-    this.counter.attr('text', 'Chronons: ' + this.game.chronons);
-    for (var i = 0, label; label = this.labels[i]; i++) {
-      var robot = label['robot'];
-      label['energy'].attr('text', 'Energy: ' + robot.energy);
-      label['damage'].attr('text', 'Damage: ' + robot.damage);
-      label['status'].attr('text', 'Status: ' + (robot.running ? 'running' : 'DEAD'));
-    }
-  },
-
-});
-
 var LAYER_ARENA = 0;
 var LAYER_ROBOTS = 1;
 var LAYER_PROJECTILES = 2;
@@ -206,11 +156,12 @@ var Game = Class.extend({
 
       // Check robot collisions.
       // TODO: Optimize -- quadtree or something.
+      var any_colliding = false;
       for (var i = 0, a; a = self.robots[i]; i++) {
         for (var j = 0, b; b = self.robots[j]; j++) {
           if (a == b) continue;
           if (a.is_touching(b)) {
-            a.collision = b.collision = true;
+            a.collision = b.collision = any_colliding = true;
             a.speedx = b.speedx = 0;
             a.speedy = b.speedy = 0;
             a.x = a.old_x;
@@ -227,6 +178,9 @@ var Game = Class.extend({
           }
         }
       }
+
+      // TODO: Change this when COLLISION interrupt is implemented.
+      if (any_colliding) SoundEffects.play_collision();
 
       self.scoreboard.update();
       // Keep going if more than one bot is alive.
@@ -272,6 +226,7 @@ var Game = Class.extend({
     if (index == undefined) {
       throw new Error("Couldn't remove unknown RobotView for: " + given);
     }
+    SoundEffects.play_death();
     actors[index].animated_remove();
     actors.splice(index, 1);
   },
@@ -303,6 +258,7 @@ var Game = Class.extend({
 
     if (animate) {
       actors[index].animated_remove();
+      SoundEffects.play_hit();
     } else {
       actors[index].remove();
     }
@@ -321,14 +277,14 @@ var Arena = Class.extend({
     this.height = height;
   },
 
-  do_range: function(observer) {
+  calculate_nearest_distance: function(observer, objects) {
     var SCAN_DEGREES = 40;  // In robowar.pdf under 'RADAR'.
     var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
     var aim_radians = fix360(observer.aim + observer.look) * (Math.PI + Math.PI) / 360;
 
     var closest = 0;
 
-    for (var i = 0, enemy; enemy = this.robots[i]; i++) {
+    for (var i = 0, enemy; enemy = objects[i]; i++) {
       if (enemy == observer) continue;
 
       // Stolen from JRoboWar (lucas@elmorian.zetnet.co.uk), who got it right.
@@ -349,10 +305,22 @@ var Arena = Class.extend({
     return closest;
   },
 
+  do_range: function(observer) {
+    return this.calculate_nearest_distance(observer, this.robots);
+  },
+
+  do_radar: function(observer) {
+    return this.calculate_nearest_distance(observer, this.game.projectiles);
+  },
+
   create_projectile: function(type) {
     switch (type) {
-      case 'BULLET': return new RegularBullet();
-      case 'EXPLOSIVE_BULLET': return new ExplosiveBullet();
+      case 'BULLET':
+        SoundEffects.play_gun();
+        return new RegularBullet();
+      case 'EXPLOSIVE_BULLET':
+        SoundEffects.play_gun();
+        return new ExplosiveBullet();
       case 'HELLBORE':
       case 'MINE':
       case 'MISSILE':
@@ -730,6 +698,16 @@ var Robot = Class.extend({
     this.trace('Stack:', output);
   },
 
+  take_damage: function(amount) {
+    if (amount <= this.shield) {
+      this.shield -= amount;
+    } else {
+      var remainder = amount - this.shield;
+      this.shield = 0;
+      this.damage -= remainder;
+    }
+  },
+
   distance_to: function(other) {
     var a = this;
     var b = other;
@@ -929,7 +907,7 @@ var Robot = Class.extend({
       case 'PROBE':
         throw new Error('TODO: get_variable(' + name + ')');
       case 'RADAR':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.arena.do_radar(this);
       case 'RANDOM':
         return Math.floor(Math.random() * 360);
       case 'RANGE':
@@ -976,10 +954,15 @@ var Robot = Class.extend({
     this.chronons++;
     this.energy = Math.min(this.max_energy, this.energy + 2);
 
-    if (this.wall) this.damage -= 5;
-    if (this.collision) this.damage -= 1;
+    if (this.wall) this.take_damage(5);
+    if (this.collision) this.take_damage(1);
     if (this.damage <= 0) this.running = false;
     if (this.energy < -200) this.running = false;
+
+    if (this.shield > this.max_shield)
+      this.shield = Math.max(0, this.shield - 2.0);
+    else if (this.shield > 0)
+      this.shield = Math.max(0, this.shield - 0.5);
 
     for (var i = this.speed; i > 0 && this.running; ) {
       try {
@@ -1220,3 +1203,88 @@ var Robot = Class.extend({
   },
 
 });
+
+var Scoreboard = Class.extend({
+
+  init: function(scoreboard_el, game) {
+    this.paper = Raphael(scoreboard_el, 250, 250);
+    this.game = game;
+  },
+
+  start: function() {
+    var p = this.paper;
+    p.clear();
+
+    var PAD = 12;
+    var y = PAD * 2;
+    var attr = {fill: 'black', 'text-anchor': 'start', 'font-size': PAD + 'px'};
+
+    var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
+
+    var title = p.text(PAD, y, 'RoboWar').attr(attr).attr('font-size', '30px');
+    y += PAD * 3;
+
+    this.counter = p.text(PAD, y, 'Chronons: 0').attr(attr);
+    y += PAD * 2;
+
+    var labels = [];
+    for (var i = 0, robot; robot = this.game.robots[i]; i++) {
+      p.rect(0, y - PAD, this.paper.width, PAD * 5).attr({fill: robot.color, stroke: null});
+      labels.push({
+        robot: robot,
+        name: p.text(PAD, y + PAD * 0, robot.name).attr(attr).attr('font-weight', 'bold'),
+        energy: p.text(PAD, y + PAD * 1, '').attr(attr),
+        damage: p.text(PAD, y + PAD * 2, '').attr(attr),
+        status: p.text(PAD, y + PAD * 3, '').attr(attr),
+      });
+      y += PAD * 5;
+    }
+    this.labels = labels;
+  },
+
+  update: function() {
+    this.counter.attr('text', 'Chronons: ' + this.game.chronons);
+    for (var i = 0, label; label = this.labels[i]; i++) {
+      var robot = label['robot'];
+      label['energy'].attr('text', 'Energy: ' + robot.energy);
+      label['damage'].attr('text', 'Damage: ' + robot.damage);
+      label['status'].attr('text', 'Status: ' + (robot.running ? 'running' : 'DEAD'));
+    }
+  },
+
+});
+
+var SoundEffects = (function() {
+
+  var sounds = {
+    collision: "Collision",
+    death: "Death",
+    drone: "Drone",
+    gun: "Gun",
+    hellbore: "Hellbore",
+    laser: "Laser",
+    mine: "Mine",
+    missile: "Missile",
+    nuke: "NukeBang",
+    hit: "Shot_Hit",
+  };
+
+  function load(name) {
+    return new Audio("sounds/" + sounds[name] + ".mp3")
+  }
+
+  function make_play_callback(name) {
+    return function() { load(name).play() };
+  }
+
+  var obj = new Object();
+  var preload = {};
+
+  for (var name in sounds) {
+    preload[name] = load(name);
+    obj["play_" + name] = make_play_callback(name);
+  }
+
+  return obj;
+
+})();
