@@ -1,3 +1,5 @@
+// --------------- BEGIN JS INHERITANCE ----------------
+// Stolen from http://ejohn.org/blog/simple-javascript-inheritance/
 // Inspired by base2 and Prototype
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
@@ -57,6 +59,7 @@
   return Class;
   };
 })();
+// --------------- END JS INHERITANCE ----------------
 
 function fix360(value) {
   value %= 360;
