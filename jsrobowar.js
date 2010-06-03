@@ -183,8 +183,11 @@ var Game = Class.extend({
 
         for (var j = 0, p; p = self.projectiles[j]; j++) {
           if (a.is_touching(p)) {
-            self.remove_projectile(p, true);  // Remove if outside arena.
-            a.damage -= p.energy;
+            p.contact();
+            if (p.is_harmful()) {
+              self.remove_projectile(p, true);  // Remove if outside arena.
+              a.damage -= p.damage;
+            }
           }
         }
       }
@@ -243,7 +246,12 @@ var Game = Class.extend({
 
   add_projectile: function(p) {
     this.projectiles.push(p);
-    this.actors[LAYER_PROJECTILES].push(new ProjectileView(this.paper, p));
+    var actor =
+      p instanceof RubberBullet ? new RubberBulletView(this.paper, p) :
+      p instanceof NormalBullet ? new NormalBulletView(this.paper, p) :
+      p instanceof ExplosiveBullet ? new ExplosiveBulletView(this.paper, p) :
+      (function() { throw new Error("Can't make view for projectils: " + p) })();
+    this.actors[LAYER_PROJECTILES].push(actor);
   },
 
   remove_projectile: function(given, animate) {
@@ -325,14 +333,17 @@ var Arena = Class.extend({
     return this.calculate_nearest_distance(robot, direction, this.game.projectiles);
   },
 
-  create_projectile: function(type) {
+  create_projectile: function(type, energy) {
     switch (type) {
-      case 'BULLET':
+      case 'RUBBER_BULLET':
         SoundEffects.play_gun();
-        return new RegularBullet();
+        return new RubberBullet(energy);
+      case 'NORMAL_BULLET':
+        SoundEffects.play_gun();
+        return new NormalBullet(energy);
       case 'EXPLOSIVE_BULLET':
         SoundEffects.play_gun();
-        return new ExplosiveBullet();
+        return new ExplosiveBullet(energy);
       case 'HELLBORE':
       case 'MINE':
       case 'MISSILE':
@@ -344,7 +355,7 @@ var Arena = Class.extend({
 
   shoot: function(robot, type, energy) {
     var aim_radians = robot.aim * (Math.PI + Math.PI) / 360;
-    var p = this.create_projectile(type);
+    var p = this.create_projectile(type, energy);
     var radius = robot.radius + 7;
     p.x = robot.x + Math.sin(aim_radians) * radius;
     p.y = robot.y - Math.cos(aim_radians) * radius;
@@ -374,12 +385,19 @@ var Projectile = Class.extend({
     this.x = 0;
     this.y = 0;
     this.radius = 2;
-    this.energy = 0;
+    this.damage = 0;
   },
 
   set_velocity: function(aim_radians, speed) {
     this.speedx = Math.sin(aim_radians) * speed;
     this.speedy = -Math.cos(aim_radians) * speed;
+  },
+
+  contact: function() {
+  },
+
+  is_harmful: function() {
+    return true;
   },
 
   step: function() {
@@ -389,23 +407,81 @@ var Projectile = Class.extend({
 
 });
 
-var RegularBullet = Projectile.extend({
+var RubberBullet = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.damage = energy * 0.5;
+    this.armed = true;
+  },
+
+});
+
+var NormalBullet = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.damage = energy;
+    this.armed = true;
+  },
+
 });
 
 var ExplosiveBullet = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.damage = energy * 2;
+    this.exploded = false;
+    this.time_since_exploded = 0;
+  },
+
+  step: function() {
+    if (this.exploded) {
+      this.time_since_exploded++;
+      this.radius = 12 * this.time_since_exploded;
+    } else {
+      return this._super();
+    }
+  },
+
+  contact: function() {
+    if (!this.exploded) {
+      this.exploded = true;
+      this.time_since_exploded = 1;
+      this.radius = 12;
+    }
+  },
+
+  is_harmful: function() {
+    if (this.exploded) {
+      return this.time_since_exploded >= 3;
+    } else {
+      return false;
+    }
+  }
+
 });
 
 var ProjectileView = Actor.extend({
 
   init: function(paper, projectile) {
+    this.paper = paper; // Do not use except for debugging.
     this.projectile = projectile;
-    var attr = {fill: 'black', stroke: null};
-    this.el = paper.circle(projectile.x, projectile.y, projectile.radius).attr(attr);
-    // TODO: Other projectile types
-    //this.XXX = paper;
+
+    this.el = this.get_element();
 
     this.old_x = this.projectile.x;
     this.old_y = this.projectile.y;
+  },
+
+  get_element: function() {
+    var p = this.projectile;
+    return this.paper.circle(p.x, p.y, p.radius).attr(this.get_attr());
+  },
+
+  get_attr: function() {
+    return {fill: 'black', stroke: null};
   },
 
   update: function() {
@@ -427,6 +503,43 @@ var ProjectileView = Actor.extend({
   },
 
 });
+
+var RubberBulletView = ProjectileView.extend({
+  get_attr: function() {
+    return {fill: 'white', stroke: 'black'};
+  },
+});
+
+var NormalBulletView = ProjectileView.extend({
+  get_attr: function() {
+    return {fill: 'black', stroke: null};
+  },
+});
+
+var ExplosiveBulletView = ProjectileView.extend({
+
+  get_attr: function() {
+    return {fill: 'red', stroke: 'black'};
+  },
+
+  update: function() {
+    this._super();
+    if (this.projectile.exploded) {
+      this.el.attr({
+        fill: 'orange',
+        r: this.projectile.radius,
+        stroke: 'none',
+      });
+    }
+  },
+
+  animated_remove: function() {
+    var self = this;
+    this.el.animate({opacity: 0}, 200, function() {self.remove()});
+  },
+
+});
+
 
 var ArenaView = Actor.extend({
   init: function(paper, arena) {
@@ -773,7 +886,7 @@ var Robot = Class.extend({
     this.max_energy = 100;
     this.max_shield = 30;
     this.starting_damage = 100;
-    this.explosive_bullets = false;
+    this.bullet_type = 'EXPLOSIVE';
     this.set_trace(false);
 
     this.registers = {};
@@ -880,7 +993,10 @@ var Robot = Class.extend({
         if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
         return;
       case 'BULLET':
-        this.shoot(name, value);
+        if (this.bullet_type == 'EXPLOSIVE')
+          this.shoot('NORMAL_BULLET', value);
+        else
+          this.shoot(this.bullet_type + '_BULLET', value);
         return;
       case 'BOTTOM':
       case 'BOT':
@@ -894,7 +1010,7 @@ var Robot = Class.extend({
       case 'ENERGY':
         return;
       case 'FIRE':
-        this.shoot(this.explosive_bullets ? 'EXPLOSIVE' : 'BULLET', value);
+        this.shoot(this.bullet_type + '_BULLET', value);
         return;
       case 'FRIEND':
         throw new Error('Teamplay not yet implemented');
@@ -1127,6 +1243,7 @@ var Robot = Class.extend({
     }
 
     for (var i = this.speed; i > 0 && this.running; ) {
+      if (this.energy <= 0) break;
       try {
         if (this.interrupts.enabled && this.interrupts.has_next()) {
           this.interrupts.enabled = false;
@@ -1142,7 +1259,6 @@ var Robot = Class.extend({
         console.error(this.name, 'error on line ' + line + ', before ' + debug + ' - ' + e);
         this.running = false;
       }
-      if (this.energy <= 0) break;
     }
 
     if (this.energy > 0) {
