@@ -45,17 +45,20 @@
 <section>
 <h1>Robot 1</h1>
 <textarea id="code1">
-#   Stationary Gun Turret
-#   by [your name here]
+# Bozo
+# Written 8/22/93 by David Harris
+# This robot uses interrupts.
 
-Main:
-    range 0 &gt; shoot if
-    aim 5 + aim' store
-    Main jump
+    killem RANGE' SETINT
+    INTON
 
-Shoot:
-    20 fire' store
-    return
+main:
+    AIM 5 + AIM' STORE
+    main JUMP
+
+killem:
+    50 FIRE' STORE
+    RTI
 </textarea>
 <textarea id="errors1" class="errors" readonly></textarea>
 <br/>

@@ -66,6 +66,13 @@ function fix360(value) {
   return (value < 0) ? 360 + value : value;
 }
 
+function unique(seq) {
+  var o = {}, a = [];
+  for (var i = 0; i < seq.length; i++) o[seq[i]] = 1;
+  for (var e in o) a.push(e);
+  return a;
+}
+
 var LAYER_ARENA = 0;
 var LAYER_ROBOTS = 1;
 var LAYER_PROJECTILES = 2;
@@ -652,6 +659,107 @@ var RobotView = Actor.extend({
 
 });
 
+var INTERRUPTS = {
+  // Values are each interrupt's priority level.
+  COLLISION: 1,
+  WALL: 2,
+  DAMAGE: 3,
+  SHIELD: 4,
+  TOP: 5,
+  BOTTOM: 6,
+  LEFT: 7,
+  RIGHT: 8,
+  RADAR: 9,
+  RANGE: 10,
+  TEAMMATES: 11,
+  ROBOTS: 12,
+  SIGNAL: 13,
+  CHRONON: 14,
+};
+
+var InterruptQueue = Class.extend({
+
+  init: function() {
+    this.enabled = false;
+    this.queue = [];
+
+    this.params = {
+        DAMAGE: 150,
+        SHIELD: 25,
+        TOP: 20,
+        BOTTOM: 280,  // TODO: Get data from arena.
+        LEFT: 280,
+        RIGHT: 280,
+        RADAR: 600,
+        RANGE: 600,
+        TEAMMATES: 5,
+        ROBOTS: 6,
+        SIGNAL: 0,
+        CHRONON: 0,
+      };
+
+    this.ptrs = {};
+    for (name in INTERRUPTS) {
+      this.ptrs[name] = -1;
+    }
+  },
+
+  normalize: function(name) {
+    // Guarantees that the result is a valid interrupt name.
+    if (name == 'BOT') name = 'BOTTOM';
+    if (name in INTERRUPTS)
+      return name;
+    else
+      throw new Error('Unknown interrupt name: "' + name + '"');
+  },
+
+  get_param: function(name) {
+    return this.params[this.normalize(name)];
+  },
+
+  set_param: function(name, value) {
+    this.params[this.normalize(name)] = value;
+  },
+
+  get_ptr: function(name) {
+    return this.ptrs[this.normalize(name)];
+  },
+
+  set_ptr: function(name, value) {
+    this.ptrs[this.normalize(name)] = value;
+  },
+
+  add: function(name) {
+    name = this.normalize(name);
+    // TODO: Use a priority queue. Duh.
+    this.queue.unshift(name);
+    this.queue = unique(this.queue);
+    this.queue = this.queue.sort(function(a, b) { return INTERRUPTS[a] - INTERRUPTS[b] });
+  },
+
+  has_next: function() {
+    if (this.queue.length == 0) return false;
+
+    // Use this call to prune any interrupts that point to address -1.
+    while (this.queue.length > 0) {
+      var next = this.queue[0];
+      if (this.ptrs[next] == -1)
+        this.queue.shift(); // Remove it!
+      else
+        return true;
+    }
+    return false;  // I guess they all pointed to -1...
+  },
+
+  next: function() {
+    if (this.queue.length)
+      return this.queue.shift();
+    else
+      throw new Error('Internal error: Tried getting next interrupt signal but none queued');
+  },
+
+});
+
 var Robot = Class.extend({
 
   init: function(name, color, program) {
@@ -672,6 +780,7 @@ var Robot = Class.extend({
     this.vector = [];
     this.stack = [];
     this.ptr = 0;
+    this.interrupts = new InterruptQueue();
 
     this.aim = 0;
     this.scan = 0;
@@ -767,6 +876,8 @@ var Robot = Class.extend({
     switch (name) {
       case 'AIM':
         this.aim = fix360(value);
+        if (this.arena.do_radar(this) > 0) this.interrupts.add('RADAR');
+        if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
         return;
       case 'BULLET':
         this.shoot(name, value);
@@ -797,6 +908,7 @@ var Robot = Class.extend({
       case 'LEFT':
         return;
       case 'LOOK':
+        if (this.arena.do_radar(this) > 0) this.interrupts.add('RADAR');
         this.look = value;
         return;
       case 'MINE':
@@ -822,7 +934,9 @@ var Robot = Class.extend({
       case 'ROBOTS':
         return;
       case 'SCAN':
+        if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
         this.scan = fix360(value);
+        return;
       case 'SHIELD':
         value = Math.max(0, value);
         if (this.shield < value) {
@@ -969,8 +1083,57 @@ var Robot = Class.extend({
     else if (this.shield > 0)
       this.shield = Math.max(0, this.shield - 0.5);
 
+    if (this.interrupts.enabled) {
+      if (this.collision && !this.was_already_colliding)
+        this.interrupts.add('COLLISION');
+      if (this.wall && !this.was_already_on_wall)
+        this.interrupts.add('WALL');
+      if (this.damage < this.interrupts.get_param('DAMAGE'))
+        this.interrupts.add('DAMAGE');
+      if (this.shield < this.interrupts.get_param('SHIELD'))
+        this.interrupts.add('SHIELD');
+
+      if (this.y < this.interrupts.get_param('TOP')) {
+        if (!this.was_already_at_top) this.interrupts.add('TOP');
+      } else {
+        this.was_already_at_top = false;
+      }
+      if (this.y > this.interrupts.get_param('BOTTOM')) {
+        if (!this.was_already_at_bottom) this.interrupts.add('BOTTOM');
+      } else {
+        this.was_already_at_bottom = false;
+      }
+      if (this.x < this.interrupts.get_param('LEFT')) {
+        if (!this.was_already_at_left) this.interrupts.add('LEFT');
+      } else {
+        this.was_already_at_left = false;
+      }
+      if (this.x > this.interrupts.get_param('RIGHT')) {
+        if (!this.was_already_at_right) this.interrupts.add('RIGHT');
+      } else {
+        this.was_already_at_right = false;
+      }
+
+      if (this.arena.do_radar(this) > 0) this.interrupts.add('RADAR');
+      if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
+
+      // TODO: TEAMMATES interrupt. Teamplay not yet implemented.
+      // TODO: SIGNAL interrupt. Teamplay not yet implemented.
+      // TODO: ROBOTS interrupt.
+
+      if (this.chronons >= this.interrupts.get_param('CHRONON')) {
+        this.interrupts.add('CHRONON');
+      }
+    }
+
     for (var i = this.speed; i > 0 && this.running; ) {
       try {
+        if (this.interrupts.enabled && this.interrupts.has_next()) {
+          this.interrupts.enabled = false;
+          var next = this.interrupts.next();
+          this.trace('Executing interrupt ' + next);
+          this.op_call(this.interrupts.get_ptr(next));
+        }
         // Some instructions have no cost, like DEBUG, thus they return 0.
         i -= this.step_one();
       } catch (e) {
@@ -987,6 +1150,9 @@ var Robot = Class.extend({
       this.x = Math.max(r, Math.min(this.arena.width - r, this.x + this.vx));
       this.y = Math.max(r, Math.min(this.arena.height - r, this.y + this.vy));
     };
+
+    this.was_already_colliding = this.collision;
+    this.was_already_on_wall = this.wall;
   },
 
   step_one: function() {
@@ -1183,11 +1349,26 @@ var Robot = Class.extend({
 
       case 'ROLL': throw new Error('TODO: ' + op.name);
 
-      case 'INTOFF': throw new Error('TODO: ' + op.name);
-      case 'INTON': throw new Error('TODO: ' + op.name);
-      case 'RTI': throw new Error('TODO: ' + op.name);
-      case 'SETINT': throw new Error('TODO: ' + op.name);
-      case 'SETPARAM': throw new Error('TODO: ' + op.name);
+      case 'INTON':
+        this.interrupts.enabled = true;
+        return 1;
+      case 'INTOFF':
+        this.interrupts.enabled = false;
+        return 1;
+      case 'RTI': // Equivalent to INTON RETURN
+        this.interrupts.enabled = true;
+        this.op_jump(this.pop_number());
+        return 2;
+      case 'SETINT':
+        var v = this.pop_variable();
+        var address = this.pop_number();
+        this.interrupts.set_ptr(v.name, address);
+        return 1;
+      case 'SETPARAM':
+        var v = this.pop_variable();
+        var value = this.pop_number();
+        this.interrupts.set_param(v.name, value);
+        return 1;
 
       case 'BEEP':
         console.log('BEEP!');
