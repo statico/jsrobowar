@@ -781,7 +781,7 @@ var Operator = Instruction.extend({
   },
 
   toString: function() {
-    return "Operator: " + this.name;
+    return this.name;
   },
 
 });
@@ -793,7 +793,7 @@ var Literal = Instruction.extend({
   },
 
   toString: function() {
-    return "Literal: " + this.value;
+    return this.value;
   },
 
 });
@@ -805,7 +805,7 @@ var Variable = Instruction.extend({
   },
 
   toString: function() {
-    return "Variable: " + this.name;
+    return this.name;
   },
 
 });
@@ -964,7 +964,7 @@ var InterruptQueue = Class.extend({
         SHIELD: 25,
         TOP: 20,
         BOTTOM: 280,  // TODO: Get data from arena.
-        LEFT: 280,
+        LEFT: 20,
         RIGHT: 280,
         RADAR: 600,
         RANGE: 600,
@@ -1086,7 +1086,7 @@ var Robot = Class.extend({
     for (var i = 0; i < this.stack.length; i++) {
       output.push(this.stack[i].toString());
     }
-    this.trace('Stack:', output);
+    return output;
   },
 
   take_damage: function(amount) {
@@ -1121,9 +1121,9 @@ var Robot = Class.extend({
     // TOOD can't move and shoot
   },
 
-  translate: function(axis, distance) {
-    // TODO max distance?
-    this.energy -= Math.abs(distance * 2);
+  translate: function(axis, energy) {
+    var distance = Math.floor(energy / 2);
+    this.energy -= energy;
     var r = this.radius;
     switch (axis) {
       case 'x':
@@ -1154,8 +1154,8 @@ var Robot = Class.extend({
     switch (name) {
       case 'AIM':
         this.aim = fix360(value);
-        if (this.arena.do_radar(this) > 0) this.interrupts.add('RADAR');
-        if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
+        this.check_radar_interrupt();
+        this.check_range_interrupt();
         return;
       case 'BULLET':
         if (this.bullet_type == 'EXPLOSIVE')
@@ -1195,7 +1195,7 @@ var Robot = Class.extend({
       case 'LEFT':
         return;
       case 'LOOK':
-        if (this.arena.do_radar(this) > 0) this.interrupts.add('RADAR');
+        this.check_radar_interrupt();
         this.look = value;
         return;
       case 'MINE':
@@ -1221,7 +1221,7 @@ var Robot = Class.extend({
       case 'ROBOTS':
         return;
       case 'SCAN':
-        if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
+        this.check_range_interrupt();
         this.scan = fix360(value);
         return;
       case 'SHIELD':
@@ -1301,7 +1301,7 @@ var Robot = Class.extend({
       case 'KILLS':
         throw new Error('TODO: get_variable(' + name + ')');
       case 'LEFT':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return 0;
       case 'LOOK':
         return this.look;
       case 'MINE':
@@ -1358,9 +1358,11 @@ var Robot = Class.extend({
 
   step: function() {
     this.chronons++;
+    this.trace('------ ' + this.chronons + ' ------');
 
     if (this.stasis > 0) {
       this.stasis--;
+      this.trace('In stasis for ' + this.stasis + ' more chronons');
       continue;
     }
 
@@ -1377,38 +1379,63 @@ var Robot = Class.extend({
       this.shield = Math.max(0, this.shield - 0.5);
 
     if (this.interrupts.enabled) {
-      if (this.collision && !this.was_already_colliding)
-        this.interrupts.add('COLLISION');
-      if (this.wall && !this.was_already_on_wall)
-        this.interrupts.add('WALL');
+      if (this.collision) {
+        if (!this.was_already_colliding) {
+          this.interrupts.add('COLLISION');
+          this.was_already_colliding = true;
+        } else {
+          this.was_already_colliding = false;
+        }
+      }
+      if (this.wall) {
+        if (!this.was_already_on_wall) {
+          this.interrupts.add('WALL');
+          this.was_already_on_wall = true;
+        } else {
+          this.was_already_on_wall = false;
+        }
+      }
+
       if (this.damage < this.interrupts.get_param('DAMAGE'))
         this.interrupts.add('DAMAGE');
       if (this.shield < this.interrupts.get_param('SHIELD'))
         this.interrupts.add('SHIELD');
 
       if (this.y < this.interrupts.get_param('TOP')) {
-        if (!this.was_already_at_top) this.interrupts.add('TOP');
+        if (!this.was_already_at_top) {
+          this.interrupts.add('TOP');
+          this.was_already_at_top = true;
+        }
       } else {
         this.was_already_at_top = false;
       }
       if (this.y > this.interrupts.get_param('BOTTOM')) {
-        if (!this.was_already_at_bottom) this.interrupts.add('BOTTOM');
+        if (!this.was_already_at_bottom) {
+          this.interrupts.add('BOTTOM');
+          this.was_already_at_bottom = true;
+        }
       } else {
         this.was_already_at_bottom = false;
       }
       if (this.x < this.interrupts.get_param('LEFT')) {
-        if (!this.was_already_at_left) this.interrupts.add('LEFT');
+        if (!this.was_already_at_left) {
+          this.interrupts.add('LEFT');
+          this.was_already_at_left = true;
+        }
       } else {
         this.was_already_at_left = false;
       }
       if (this.x > this.interrupts.get_param('RIGHT')) {
-        if (!this.was_already_at_right) this.interrupts.add('RIGHT');
+        if (!this.was_already_at_right) {
+          this.interrupts.add('RIGHT');
+          this.was_already_at_right = true;
+        }
       } else {
         this.was_already_at_right = false;
       }
 
-      if (this.arena.do_radar(this) > 0) this.interrupts.add('RADAR');
-      if (this.arena.do_range(this) > 0) this.interrupts.add('RANGE');
+      this.check_radar_interrupt();
+      this.check_range_interrupt();
 
       // TODO: TEAMMATES interrupt. Teamplay not yet implemented.
       // TODO: SIGNAL interrupt. Teamplay not yet implemented.
@@ -1420,7 +1447,10 @@ var Robot = Class.extend({
     }
 
     for (var i = this.speed; i > 0 && this.running; ) {
-      if (this.energy <= 0) break;
+      if (this.energy <= 0) {
+        this.trace('Robot has no energy');
+        break;
+      }
       try {
         if (this.interrupts.enabled && this.interrupts.has_next()) {
           this.interrupts.enabled = false;
@@ -1455,7 +1485,7 @@ var Robot = Class.extend({
     if (instruction == undefined) {
       throw new Error('Program finished');
     }
-    this.trace('Instruction:', instruction.toString());
+    this.trace(instruction.toString(), this.debug_stack());
 
     this.ptr++;
 
@@ -1469,6 +1499,18 @@ var Robot = Class.extend({
     } else if (instruction instanceof Operator) {
       return this.handle_operation(instruction);
     }
+  },
+
+  check_radar_interrupt: function() {
+    var radar = this.arena.do_radar(this);
+    if (radar != 0 && radar <= this.interrupts.get_param('RADAR'))
+      this.interrupts.add('RADAR');
+  },
+
+  check_range_interrupt: function() {
+    var range = this.arena.do_range(this);
+    if (range != 0 && range <= this.interrupts.get_param('RANGE'))
+      this.interrupts.add('RANGE');
   },
 
   push: function(value) {
@@ -1707,7 +1749,7 @@ var Scoreboard = Class.extend({
 
     var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
 
-    var title = p.text(PAD, y, 'RoboWar').attr(attr).attr('font-size', '30px');
+    var title = p.text(PAD, y, 'JSRoboWar').attr(attr).attr('font-size', '30px');
     y += PAD * 3;
 
     this.counter = p.text(PAD, y, 'Chronons: 0').attr(attr);
