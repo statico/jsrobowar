@@ -186,7 +186,13 @@ var Game = Class.extend({
             p.contact();
             if (p.is_harmful()) {
               self.remove_projectile(p, true);  // Remove if outside arena.
-              a.damage -= p.damage;
+              if (p.is_emp) {
+                a.energy = 0;
+              } else if (p.is_stasis) {
+                a.stasis += Math.floor(p.value / 4);
+              } else {
+                a.damage -= p.value;
+              }
             }
           }
         }
@@ -250,6 +256,11 @@ var Game = Class.extend({
       p instanceof RubberBullet ? new RubberBulletView(this.paper, p) :
       p instanceof NormalBullet ? new NormalBulletView(this.paper, p) :
       p instanceof ExplosiveBullet ? new ExplosiveBulletView(this.paper, p) :
+      p instanceof Hellbore ? new HellboreView(this.paper, p) :
+      p instanceof Missile ? new MissileView(this.paper, p) :
+      p instanceof TacNuke ? new TacNukeView(this.paper, p) :
+      p instanceof Mine ? new MineView(this.paper, p) :
+      p instanceof Stunner ? new StunnerView(this.paper, p) :
       (function() { throw new Error("Can't make view for projectils: " + p) })();
     this.actors[LAYER_PROJECTILES].push(actor);
   },
@@ -345,10 +356,19 @@ var Arena = Class.extend({
         SoundEffects.play_gun();
         return new ExplosiveBullet(energy);
       case 'HELLBORE':
+        SoundEffects.play_hellbore();
+        return new Hellbore(energy);
       case 'MINE':
+        SoundEffects.play_mine();
+        return new Mine(energy);
       case 'MISSILE':
+        SoundEffects.play_missile();
+        return new Missile(energy);
       case 'NUKE':
+        SoundEffects.play_nuke();
+        return new TacNuke(energy);
       case 'STUNNER':
+        return new Stunner(energy);
       default: throw new Error('Unknown bullet type: ' + type);
     }
   },
@@ -360,7 +380,9 @@ var Arena = Class.extend({
     p.x = robot.x + Math.sin(aim_radians) * radius;
     p.y = robot.y - Math.cos(aim_radians) * radius;
     p.energy = energy;
-    p.set_velocity(aim_radians, 12); // TODO 12?
+    p.speedx = Math.sin(aim_radians) * p.speed;
+    p.speedy = -Math.cos(aim_radians) * p.speed;
+
     this.game.add_projectile(p);
   },
 
@@ -385,12 +407,12 @@ var Projectile = Class.extend({
     this.x = 0;
     this.y = 0;
     this.radius = 2;
-    this.damage = 0;
-  },
-
-  set_velocity: function(aim_radians, speed) {
-    this.speedx = Math.sin(aim_radians) * speed;
-    this.speedy = -Math.cos(aim_radians) * speed;
+    this.value = 0;
+    this.speed = 12;
+    this.speedx = 0; // Set by caller.
+    this.speedy = 0; // Set by caller.
+    this.is_emp = false;
+    this.is_stasis = false;
   },
 
   contact: function() {
@@ -407,12 +429,81 @@ var Projectile = Class.extend({
 
 });
 
+var Mine = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.value = 2 * Math.max(0, energy - 5);
+    this.speed = 0;
+    this.chronons = 0;
+    this.radius = 5;
+  },
+
+  step: function() {
+    this._super();
+    this.chronons++;
+  },
+
+  is_harmful: function() {
+    return this.chronons > 10;
+  }
+
+});
+
+var TacNuke = Mine.extend({
+
+  init: function(energy) {
+    this._super();
+    this.value = 2 * energy;
+    this.radius = 1;
+  },
+
+  step: function() {
+    this._super();
+    this.radius = this.chronons * 5;
+  },
+
+});
+
+var Missile = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.value = energy * 2;
+    this.speed = 5;
+  },
+
+});
+
+var Stunner = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.value = Math.floor(energy / 4);
+    this.speed = 14;
+    this.is_stasis = true;
+  },
+
+});
+
+var Hellbore = Projectile.extend({
+
+  init: function(energy) {
+    this._super();
+    this.speed = Math.min(20, Math.max(4, energy));
+    this.is_emp = true;
+
+    if (this.speed != energy)
+      throw new Error('Hellbore value must be between 4 and 20, inclusive');
+  },
+
+});
+
 var RubberBullet = Projectile.extend({
 
   init: function(energy) {
     this._super();
-    this.damage = energy * 0.5;
-    this.armed = true;
+    this.value = energy * 0.5;
   },
 
 });
@@ -421,8 +512,7 @@ var NormalBullet = Projectile.extend({
 
   init: function(energy) {
     this._super();
-    this.damage = energy;
-    this.armed = true;
+    this.value = energy;
   },
 
 });
@@ -431,7 +521,7 @@ var ExplosiveBullet = Projectile.extend({
 
   init: function(energy) {
     this._super();
-    this.damage = energy * 2;
+    this.value = energy * 2;
     this.exploded = false;
     this.time_since_exploded = 0;
   },
@@ -473,6 +563,7 @@ var ProjectileView = Actor.extend({
 
     this.old_x = this.projectile.x;
     this.old_y = this.projectile.y;
+    this.old_harmful = this.projectile.is_harmful();
   },
 
   get_element: function() {
@@ -493,7 +584,16 @@ var ProjectileView = Actor.extend({
 
     this.old_x = this.projectile.x;
     this.old_y = this.projectile.y;
+
+    // This can probably be optimized -- check if method exists first.
+    var current = this.projectile.is_harmful();
+    if (this.old_harmful != current) {
+      this.old_harmful = current;
+      this.update_harmfulness(current);
+    }
   },
+
+  update_harmfulness: function(value) {},
 
   animated_remove: function() {
     var self = this;
@@ -502,6 +602,63 @@ var ProjectileView = Actor.extend({
     this.el.animate(attr, 200, function() {self.remove()});
   },
 
+});
+
+var MissileView = ProjectileView.extend({
+  get_element: function() {
+    var p = this.projectile;
+    var x1 = p.x - p.speedx;
+    var y1 = p.y - p.speedy;
+    var x2 = p.x + p.speedx;
+    var y2 = p.y + p.speedy;
+
+    var line = this.paper.path('M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2);
+    line.attr({stroke: 'black', 'stroke-width': '2px'});
+    return line;
+  },
+  get_attr: function() {
+    return {fill: 'white', stroke: 'black'};
+  },
+});
+
+var MineView = ProjectileView.extend({
+  get_element: function() {
+    var p = this.projectile;
+    this.outer = this.paper.circle(p.x, p.y, p.radius);
+    this.outer.attr({fill: 'green', stroke: 'black', 'stroke-width': '1px'});
+    this.inner = this.paper.circle(p.x, p.y, p.radius * 0.4);
+    this.inner.attr({fill: 'black', stroke: 'none'});
+    return this.paper.set(this.outer, this.inner);
+  },
+  update_harmfulness: function(is_harmful) {
+    this.outer.attr({fill: 'white'});
+  },
+});
+
+var TacNukeView = ProjectileView.extend({
+  get_attr: function() {
+    return {fill: 'yellow', stroke: 'none'};
+  },
+  update: function() {
+    this._super();
+    this.el.attr('r', this.projectile.radius);
+  },
+  animated_remove: function() {
+    var self = this;
+    this.el.animate({opacity: 0}, 200, function() {self.remove()});
+  },
+});
+
+var StunnerView = ProjectileView.extend({
+  get_attr: function() {
+    return {fill: 'yellow', stroke: 'none'};
+  },
+});
+
+var HellboreView = ProjectileView.extend({
+  get_attr: function() {
+    return {fill: 'cyan', stroke: 'black'};
+  },
 });
 
 var RubberBulletView = ProjectileView.extend({
@@ -886,7 +1043,7 @@ var Robot = Class.extend({
     this.max_energy = 100;
     this.max_shield = 30;
     this.starting_damage = 100;
-    this.bullet_type = 'EXPLOSIVE';
+    this.bullet_type = 'RUBBER';
     this.set_trace(false);
 
     this.registers = {};
@@ -901,6 +1058,7 @@ var Robot = Class.extend({
     this.energy = this.max_energy;
     this.damage = this.starting_damage;
     this.shield = 0;
+    this.stasis = 0;
     this.wall = false;
     this.collision = false;
     this.x = 0;
@@ -951,6 +1109,7 @@ var Robot = Class.extend({
   },
 
   shoot: function(type, amount) {
+    amount = Math.min(amount, this.max_energy);
     this.arena.shoot(this, type, amount);
     this.energy -= amount;
     // TOOD can't move and shoot
@@ -1007,6 +1166,9 @@ var Robot = Class.extend({
       case 'COLLISION':
       case 'DAMAGE':
       case 'DOPPLER':
+        return;
+      case 'DRONE':
+        throw new Error('Drones are not supported as of RoboWar 2.4');
       case 'ENERGY':
         return;
       case 'FIRE':
@@ -1021,6 +1183,9 @@ var Robot = Class.extend({
         return;
       case 'ID':
       case 'KILLS':
+        return;
+      case 'LASER':
+        throw new Error('Lasers are not supported as of RoboWar 2.4');
       case 'LEFT':
         return;
       case 'LOOK':
@@ -1187,6 +1352,12 @@ var Robot = Class.extend({
 
   step: function() {
     this.chronons++;
+
+    if (this.stasis > 0) {
+      this.stasis--;
+      continue;
+    }
+
     this.energy = Math.min(this.max_energy, this.energy + 2);
 
     if (this.wall) this.take_damage(5);
@@ -1257,6 +1428,7 @@ var Robot = Class.extend({
         var line = this.program.line_numbers[this.ptr];
         var debug = this.program.instructions[this.ptr];
         console.error(this.name, 'error on line ' + line + ', before ' + debug + ' - ' + e);
+        console.log(e.stack);
         this.running = false;
       }
     }
@@ -1531,15 +1703,16 @@ var Scoreboard = Class.extend({
 
     var labels = [];
     for (var i = 0, robot; robot = this.game.robots[i]; i++) {
-      p.rect(0, y - PAD, this.paper.width, PAD * 5).attr({fill: robot.color, stroke: null});
+      p.rect(0, y - PAD, this.paper.width, PAD * 6).attr({fill: robot.color, stroke: null});
       labels.push({
         robot: robot,
         name: p.text(PAD, y + PAD * 0, robot.name).attr(attr).attr('font-weight', 'bold'),
         energy: p.text(PAD, y + PAD * 1, '').attr(attr),
         damage: p.text(PAD, y + PAD * 2, '').attr(attr),
-        status: p.text(PAD, y + PAD * 3, '').attr(attr),
+        shield: p.text(PAD, y + PAD * 3, '').attr(attr),
+        status: p.text(PAD, y + PAD * 4, '').attr(attr),
       });
-      y += PAD * 5;
+      y += PAD * 6;
     }
     this.labels = labels;
   },
@@ -1550,6 +1723,7 @@ var Scoreboard = Class.extend({
       var robot = label['robot'];
       label['energy'].attr('text', 'Energy: ' + robot.energy);
       label['damage'].attr('text', 'Damage: ' + robot.damage);
+      label['shield'].attr('text', 'Shield: ' + robot.shield);
       label['status'].attr('text', 'Status: ' + (robot.running ? 'running' : 'DEAD'));
     }
   },
