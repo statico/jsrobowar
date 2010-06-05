@@ -597,7 +597,7 @@ var ProjectileView = Actor.extend({
 
   animated_remove: function() {
     var self = this;
-    this.el.attr({scale: 2, fill: 'orange'});
+    this.el.attr({scale: 2, fill: 'orange', stroke: 'none'});
     var attr = {scale: 7, opacity: 0};
     this.el.animate(attr, 200, function() {self.remove()});
   },
@@ -618,6 +618,12 @@ var MissileView = ProjectileView.extend({
   },
   get_attr: function() {
     return {fill: 'white', stroke: 'black'};
+  },
+  animated_remove: function() {
+    var p = this.projectile;
+    this.el.remove();
+    this.el = this.paper.circle(p.x, p.y, p.radius * 2);
+    this._super();
   },
 });
 
@@ -1043,7 +1049,7 @@ var Robot = Class.extend({
     this.max_energy = 100;
     this.max_shield = 30;
     this.starting_damage = 100;
-    this.bullet_type = 'RUBBER';
+    this.bullet_type = 'NORMAL';
     this.set_trace(false);
 
     this.registers = {};
@@ -1625,6 +1631,12 @@ var Robot = Class.extend({
       case 'DROP':
         this.stack.pop();
         return 1;
+      case 'DUP':
+      case 'DUPLICATE':
+        var value = this.pop_number();
+        this.stack.push(value);
+        this.stack.push(value);
+        return 1;
       case 'DROPALL':
         this.stack = [];
         return 1;
@@ -1672,7 +1684,7 @@ var Robot = Class.extend({
         return 0;
 
       default:
-        throw new Error('Unknown instruction:', op);
+        throw new Error('Unknown instruction: ' + op.name);
     }
   },
 
