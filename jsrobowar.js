@@ -307,7 +307,7 @@ var Arena = Class.extend({
   },
 
   calculate_nearest_distance: function(observer, direction, objects) {
-    var SCAN_DEGREES = 5;  // In robowar.pdf under 'RADAR'.
+    var SCAN_DEGREES = 10;  // In robowar.pdf under 'RADAR'.
     var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
     var aim_radians = direction * (Math.PI + Math.PI) / 360;
 
@@ -613,7 +613,7 @@ var MissileView = ProjectileView.extend({
     var y2 = p.y + p.speedy;
 
     var line = this.paper.path('M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2);
-    line.attr({stroke: 'black', 'stroke-width': '2px'});
+    line.attr({stroke: 'black', 'stroke-width': '1px'});
     return line;
   },
   get_attr: function() {
