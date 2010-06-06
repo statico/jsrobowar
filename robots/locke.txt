@@ -1,0 +1,1695 @@
+	<source checksum="MD5:fc5ae5b252f22c3cc93d1ac7e7967888">
+#Locke v18
+#Occasionally referred to as "Locke II 2"
+#By Randy Munroe
+
+#1/4/01
+#Newest Update:  4/27/01
+
+#  Locke started out as a slow dasher, a clone
+#of Adam Locke-Norton's "Dislexix," with an
+#interesting anti-Mortality mode that used
+#probes to detect a stunarc  (If this version
+#doesn't do that, it should).  I found that I
+#had problems defeating stun-streamers when
+#using slow dashing, and decided to change it
+#to a combination fadeaway/gunner/fast
+#dasher.  This robot, like my other two, does
+#not (intentionally) hesitate, but its initial
+#mode is a fadeaway gunner.  If it takes
+#damage or certain conditions are met, it
+#dashes at a high speed.
+#
+#   The stun-stream dodge routines are
+#interesting.  This bot still doesn't do very
+#well against stun-streamers, because it
+#has to dodge a lot of streams before the 
+#enemy is killed by the attrition fire, and
+#if a single dodge is too slow, it fails.
+#The remarkable thing about the stun-stream
+#dodging is that it is done without radar.
+#In fact, this robot hardly uses radar at all.
+#
+#   The group mode is specially designed
+#to kill wibblers, and features an interesting
+#probe-based close-range technique taken
+#from Killgore Sprout.  Overall, it's not
+#spectacular, but like the solo mode, it does
+#OK.
+#
+#   All in all, this is a pretty neat bot.
+#
+#   Updated Notes:  Locke v18
+#   Main change:  It now has a new technique
+#for killing fadeaway gunners.  To see this
+#technique in action, place this robot against
+#QDCH.  It's beautiful.
+#Another change that I'm making after I write
+#this is the Anti-Wibbler mode in group.  I'm
+#removing the whole constant-acceleration
+#thing because it hurts Locke too much.  At
+#the apex of its motion away from the wall,
+#it holds still too long and takes a lot of
+#damage.
+#
+#!!NoStoWarnings
+   Robots 2 > Groupmode ifg
+##############################################
+#                  Startup                   #
+##############################################
+
+SoloMode:
+   PrePreDash damage' setint
+   RangeStart range' setint
+   Radarstart radar' setint
+   Aimloop rti
+
+RadarStart:  #When radar triggers before range
+   drop
+   radar dup 80 < and FastBack ifg #Run away!
+   -1 radar' setint
+   RadarToRange Lock jump
+RadarToRange:
+   drop
+   probe dup p' sto
+   31 < RunPerpFast RunPerpNorm ifeg
+
+RangeStart:  #When range triggers before radar
+   range dup 100 < and FastBack ifg
+   -1 radar' setint
+   radar RadarToRange ifg
+   drop
+   Antiglommer collision' setint
+   x 150 - abs y 150 - abs max 120 >
+   lock call drop
+   probe p' sto
+   probe 30 > and RunPerpNorm if
+   BackAway jump
+
+RunPerpNorm:
+   range 180 < RunPerpOddSet ifg
+#   range not Retarg if#Need a good probe read
+#   probe 31 < RunPerpFast ifg
+   Float RunPerp SetFullDefault jump
+     #DecideFloat will decide what to do while
+     #running  -  not currently set up
+RunPerpOddSet:
+   Float RunPerpOdd SetFullDefault jump
+RunPerpFast:
+   Float ZipPerp SetFullWary jump
+
+################
+#   BackAway   #
+################
+# Default startup routine, starts running
+# perpendicularly (?) when shots are detected
+
+BackAway:
+   aim look + aim' sto
+   lock call drop
+   -1
+   SetFullDefault call
+   probe 31 < BackDanger BackSafe ifeg
+
+BackDanger:
+   drop               #If they're lo-dam, jump
+   Snipecheck call    #at the first radar.
+  range dup 100 < and radar or RunPerpFast ifg
+   aim look + dup aim' sto
+   90 + dup
+   7 cos speedx' sto
+   7 sin speedy' sto
+   BackDanger lock jump
+
+BackSafe:
+   drop
+   snipecheck call
+   range dup 100 < and {FastDash ifg}
+   radar dup 120 < and or RunPerpNorm ifg
+   aim look + dup aim' sto
+   90 + dup
+   4 cos speedx' sto
+   4 sin speedy' sto
+   BackSafe lock jump
+
+
+FastBack:           #Run away really fast
+   -1 radar' setint #Used when starting close
+   probe 60 > FastBackSlower ifg
+   snipecheck call
+   x 150 - abs y 150 - abs max 110 / 
+   BackZipPerp ifg
+   aim dup 70 + dup
+   16 cos speedx' sto
+   16 sin speedy' sto
+   look + aim' sto
+   FastBackLoop lock SetLightspeed jump
+
+FastBackSlower:
+   snipecheck call
+   x 150 - abs y 150 - abs max 110 / 
+   BackZipPerp ifg
+   aim dup 70 + dup
+   10 cos speedx' sto
+   10 sin speedy' sto
+   look + aim' sto
+   FastBackLoop lock SetLightspeed jump
+
+BackZipPerp:
+   FastBackLoop lock SetDefault ZipPerp jump
+
+FastBackLoop:
+   drop
+   snipecheck call
+   aim look + aim' sto
+   energy 30 > missile' sto
+   FastBackLoop lock jump
+
+#Lightspeed Routines -- used for landing
+#on wall after fast run.
+
+LightX:
+   0 speedx' sto
+   range not retarg if
+   range
+   aim look + aim' sto
+   lock call drop 
+   range -1 range' setint < DontPanicX ifg
+   setFullWary call
+   y 150 < YPlus YMinus ifeg
+YPlus:
+   drop
+   speedy 1 + dup speedy' sto
+   12 > Float ifg  #Once speed is up to 12...
+   aim look + aim' sto
+   snipecheck call
+   YPlus lock jump
+YMinus:
+   drop
+   speedy 1 - dup speedy' sto
+   -12 < Float ifg
+   aim look + aim' sto
+   snipecheck call
+   YMinus lock jump
+
+LightY:
+   0 speedy' sto
+   range not retarg if
+   range
+   aim look + aim' sto
+   lock call drop
+   range -1 range' setint < DontPanicY ifg
+   setFullWary call          #Don't Panic-
+   x 150 < XPlus XMinus ifeg #Reset defaults
+XPlus:                       #and switch to
+   drop                      #wary mode, not
+   speedx 1 + dup speedx' sto#panic mode
+   12 > Float ifg
+   aim look + aim' sto
+   snipecheck call
+   XPlus lock jump
+XMinus:
+   drop
+   speedx 1 - dup speedx' sto
+   -12 < Float ifg
+   aim look + aim' sto
+   snipecheck call
+   XMinus lock jump
+DontPanicX:
+   WaryX setFullWary jump
+DontPanicY:
+   WaryY setFullWary jump
+
+################
+#    Float     #
+################
+# Basic code for running along
+
+Float:
+   energy' probe' setparam
+   aim look + aim' sto   
+   AntiGlommer collision' setint
+   lock call #Leaving it here so the floatloop
+             #has something to drop
+   p 31 < HieFloat ifg
+
+
+FloatLoop:       #This is the big one
+   dropall
+   aim look + dup doppler
+   d 4 * + 5 / dup d' sto
+   -5 arctan + aim' sto
+   energy 33 > 8 * missile' sto
+   aim' sto
+   lock call drop
+   range dup 190 < and CheckStunner if
+   w CheckSafe if   #Stand Down from Red Alert
+   SnipeCheck call
+   aim look + aim' sto
+   FloatLoop lock jump 
+
+CloseFloatLoop:
+   dropall
+   range 100 > Float ifg
+   snipecheck call
+   aim look + aim' sto
+   CloseFloatLoop lock jump
+
+HieFloat:
+   dropall
+   probe 80 < HieAlert if
+   SnipeCheck call
+   aim look + dup doppler -8 arctan + aim' sto
+   energy 33 > 8 * missile' sto
+   aim' sto
+   lock call drop
+   probe 80 < HieAlert if
+   range dup 200 < and CheckStunner if
+   w CheckSafe if   #Stand Down from Red Alert
+   aim look + aim' sto
+   HieFloat lock jump
+HieAlert:
+   range
+   lock call drop
+   range - 6 < DoReturn BlastOut ifeg
+
+
+LongFloat:  #Long-range floating
+   range dup 200 < and FloatLoop ifg
+   dropall
+   radar doppler and CheckDashMode if
+   aim look + aim' sto
+   lock call drop
+   SnipeCheck call
+   aim look + dup doppler -10 arctan + 
+   aim' sto
+   energy 33 > 6 * missile' sto
+   aim' sto
+   LongFloat lock jump
+
+CheckStunner:
+   doppler NotStream ifg
+   probe
+#   range
+   lock call drop
+   probe 1 - >
+#   range 2 + <
+   aim look + aim' sto
+   -1 range' setint
+   DoubleSpeed NotStream ifeg
+
+NotStream:
+   range dup 100 < and 
+   BlastOut DoReturn ifeg
+
+BlastOut:     #Bad Touch!  Too close!
+#   energy 20 < DoReturn ifg
+   icon7
+   drop CloseFloatLoop
+   aim 1 tan BlastX BlastY ifeg
+
+BlastX:
+   x 150 < energy * energy 2 / - 
+   speedx + speedx' sto
+   lock call drop
+   aim look + dup doppler -9 arctan + aim' sto
+   energy 20 - missile' sto
+   aim' sto
+   40 left' setparam
+   260 right' setparam
+   return
+BlastY:
+   y 150 < energy * energy 2 / - 
+   speedy + speedy' sto
+   lock call drop
+   aim look + dup doppler -9 arctan + aim' sto
+   energy 20 - missile' sto
+   aim' sto
+   40 top' setparam
+   260 bot' setparam
+   return
+
+DoubleSpeed:
+   energy 20 < DoReturn ifg
+   range dup 100 < and
+   OhCensored if       #Leave for long
+   DoubleFinish        #doublecheck
+   speedx abs speedy abs > 
+   DoubleX DoubleY ifeg
+
+DoubleFinish:
+   energy' probe' setparam
+   aim look + aim' sto
+   lock call drop
+   energy 20 - missile' sto
+   snipecheck call
+   aim look + aim' sto
+   lock call drop
+   snipecheck call
+return
+
+OhCensored:      #Reverse and haul
+   aim' probe' setparam 
+   probe 180 + 360 mod
+   aim -
+   20 / energy 10 > and
+   swap ifg  #The idea here is that if they're
+             #aiming right at you, best to
+             #just accelerate and run thru.
+   DoubleFinish
+   speedx abs speedy abs >
+   CensoredX CensoredY ifeg
+CensoredX:
+   aim 1 tan not WhyY ifg
+   speedx 0 > CensorNegX CensorPosX ifeg
+CensorNegX:
+   -6 speedx' sto
+   k 1 + k' sto
+   return
+CensorPosX:
+   6 speedx' sto
+   k 1 + k' sto
+   return
+CensoredY:
+   aim 1 tan WhyX ifg
+   speedy 0 > CensorNegY CensorPosY ifeg
+CensorNegY:
+   -6 speedy' sto
+   k 1 + k' sto
+   return
+CensorPosY:
+   6 speedy' sto
+   k 1 + k' sto
+   return
+
+WhyY:
+   0 speedx' sto
+   y 150 < 10 * 5 - speedy' sto
+   k 1 + k' sto
+return
+WhyX:
+   0 speedy' sto
+   x 150 < 10 * 5 - speedx' sto
+   k 1 + k' sto
+return
+
+DoubleX:
+   speedx' dup recall
+   0 > DoublePlus DoubleMinus ifeg 
+DoubleY:
+   speedy' dup recall
+   0 > DoublePlus DoubleMinus ifeg
+
+#These routines vary the speed so as to
+#evade . . . anything.  Stun-streams, mainly.
+#They add to the speed if it's below six, 
+#subtract if it's above.
+DoublePlus:
+   dup recall
+   dup 6 < 12 * 6 - + swap sto
+   k 1 + k' sto
+   return
+DoubleMinus:
+   dup recall
+   dup -6 > -12 * 6 + + swap sto
+   k 1 + k' sto
+   return
+
+
+CheckSafe:   
+   range 200 > ConfirmSafe ifg
+   jump
+ConfirmSafe:
+   0 w' sto
+   SetFullDefault jump
+CheckDashMode:
+   doppler
+   range 250 > and
+   aim look + aim' sto
+   lock call drop
+#   {oldrange} range < and
+   range 250 > doppler and and
+   damage' probe' setparam
+   probe 30 > and
+   energy' probe' setparam   
+   k 3 < and
+   Dashmode DoReturn ifeg
+
+#############################
+#  Various "Perp" routines  #
+#############################
+# Used for running along an axis
+
+RunPerp:
+   aim 1 tan RunPerpX RunPerpY ifeg
+RunPerpX:        
+   x 150 < 10 * 5 - speedx' sto
+   0 speedy' sto #Your basic perpendicular
+   return        #movement routine
+RunPerpY:
+   y 150 < 10 * 5 - speedy' sto
+   0 speedx' sto
+   return
+
+RunPerpOdd:
+   aim 1 tan RunOddX RunOddY ifeg
+RunOddX:        
+   x 150 < 14 * 7 - speedx' sto
+   0 speedy' sto #Your basic perpendicular
+   return        #movement routine
+RunOddY:
+   y 150 < 14 * 7 - speedy' sto
+   0 speedx' sto
+   return
+
+ZipPerp:         #Same as perp, only faster
+   aim 1 tan ZipPerpX ZipPerpY ifeg
+ZipPerpX:
+   x 150 < 20 * 10 - speedx' sto
+   0 speedy' sto
+   return
+ZipPerpY:
+   y 150 < 20 * 10 - speedy' sto
+   0 speedx' sto
+   return
+
+CosinePerp:      #Run _away_ from enemy
+   {Not needed yet}
+
+CasualPerP:
+   aim 1 tan CasualX CasualY ifeg #a bit slower
+CasualX:        
+   x 150 < 6 * 3 - speedx' sto
+   0 speedy' sto #Your basic perpendicular
+   return        #movement routine
+CasualY:
+   y 150 < 6 * 3 - speedy' sto
+   0 speedx' sto
+   return
+
+##############
+#  Retarget  #
+##############
+Retarg:
+   aim look + aim' sto
+   Lock call drop jump   
+
+###############
+#  Wall Ints  #
+###############
+SetFullDefault:
+   20 dup top' setparam left' setparam
+   280 dup right' setparam bot' setparam
+SetDefault:
+   DefaultX dup left' setint right' setint
+   DefaultY dup top' setint bot' setint
+   energy' probe' setparam
+   0 w' sto
+return
+SetSobriety:  #Hit wall after missed dash
+   SoberX dup
+   left' setint right' setint
+   SoberY dup
+   top' setint bot' setint
+return
+
+SetLightSpeed:
+   35 dup top' setparam left' setparam
+   265 dup right' setparam bot' setparam
+   LightX dup left' setint right' setint
+   LightY dup top' setint bot' setint
+   energy' probe' setparam
+   1 w' sto
+return
+
+SetFullWary:
+   30 dup top' setparam left' setparam
+   270 dup right' setparam bot' setparam
+SetWary:
+   WaryX dup left' setint right' setint
+   WaryY dup top' setint bot' setint
+   1 w' sto
+return
+
+WaryX:
+   icon0
+   0 speedx' sto
+   drop Float
+   speedy 2 / not #If it's not really moving
+   y 150 - 115 / #Or if it's close to the wall
+   or RunPerpFast ifg  #Run toward center
+   RunFastSpeedy jump
+WaryY:
+   icon0
+   0 speedy' sto
+   drop Float #<---Question:  Aren't these two
+   speedx 2 / not #commands contradictory?
+   x 150 - 115 / 
+   or RunPerpFast ifg
+   RunFastSpeedx jump
+   
+DefaultX:
+   icon0
+   0 speedx' sto
+   drop Float
+   speedy 2 / not
+   y 150 - 115 /
+   or RunPerpCasual RunSpeedy ifeg
+
+DefaultY:
+   icon0
+   0 speedy' sto
+   drop Float
+   speedx 2 / not
+   x 150 - 115 /
+   or RunPerpCasual RunSpeedx ifeg
+SoberX:
+   icon0
+   0 speedx' sto
+   dropall
+   float ResetDash jump
+SoberY:
+   icon0
+   0 speedy' sto
+   dropall
+   float ResetDash jump
+
+RunPerpCasual:
+   Float CasualPerp SetFullDefault jump
+
+RunSpeedx:
+   speedx 0 > 10 * 5 - speedx' sto
+   return
+RunSpeedy:
+   speedy 0 > 10 * 5 - speedy' sto
+   return
+RunFastSpeedx:
+   speedx 0 > 16 * 8 - speedx' sto
+   return  #The danger here is that you might
+           #be about to hit a wall,
+           #so don't go too fast.
+RunFastSpeedy:
+   speedy 0 > 16 * 8 - speedy' sto
+   return
+
+
+##############################################
+#                  DashMode                  #
+##############################################
+PrePreDash:
+   collision antiglommer ifg
+   k 2 < DashMode DoRti ifeg
+   sync
+PreDashMode:   
+   speedx 2 * 3 / speedx' sto
+   speedy 2 * 3 / speedy' sto
+   energy 30 < PrePreDash ifg
+DashMode:
+   KQDCH dup dup dup
+   left' setint right' setint 
+   top' setint bot' setint
+   30 dup top' setparam left' setparam
+   270 dup bot' setparam right' setparam
+   -1 damage' setint
+   energy' probe' setparam
+   CloseKill collision' setint
+
+#############
+#   Dash    #
+#############
+ResetFull:
+   -1 chronon' setint
+ResetDash:
+   icon0
+   dropall
+   aim look + aim' sto
+#   SetSobriety call
+   AlphaDash lock jump
+
+####AlphaDash####
+AlphaDash:  #moving along slowly
+   range dup 100 < and iOmegaDash ifg
+   radar dup 30 < and BetaDash ifg
+   drop
+   aim look + dup aim' sto
+   90 - dup
+   5 sin speedy' sto
+   5 cos speedx' sto
+   lock call drop  #Need to double this loop
+   range dup 100 < and iOmegaDash ifg
+   radar dup 38 < and BetaDash ifg
+   snipecheck call   
+   aim look + aim' sto
+   AlphaDash lock jump
+
+####BetaDash####
+BetaDash:
+   -1
+BetaLoop:
+   range dup 100 < and GammaDash ifg
+   drop
+   snipecheck call
+   aim look + dup aim' sto
+   90 - dup
+   14 sin speedy' sto
+   14 cos speedx' sto
+   BetaDash lock jump
+
+####GammaDash###
+GammaDash:
+   probe #return address
+   aim look + dup doppler -17 arctan +
+   90 - dup
+   14 cos speedx' sto
+   14 sin speedy' sto
+   aim' sto
+   GammaLoop lock jump
+GammaLoop:
+   drop
+   probe dup 2 roll -
+   15 > doppler not and
+   JumpAsideKill if
+   aim look + aim' sto
+   GammaLoop lock jump
+
+###iOmegaDash###
+iOmegaDash:
+   probe
+   iOmegaLoop lock jump
+iOmegaLoop:
+   radar dup 30 < and GammaDash ifg
+   drop
+   probe dup 2 roll -
+   15 > doppler not and
+   JumpAsideKill if
+   aim look + dup 
+   90 - dup   
+   6 cos speedx' sto
+   6 sin speedy' sto
+   aim' sto
+   iOmegaLoop lock jump
+
+####################
+#  Close-Startup   #
+####################
+WaitJAK:
+   dropall
+   radar dup 32 < and FullJak ifg
+   range 80 > ResetDash ifg
+WaitJak lock jump
+
+FullJAK:
+   ResetDash 
+   aim look + aim' sto
+   Jump42 call
+   CloseLock call drop
+   _NPKillshot jump
+
+_NPKillshot:
+   aim look + aim' sto
+   40 40 
+   missile' sto 
+   missile' sto
+   energy 190 + shield' sto
+   energy 200 + missile' sto
+return
+####################
+#       Kill       #
+####################
+JumpAsideKill:
+   range 69 > doreturn ifg
+   aim look + aim' sto
+   Jump20 call
+   CloseLock call drop
+   SitKill jump
+JumpAside:
+   aim dup
+   12 cos movex' sto   
+   12 sin movey' sto
+   lock jump
+CloseKill:
+   -1 collision' setint
+SitKill:
+   range 6 < DoRti ifg
+   aim look + doppler -5 arctan + aim' sto
+   40 missile' 
+   40 missile' 
+   40 missile'
+   sto sto sto 
+   energy 199 + shield'
+   sto
+   dropall
+   sync
+ResetDash jump   
+ProbeKill:
+   shield' probe' setparam
+   probe 2 + p + 4 / dup
+   aim look + aim' sto
+   missile' sto
+   missile' sto
+   energy 200 + shield' sto
+   sync                  
+resetdash jump
+
+#################
+#   Anti-QDCH   #
+#################
+
+KQDCH:
+   flushint
+   dropall
+   icon9
+   stop call
+   -1 dup left' setint right' setint
+   -1 dup bot'  setint top' setint
+   antiglommer collision' setint
+   -1 chronon' setint
+   -1 radar' setparam
+   -1 damage' setint
+   500 range' setparam
+   10 k' sto
+   x y < qLookBL qLookTR ifeg
+qLookBL:
+   SetCornLoop
+   300 x - y < SetsB SetsL ifeg
+qLookTR:
+   SetCornLoop
+   x 300 y - < SetsT SetsR ifeg
+
+SetsB: AtBot s' sto WobbleY jump
+SetsT: AtTop s' sto WobbleY jump
+SetsL: AtLeft s' sto WobbleX jump
+SetsR: AtRight s' sto WobbleX jump
+
+SetCornLoop:
+   intoff
+   aim look + aim' sto
+   lock call
+
+Cornloop:
+   drop
+   doppler 10 / {dup} {chronon 2 mod and} 
+   range 245 > and
+   Cornerpound ifg
+#   drop
+   aim look + 
+   s call
+   aim' sto
+   energy 30 - 2 min missile' sto
+Cornloop lock jump
+
+Cornerpound:
+   aim look +
+   #hack mode
+
+   s 2 + call
+   aim' sto
+   CornLoop Lock jump
+
+   #These must be exactly 2i.
+AtBot: AtY jump #swap 0 < qCorTL qCorTR ifeg
+      qCorTR call
+      1 missile' sto
+      qCorTL call
+      1 missile' sto   
+      return
+AtTop: AtY jump #swap 0 < qCorBR qCorBL ifeg
+      qCorBR call
+      1 missile' sto
+      qCorBL call
+      1 missile' sto   
+      return
+AtLeft: AtX Jump #swap 0 < qCorTR qCorBR ifeg
+      qCorTR call
+      1 missile' sto
+      qCorBR call
+      1 missile' sto   
+      return
+AtRight: AtX jump #swap 0 < qCorBL qCorTL ifeg
+      qCorBL call
+      1 missile' sto
+      qCorTL call
+      1 missile' sto   
+      return
+
+AtX:
+   0 look' sto
+   0 aim' sto range toB ifg
+   180 aim' sto range toT ifg
+   return
+AtY:
+   0 look' sto
+   90 aim' sto range toL ifg
+   270 aim' sto range toR ifg
+   return
+inX5: 
+   flushint
+   -1 left' setint -1 right' setint
+   x 150 < 10 * 5 - speedx' sto return
+inY5: 
+   flushint
+   -1 top' setint -1 bot' setint
+   y 150 < 10 * 5 - speedy' sto return
+
+toT:
+   AtTop s' sto
+   WobbleY top' setint
+   20 top' setparam
+   -5 speedy' sto
+   drift inX5 jump
+toB:
+   AtBot s' sto
+   WobbleY bot' setint
+   280 bot' setparam
+   5 speedy' sto
+   drift inX5 jump
+toL:
+   AtLeft s' sto
+   WobbleX left' setint
+   20 left' setparam
+   -5 speedx' sto
+   drift inY5 jump
+toR:
+   AtRight s' sto
+   WobbleX right' setint
+   280 right' setparam
+   5 speedx' sto
+   drift inY5 jump
+
+qCorBR:
+   270 x - 270 y - arctan aim' sto return
+qCorBL:
+   30 x - 270 y - arctan aim' sto return
+qCorTR:
+   270 x - 30 y - arctan aim' sto return
+qCorTL:
+   30 x - 30 y - arctan aim' sto return
+
+{LookB:
+   AtBot s' sto
+   drift
+   y 270 > WobbleY ifg
+   WobbleY bot' setint
+   5 speedy' sto
+jump
+LookT:
+   AtTop s' sto
+   Drift
+   y 30 < WobbleY ifg
+   WobbleY top' setint
+   -5 speedy' sto
+jump
+LookR:
+   AtRight s' sto
+   Drift
+   x 270 > WobbleX ifg
+   WobbleX right' setint
+   5 speedx' sto
+jump
+LookL:
+   AtLeft s' sto
+   Drift
+   x 30 < WobbleX ifg
+   WobbleX left' setint
+   -5 speedx' sto
+jump}
+WobbleX:
+   0 speedx' sto
+   y 150 < 6 * 3 - speedy' sto
+   reverseY dup top' setint bot' setint
+   125 top' setparam
+   175 bot' setparam
+rti
+WobbleY:
+   0 speedy' sto
+   x 150 < 6 * 3 - speedx' sto
+   reverseX dup left' setint right' setint
+   125 left' setparam
+   175 right' setparam
+rti
+
+ReverseX:
+   speedx chs speedx' sto
+rti
+ReverseY:
+   speedy chs speedy' sto
+rti
+
+Drift:
+   Cornloop range' setint
+aimloop rti
+
+
+############################
+# Antiglommer mode rebuilt #
+############################
+MaybeAntiGlommer:
+   range 4 > DoRti ifg
+AntiGlommer:
+   flushint
+   0 look' sto
+   -1 collision' setint
+   range GotRange if
+   icon6 snd4
+   AGKill range' setint
+   inton
+AGFind:
+0 aim' sto 90 aim' sto 
+180 aim' sto 270 aim' sto
+45 aim' sto 135 aim' sto
+225 aim' sto 315 aim' sto
+sync
+AGFind jump
+GotRange:
+   probe dup 0 < TakeDam ifg
+   drop
+AGKill:
+   range 8 < DoRti ifg
+#   shield' probe' setparam
+#   probe 1 + 2 / missile' sto
+   _NPKillshot call
+   Antiglommer collision' setint
+   sync
+ResetDash jump
+TakeDam:
+   10 + -2 * shield' sto
+   sync
+   _NPKillshot call
+   Antiglommer collision' setint
+####################
+#    ProbeSnipe    #
+####################
+SnipeCheck:
+   probe -2 / range 5 / >
+   ProbeSnipe DoReturn ifeg
+
+ProbeSnipe:
+   probe -2 / range 50 + 5 / - 
+   energy + 2 / e' sto
+   aim look + dup aim' sto 0 look' sto
+   1 tan AutoLeapx AutoLeapy ife
+   200
+   40 missile' 
+   40 missile' 
+   40 missile' 
+   30 missile'
+   sync
+   range not GetNewLock if
+   sto sto sto sto
+   energy + shield' sto
+   sync
+   energy' probe' setparam
+ResetFull jump
+GetNewLock:
+   lock call drop 
+   aim look + aim' sto 
+   0 look' sto
+return
+AutoLeapX:
+   x 150 < AutoLeapRight AutoLeapLeft ifeg
+AutoLeapRight:
+   aim range sin e - speedx -
+   aim range cos chs 
+   arctan
+   aim' sto
+   e movex' sto
+return
+AutoLeapLeft:
+   aim range sin e + speedx -
+   aim range cos chs
+   arctan
+   aim' sto
+   e chs movex' sto
+return
+AutoLeapY:
+   y 150 < AutoLeapDown AutoLeapUp ifeg
+AutoLeapDown:
+   aim range sin
+   aim range cos chs e - speedy -
+   arctan
+   aim' sto
+   e movey' sto
+return
+AutoLeapUp:
+   aim range sin
+   aim range cos chs e + speedy -
+   arctan
+   aim' sto
+   e chs movey' sto
+return
+
+
+
+####################
+# Basic Tiny Stuff #
+####################
+DoSyncReturn:
+    sync jump
+DoSync:
+   sync return
+DoDropReturn:
+   drop return
+DoReturn:
+   return
+DoRti:
+   rti
+Stop:
+   0 speedx' sto 0 speedy' sto return
+
+################
+#    Leaps     #
+################
+eLeap:
+   aim 1 tan eLeapX eLeapY ifeg
+eLeapX:
+   x 150 < e * e 2 / -
+   movex' sto
+   1 shield' sto
+return
+eLeapY:
+   y 150 < e * e 2 / -
+   movey' sto
+   1 shield' sto
+return
+eLeapX2:
+   x 150 < e * e 2 / -
+   sync
+   movex' sto
+return
+eLeapY2:
+   y 150 < e * e 2 / -
+   sync
+   movey' sto
+return
+Jump20:
+   aim 1 tan Jump20X Jump20Y ifeg
+Jump20X:
+   x 150 < 32 * 16 - movex' sto
+return
+Jump20Y:
+   y 150 < 32 * 16 - movey' sto
+return
+Jump42:
+   aim 1 tan Jump42X Jump42Y ifeg
+Jump42X:
+   x 150 < 40 * 20 - movex' sto
+return
+Jump42Y:
+   y 150 < 40 * 20 - movey' sto
+return
+##############################################
+################ # # # # # # #################
+################ GROUP  MODE #################
+################ # # # # # # #################
+##############################################
+GroupMode:
+   Solomode robots' setint
+   3 robots' setparam
+   MidAir jump
+################
+#  Close Mode  #
+################
+CloseMode:
+   icon8
+   GroupSnipeCheck call
+   energy' probe' setparam
+   speedy speedx
+   stop call
+   probe dup
+   0 < CGSDrop if
+   Lock100 call
+CloseModeLoop:
+   drop
+   range 93 > StopCloseMode ifg
+   probe dup 2 roll -
+   damage 2 / > 
+   CloseGroupSnipe ifg
+   1 missile' sto
+   aim look + aim' sto
+CloseModeLoop Lock100 jump
+CGSDrop:
+   drop
+CloseGroupSnipe:
+   damage' probe' setparam
+   probe
+   110 range' setparam
+   Jump20 call
+   StopCloseMode
+   swap
+   GSNJ Lock100 Jump
+StopCloseMode:
+   icon0
+   drop
+   500 range' setparam
+   GroupSimpleShoot range' setint
+   energy' probe' setparam
+   speedx' sto speedy' sto
+   0 look' sto
+   rti
+#############
+#   Stuff   #
+#############
+GroupSnipeCheck:
+   probe -2 / range 5 / >
+   GroupSnipe DoReturn ifeg
+GroupSnipe:
+   damage' probe' setparam
+   probe
+   jump20 call
+   lock call
+GSNJ:
+   drop
+   aim look + aim' sto
+   2 + 4 / dup 
+   missile' sto
+   missile' sto
+   0 look' sto
+   sync
+   -1 range' setint
+return
+GroupSimpleShoot:
+   range dup 70 < and CloseMode ifg
+   energy 32 - missile' sto
+rti
+
+#############################
+#  Optomized WallLoop Code  #
+#############################
+AWShoot:
+   energy 35 > 1 + missile' sto
+return
+AddR:
+   range not dup r + * dup r' sto
+   24 > swap
+return
+SideShoot:
+   energy 2 / missile' sto
+return
+#############
+# Wall Loops#
+#############
+TopLoop:
+   90 aim' sto range TopKillR if
+   270 aim' sto range TopKillL if
+   GroupSimpleShoot range' setint
+   180 aim' sto
+   inton sync
+   AimSW call
+   AimSE call
+   CorBR call
+   CorBL call
+   -1 range' setint intoff
+   TopLoop jump
+TopKillR: CorTR a' sto TopKill jump
+TopKillL: CorTL a' sto TopKill jump
+###
+BotLoop:
+   90 aim' sto range BotKillR if
+   270 aim' sto range BotKillL if
+   GroupSimpleShoot range' setint
+   0 aim' sto
+   inton sync
+   AimNW call
+   AimNE call
+   CorTR call
+   CorTL call
+   -1 range' setint intoff
+   BotLoop jump
+BotKillR: CorBR a' sto BotKill jump
+BotKillL: CorBL a' sto BotKill jump
+###
+LeftLoop:
+   0 aim' sto range LeftKillT if
+   180 aim' sto range LeftKillB if
+   GroupSimpleShoot range' setint
+   0 aim' sto
+   inton sync
+   AimNE call
+   AimSE call
+   CorTR call
+   CorBR call
+   -1 range' setint intoff
+LeftLoop jump
+LeftKillT: CorTL a' sto LeftKill jump
+LeftKillB: CorBL a' sto LeftKill jump
+###
+RightLoop:
+   0 aim' sto range RightKillT if
+   180 aim' sto range RightKillB if
+   GroupSimpleShoot range' setint
+   0 aim' sto
+   inton sync
+   AimNW call
+   AimSW call
+   CorTL call
+   CorTR call
+   -1 range' setint intoff
+RightLoop jump
+RightKillT: CorTR a' sto RightKill jump
+RightKillB: CorBR a' sto RightKill jump
+################
+# Anti-Wibbler #
+################
+#Taken from Locke v14
+#The T20 version was not very good, I think.
+TopKill:
+   doppler not SideShoot ifg
+   ReverseY bot' setint
+   90 bot' setparam
+   ReverseY top' setint
+   45 top' setparam
+   0 speedx' sto
+   3 speedy' sto
+   0 r' sto
+   inton
+TopKillLoop:
+   a call
+   AddR call
+   DoneTop ifg
+   AWShoot call
+#   0 speedx' sto
+   sync
+TopKillLoop jump
+BotKill:
+   doppler not SideShoot ifg
+   ReverseY top' setint
+   210 top' setparam
+   ReverseY bot' setint
+   255 bot' setparam
+   -3 speedy' sto
+   0 speedx' sto
+   0 r' sto
+   inton
+BotKillLoop:
+   a call
+   AddR call
+   DoneBot ifg
+   AWShoot call
+#   0 speedx' sto
+   sync
+BotKillLoop jump
+LeftKill:
+   doppler not SideShoot ifg
+   ReverseX right' setint
+   90 right' setparam
+   ReverseX left' setint
+   45 left' setparam
+   3 speedx' sto
+   0 speedy' sto
+   0 r' sto
+   inton
+LeftKillLoop:
+   a call
+   AddR call
+   DoneLeft ifg
+   AWShoot call
+#   0 speedy' sto
+   sync
+LeftKillLoop jump
+RightKill:
+   doppler not SideShoot ifg
+   ReverseX left' setint
+   210 left' setparam
+   ReverseX right' setint
+   255 right' setparam
+   -3 speedx' sto
+   0 speedy' sto
+   0 r' sto
+   inton
+RightKillLoop:
+   a call
+   AddR call
+   DoneRight ifg
+   AWShoot call
+#   0 speedy' sto
+   sync
+RightKillLoop jump
+
+
+##################
+#  Stop AW mode  #
+##################
+DoneTop:
+   dropall
+   20 top' setparam  
+   PickT jump
+DoneBot:
+   dropall
+   280 bot' setparam  
+   PickB jump
+DoneLeft:
+   dropall
+   20 left' setparam  
+   PickL jump
+DoneRight:
+   dropall
+   280 right' setparam  
+   PickR jump
+######################
+#   Setup for Side   #
+######################
+SetYSide:
+   W_Right left' setint
+   130 left' setparam
+   W_Left right' setint
+   170 right' setparam
+   GoX {call} jump
+{return}
+SetXSide:
+   W_Up bot' setint
+   170 bot' setparam
+   W_Down top' setint
+   130 top' setparam
+   GoY {call} jump
+{return}
+GoX:
+   x 150 < 4 * 2 - speedx' sto
+   0 speedy' sto
+return
+GoY:
+   y 150 < 4 * 2 - speedy' sto
+   0 speedx' sto
+return
+
+####################
+# First Wall Check #
+####################
+Midair:
+   x y < LookBL LookTR ifeg
+
+LookBL:
+   300 x - y < LookB LookL ifeg
+LookTR:
+   x 300 y - < LookT LookR ifeg
+
+##############
+# Check Wall #
+##############
+LookBDrop:
+   drop
+LookB:
+   y 277 > StartBot ifg
+   180 aim' sto   
+   LookRDrop range' setint
+   inton sync AimS call
+   PickB jump
+LookTDrop:
+   drop
+LookT:
+   y 23 < StartTop ifg
+   0 aim' sto  
+   LookLDrop range' setint
+   inton sync AimN call
+   PickT jump
+
+LookRDrop: 
+   drop
+LookR:
+   x 277 > StartRight ifg
+   90 aim' sto  
+   LookTDrop range' setint
+   inton sync AimE call
+   PickR jump
+
+LookLDrop: 
+   drop
+LookL:
+   x 23 < StartLeft ifg
+   270 aim' sto  
+   LookBDrop range' setint
+   inton sync AimW call
+   PickL jump
+######################
+#  Head Toward Wall  #
+######################
+PickB:
+   y 220 > SlowDown FastDown ife
+   278 bot' setparam
+   LandBot bot' setint
+   DoDriftLoop jump
+PickT:
+   y 80 < SlowUp FastUp ife
+   22 top' setparam
+   LandTop top' setint
+   DoDriftLoop jump
+PickR:   
+   x 220 > SlowRight FastRight ife
+   278 right' setparam
+   LandRight right' setint
+   DoDriftLoop jump
+PickL:
+   x 80 < SlowLeft FastLeft ife
+   22 left' setparam
+   LandLeft left' setint
+   DoDriftLoop jump
+
+######################
+#  Landing on Walls  #
+######################
+LandLeft:
+   drop
+   -2 speedx' sto
+   LeftPause call
+StartLeftHere:
+   0 speedx' sto
+   LeftLoop SetXSide jump
+StartLeft:
+   StartLeftHere jump
+
+LandRight:
+   drop 
+   2 speedx' sto
+   RightPause call
+StartRightHere:
+   0 speedx' sto
+   RightLoop SetXSide jump
+StartRight:
+   StartRightHere jump
+
+LandTop:
+   drop
+   -2 speedy' sto
+   TopPause call
+StartTopHere:
+   0 speedy' sto
+   TopLoop SetYSide jump
+StartTop:
+   StartTopHere jump
+
+LandBot:
+   drop
+   2 speedy' sto
+   BotPause call
+StartBotHere:
+   0 speedy' sto
+   BotLoop SetYSide jump
+StartBot:
+   StartBotHere jump
+LeftPause:
+   sync
+   x 13 < DoReturn LeftPause ifeg 
+RightPause:
+   sync
+   x 287 > DoReturn RightPause ifeg 
+TopPause:
+   sync
+   y 13 < DoReturn TopPause ifeg 
+BotPause:
+   sync
+   y 287 > DoReturn BotPause ifeg 
+##########################
+#  Misc. Small Routines  #
+##########################
+
+CorTR: 280 x - 20 y - arctan aim' sto return
+CorTL: 20 x - 20 y - arctan aim' sto return
+CorBR: 280 x - 280 y - arctan aim' sto return
+CorBL: 20 x - 280 y - arctan aim' sto return
+FastLeft: -9 speedx' sto return
+SlowLeft: -4 speedx' sto return
+
+FastRight: 9 speedx' sto return
+SlowRight: 4 speedx' sto return
+
+FastUp: -9 speedy' sto return
+SlowUp: -4 speedy' sto return
+
+FastDown: 9 speedy' sto return
+SlowDown: 4 speedy' sto return
+W_Up: -2 speedy' sto rti
+W_Down: 2 speedy' sto rti
+W_Left: -2 speedx' sto rti
+W_Right: 2 speedx' sto rti
+DoDriftLoop:
+   GroupSimpleShoot range' setint
+   DoDriftLoop FullSearch Jump
+####################
+#  Group Aimloops  #
+####################
+FullSearch:
+   AimNE AimSW AimNW AimSE jump
+AimNE:
+   0 aim' sto 10 aim' sto 20 aim' sto
+   30 aim' sto 40 aim' sto 50 aim' sto
+   60 aim' sto 70 aim' sto 80 aim' sto
+   90 aim' sto return
+AimSE:
+   90 aim' sto 100 aim' sto 110 aim' sto 
+   120 aim' sto 130 aim' sto 140 aim' sto 
+   150 aim' sto 160 aim' sto 170 aim' sto 
+   180 aim' sto return
+AimSW:
+   180 aim' sto 190 aim' sto 200 aim' sto 
+   210 aim' sto 220 aim' sto 230 aim' sto 
+   240 aim' sto 250 aim' sto 260 aim' sto 
+   270 aim' sto return
+AimNW:
+   270 aim' sto 280 aim' sto 290 aim' sto 
+   300 aim' sto 310 aim' sto 320 aim' sto 
+   330 aim' sto 340 aim' sto 350 aim' sto 
+   360 aim' sto return
+AimN:
+   320 aim' sto 330 aim' sto 340 aim' sto
+   350 aim' sto 0 aim' sto 10 aim' sto 
+   20 aim' sto 30 aim' sto 40 aim' sto
+return
+AimE:
+   {50 aim' sto} 60 aim' sto 70 aim' sto
+   80 aim' sto 90 aim' sto 100 aim' sto
+   110 aim' sto 120 aim' sto {130 aim' sto}
+return
+AimS:
+   {140 aim' sto} 150 aim' sto 160 aim' sto
+   170 aim' sto 180 aim' sto 190 aim' sto
+   200 aim' sto 210 aim' sto {220 aim' sto}
+return
+AimW:
+   {230 aim' sto} 240 aim' sto 250 aim' sto
+   260 aim' sto 270 aim' sto 280 aim' sto
+   290 aim' sto 300 aim' sto {310 aim' sto}
+return
+Radarscan:
+   inton
+   0 aim' sto 40 aim' sto 80 aim' sto
+   120 aim' sto 160 aim' sto 200 aim' sto
+   240 aim' sto 280 aim' sto 320 aim' sto
+   intoff
+return
+####################
+#  Solo Targeting  #
+####################
+CloseLock:
+   range' setint inton sync
+   0 look' sto
+   -12 look' sto 12 look' sto
+   -24 look' sto 24 look' sto
+   -36 look' sto 36 look' sto
+   -48 look' sto 48 look' sto
+   -60 look' sto 60 look' sto
+   -72 look' sto 72 look' sto
+   -84 look' sto 84 look' sto
+   sync
+   aimloop rti
+Lock:
+   range' setint
+   inton sync
+   0 look' sto
+Ret30384:
+   -3 look' sto 3 look' sto
+   -6 look' sto 6 look' sto
+   -9 look' sto 9 look' sto
+   -12 look' sto 12 look' sto
+   -15 look' sto 15 look' sto
+   -21 look' sto 21 look' sto
+   -45 look' sto 45 look' sto
+   0 look' sto #hey, I've got the instructions
+               #to use up . . .
+   sync
+aimloop rti
+Lock100:
+   range' setint
+   inton sync
+   0 look' sto
+   -10 look' sto 10 look' sto
+   -20 look' sto 20 look' sto
+   -30 look' sto 30 look' sto
+   -40 look' sto 40 look' sto
+   -50 look' sto 50 look' sto
+   -60 look' sto 60 look' sto
+   -70 look' sto 70 look' sto
+   0 look' sto
+   sync
+aimloop rti
+
+Aimloop:
+   0 aim' sto 24 aim' sto 48 aim' sto 
+   72 aim' sto 96 aim' sto 120 aim' sto 
+   144 aim' sto 168 aim' sto 192 aim' sto 
+   216 aim' sto 240 aim' sto 264 aim' sto   
+   288 aim' sto 312 aim' sto 336 aim' sto
+
+   15 aim' sto  39 aim' sto 63 aim' sto
+   87 aim' sto 111 aim' sto 135 aim' sto
+   159 aim' sto 183 aim' sto 207 aim' sto
+   231 aim' sto 255 aim' sto 279 aim' sto
+   303 aim' sto 327 aim' sto 351 aim' sto
+
+   6 aim' sto 30 aim' sto 54 aim' sto
+   78 aim' sto 102 aim' sto 126 aim' sto
+   150 aim' sto 174 aim' sto 198 aim' sto
+   222 aim' sto 246 aim' sto 270 aim' sto
+   294 aim' sto 318 aim' sto 342 aim' sto
+
+   21 aim' sto 45 aim' sto 69 aim' sto
+   93 aim' sto 117 aim' sto 141 aim' sto
+   165 aim' sto 189 aim' sto 213 aim' sto
+   237 aim' sto 261 aim' sto 285 aim' sto
+   309 aim' sto 333 aim' sto 357 aim' sto
+
+   12 aim' sto 36 aim' sto 60 aim' sto
+   84 aim' sto 108 aim' sto 132 aim' sto
+   156 aim' sto 180 aim' sto 204 aim' sto
+   228 aim' sto 252 aim' sto 276 aim' sto
+   300 aim' sto 324 aim' sto 348 aim' sto
+
+   3 aim' sto 27 aim' sto 51 aim' sto
+   75 aim' sto 99 aim' sto 123 aim' sto
+   147 aim' sto 171 aim' sto 195 aim' sto
+   219 aim' sto 243 aim' sto 267 aim' sto
+   291 aim' sto 315 aim' sto 339 aim' sto
+
+   18 aim' sto 42 aim' sto 66 aim' sto
+   90 aim' sto 114 aim' sto 138 aim' sto
+   162 aim' sto 186 aim' sto 210 aim' sto
+   234 aim' sto 258 aim' sto 282 aim' sto
+   306 aim' sto 330 aim' sto 354 aim' sto
+
+   9 aim' sto 33 aim' sto 57 aim' sto
+   81 aim' sto 105 aim' sto 129 aim' sto
+   153 aim' sto 177 aim' sto 201 aim' sto
+   225 aim' sto 249 aim' sto 273 aim' sto
+   297 aim' sto 321 aim' sto 345 aim' sto
+   robots 1 = Swirl ifg
+Aimloop rti
+Swirl:
+   slow call radarscan call
+   icon0 sync
+   slow call radarscan call
+   icon2 sync
+   slow call radarscan call
+   icon3 sync
+   slow call radarscan call
+   icon5 sync
+swirl jump
+Slow:
+   speedx 2 * 3 / speedx' sto
+   speedY 2 * 3 / speedy' sto
+return
+o
+return
+o
+return
+
+
+#!! NoStoWarnings
+	</source>

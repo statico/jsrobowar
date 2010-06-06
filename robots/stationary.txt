@@ -1,0 +1,16 @@
+#Energy 150
+#Damage 150
+#Shields 0
+#Processor 15
+#Normal Bullets
+#   Stationary Gun Turret
+#   by [your name here]
+
+Main:
+    range 0 > shoot if
+    aim 5 + aim' store
+    Main jump
+
+Shoot:
+    20 fire' store
+    return

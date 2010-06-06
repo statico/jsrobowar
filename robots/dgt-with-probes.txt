@@ -1,0 +1,106 @@
+#Energy 100
+#Damage 60
+#Shields 0
+#Processor 30
+#Normal bullets
+#Hellbores
+#Probes
+Start:
+    energy' probe' setparam
+    1 4 vstore
+    1 5 vstore
+    1 6 vstore
+    1 11 vstore
+    1 12 vstore
+    1 13 vstore
+    1 14 vstore
+    1 15 vstore
+    dodge radar' setint
+    90 radar' setparam
+    track range' setint
+    inton
+Loop:
+    0 aim' store
+    30 aim' store
+    60 aim' store
+    90 aim' store
+    120 aim' store
+    150 aim' store
+    180 aim' store
+    210 aim' store
+    240 aim' store
+    270 aim' store
+    300 aim' store
+    330 aim' store
+    look 7 + look' store
+    loop jump
+
+track:
+    drop
+    aim look + aim' store
+    0 look' store
+    energy 90 > realshot if
+    range dup 70 < and
+    probe -40 < or killshot if
+    inton
+    sync
+    3 look' store -3 look' store
+    6 look' store -6 look' store
+    9 look' store -9 look' store
+    12 look' store -12 look' store
+    15 look' store -15 look' store
+    20 look' store -20 look' store
+    25 look' store -25 look' store
+    30 look' store -30 look' store
+    loop jump
+
+killshot:
+    doppler -12 arctan aim + aim' store
+    12 hell' store
+    100 bullet' store
+    50 bullet' store
+    return
+
+realshot:
+    damage' probe' setparam
+    probe d' store
+    aim a' store
+    doppler -12 arctan aim + aim' store
+    12 hell' store
+    d 50 min fire' store
+    a aim' store
+    energy' probe' setparam
+    return
+
+dodge:
+    radar sync radar - vrecall realdodge ifg
+    RTI
+realdodge:
+    -1 radar' setint
+    chronon 8 + chronon' setparam
+    enddodge chronon' setint
+    aim 1 tan dodgeEW ifg
+dodgeNS:
+    y 150 > dodgeN ifg
+dodgeS:
+    8 speedy' store
+    RTI
+dodgeN:
+    -8 speedy' store
+    RTI
+
+dodgeEW:
+    x 150 > dodgeW ifg
+dodgeE:
+    8 speedx' store
+    RTI
+dodgeW:
+    -8 speedx' store
+    RTI
+
+enddodge:
+    0 speedx' store
+    0 speedy' store
+    -1 chronon' setint
+    dodge radar' setint
+    RTI

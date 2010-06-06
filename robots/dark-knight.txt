@@ -1,0 +1,1199 @@
+{
+
+                                            T H E   R E V E N G E   O F   D A R K   K N I G H T
+
+
+    Written By Peter Strˆm
+
+                Completed 2005
+
+Credits:
+    Code                     -   Peter Strˆm
+
+    Sounds, Icons      -   Stolen from computer games
+
+This robot performs well in my tests, but I expect the competition in the Titan cathegory to be fierce this time. I hope it will have a chance for at least Titan 2nd place.
+
+It's really bad when the artist have to "explain" this icon, I know, but shield is supposed to glow in some medieval magical way when its shielding.
+
+This robot is, as the name already revealed, based on The Dark Knight which won T18. The group mode is totally new however, and is rather exprimental an non-mainstream.
+
+Peter Strˆm
+
+
+
+}
+
+
+Start:
+robots 2 > GroupMode ifg
+
+Anyonetoclose:
+70 range' setparam
+movekill range' setint
+80 radar' setparam  #70
+Realystart radar' setint
+energy' probe' setparam
+inton
+
+chrononrotate:
+0 aim' store
+22 aim' store
+45 aim' store
+67 aim' store
+90 aim' store
+112 aim' store
+135 aim' store
+157 aim' store
+180 aim' store
+202 aim' store
+225 aim' store
+247 aim' store
+270 aim' store
+292 aim' store
+315 aim' store
+337 aim' store
+5 aim' store
+27 aim' store
+50 aim' store
+72 aim' store
+95 aim' store
+117 aim' store
+140 aim' store
+162 aim' store
+185 aim' store
+207 aim' store
+230 aim' store
+252 aim' store
+275 aim' store
+297 aim' store
+320 aim' store
+342 aim' store
+10 aim' store
+32 aim' store
+55 aim' store
+77 aim' store
+100 aim' store
+122 aim' store
+145 aim' store
+167 aim' store
+190 aim' store
+212 aim' store
+235 aim' store
+257 aim' store
+280 aim' store
+302 aim' store
+325 aim' store
+347 aim' store
+15 aim' store
+37 aim' store
+60 aim' store
+82 aim' store
+105 aim' store
+127 aim' store
+150 aim' store
+172 aim' store
+195 aim' store
+217 aim' store
+240 aim' store
+262 aim' store
+285 aim' store
+307 aim' store
+330 aim' store
+352 aim' store
+20 aim' store
+42 aim' store
+65 aim' store
+87 aim' store
+110 aim' store
+132 aim' store
+155 aim' store
+177 aim' store
+200 aim' store
+222 aim' store
+245 aim' store
+267 aim' store
+290 aim' store
+312 aim' store
+335 aim' store
+357 aim' store
+25 aim' store
+47 aim' store
+70 aim' store
+92 aim' store
+115 aim' store
+137 aim' store
+160 aim' store
+182 aim' store
+205 aim' store
+227 aim' store
+250 aim' store
+272 aim' store
+295 aim' store
+317 aim' store
+340 aim' store
+2 aim' store
+30 aim' store
+52 aim' store
+75 aim' store
+97 aim' store
+120 aim' store
+142 aim' store
+165 aim' store
+187 aim' store
+210 aim' store
+232 aim' store
+255 aim' store
+277 aim' store
+300 aim' store
+322 aim' store
+345 aim' store
+7 aim' store
+35 aim' store
+57 aim' store
+80 aim' store
+102 aim' store
+125 aim' store
+147 aim' store
+170 aim' store
+192 aim' store
+215 aim' store
+237 aim' store
+260 aim' store
+282 aim' store
+305 aim' store
+327 aim' store
+350 aim' store
+12 aim' store
+40 aim' store
+62 aim' store
+85 aim' store
+107 aim' store
+130 aim' store
+152 aim' store
+185 aim' store
+197 aim' store
+220 aim' store
+242 aim' store
+265 aim' store
+287 aim' store
+310 aim' store
+332 aim' store
+chronon 50 > Timestart ifg
+chrononrotate jump
+
+Timestart:
+-600 radar' setparam
+400 range' setparam
+stunnersub range' setint
+spamrotate rti
+
+{closerotate:
+0 aim' store
+180 aim' store
+24 aim' store
+204 aim' store
+48 aim' store
+228 aim' store
+72 aim' store
+252 aim' store
+96 aim' store
+276 aim' store
+120 aim' store
+300 aim' store
+144 aim' store
+324 aim' store
+168 aim' store
+348 aim' store
+rti}
+
+Realystart:
+-600 radar' setparam
+aim dup -5 cos speedx' store -5 sin speedy' store
+sync
+70 range' setparam      #Nytt fˆr att inte bli "tagen pÂ s‰ngen"
+movekill range' setint
+stopx right' setint
+stopx left' setint
+stopy top' setint
+stopy bot' setint
+inton
+0 aim' store
+180 aim' store
+26 aim' store
+206 aim' store
+52 aim' store
+232 aim' store
+78 aim' store
+258 aim' store
+104 aim' store
+284 aim' store
+130 aim' store
+310 aim' store
+156 aim' store
+336  aim' store
+#closerotate call
+#closerotate call
+0 aim' store
+180 aim' store
+26 aim' store
+206 aim' store
+52 aim' store
+232 aim' store
+78 aim' store
+258 aim' store
+104 aim' store
+284 aim' store
+130 aim' store
+310 aim' store
+156 aim' store
+336  aim' store
+400 range' setparam
+stunnersub range' setint
+sync
+inton
+
+spamrotate:
+0 aim' store
+22 aim' store
+45 aim' store
+67 aim' store
+90 aim' store
+112 aim' store
+135 aim' store
+157 aim' store
+180 aim' store
+202 aim' store
+225 aim' store
+247 aim' store
+270 aim' store
+292 aim' store
+315 aim' store
+337 aim' store
+5 aim' store
+27 aim' store
+50 aim' store
+72 aim' store
+95 aim' store
+117 aim' store
+140 aim' store
+162 aim' store
+185 aim' store
+207 aim' store
+230 aim' store
+252 aim' store
+275 aim' store
+297 aim' store
+320 aim' store
+342 aim' store
+10 aim' store
+32 aim' store
+55 aim' store
+77 aim' store
+100 aim' store
+122 aim' store
+145 aim' store
+167 aim' store
+190 aim' store
+212 aim' store
+235 aim' store
+257 aim' store
+280 aim' store
+302 aim' store
+325 aim' store
+347 aim' store
+15 aim' store
+37 aim' store
+60 aim' store
+82 aim' store
+105 aim' store
+127 aim' store
+150 aim' store
+172 aim' store
+195 aim' store
+217 aim' store
+240 aim' store
+262 aim' store
+285 aim' store
+307 aim' store
+330 aim' store
+352 aim' store
+20 aim' store
+42 aim' store
+65 aim' store
+87 aim' store
+110 aim' store
+132 aim' store
+155 aim' store
+177 aim' store
+200 aim' store
+222 aim' store
+245 aim' store
+267 aim' store
+290 aim' store
+312 aim' store
+335 aim' store
+357 aim' store
+25 aim' store
+47 aim' store
+70 aim' store
+92 aim' store
+115 aim' store
+137 aim' store
+160 aim' store
+182 aim' store
+205 aim' store
+227 aim' store
+250 aim' store
+272 aim' store
+295 aim' store
+317 aim' store
+340 aim' store
+2 aim' store
+30 aim' store
+52 aim' store
+75 aim' store
+97 aim' store
+120 aim' store
+142 aim' store
+165 aim' store
+187 aim' store
+210 aim' store
+232 aim' store
+255 aim' store
+277 aim' store
+300 aim' store
+322 aim' store
+345 aim' store
+7 aim' store
+35 aim' store
+57 aim' store
+80 aim' store
+102 aim' store
+125 aim' store
+147 aim' store
+170 aim' store
+192 aim' store
+215 aim' store
+237 aim' store
+260 aim' store
+282 aim' store
+305 aim' store
+327 aim' store
+350 aim' store
+12 aim' store
+40 aim' store
+62 aim' store
+85 aim' store
+107 aim' store
+130 aim' store
+152 aim' store
+185 aim' store
+197 aim' store
+220 aim' store
+242 aim' store
+265 aim' store
+287 aim' store
+310 aim' store
+332 aim' store
+355 aim' store
+spamrotate jump
+
+stopx:
+0 speedx' store
+rti
+
+stopy:
+0 speedy' store
+rti
+
+movekill:
+doppler 3 * aim + aim' store
+snd6 icon8
+38 stunner' store
+5 hellbore' store
+75 missile' store
+sync
+aim dup -30 cos movex' store -30 sin movey' store  #60
+sync
+icon0
+600 range' setparam
+-600 radar' setparam
+checkenergy range' setint
+spamrotate rti
+
+checkenergy:
+range -10 / probe > kill4 ifg
+killagain rti
+
+kill4:
+icon8 snd4
+12 hellbore' store
+150 bullet' store
+16 stunner' store
+22 shield' store
+sync
+icon0
+killagain rti
+
+stunnersub:
+#aim dup range 20 / sin speedx' sto range -20 / cos speedy' sto
+#aim dup range dup  2 roll 20 / sin speedx' sto -20 / cos speedy' sto
+range dup aim dup 3 roll swap 20 / sin speedx' sto -20 / cos speedy' sto snd8               #17
+-700 radar' setparam
+28 stunner' store       #Byta ordning pÂ denna och 14 -
+aim dup dup dup dup     #blir inte b‰ttre av nÂn anledning
+7 - aim' store
+24 stunner' store
+14 - aim' store
+20 stunner' store
+7 + aim' store
+24 stunner' store
+14 + aim' store
+28 stunner' store
+sync
+aim' store
+90 range' setparam
+reallykill range' setint
+#88 stunner'    #Var fˆrst fˆrut
+#75 missile'
+#5 hellbore'
+16 stunner'
+150 bullet'
+12 hellbore'
+preKAx right' setint
+preKAx left' setint
+preKAy top' setint
+preKAy bot' setint
+spamrotate rti
+
+dropkill:
+range 50 > cancelkill ifg
+snd6 icon8
+drop
+store store store   {88 stunner' store 5 hellbore' store 75 missile' store}
+sync
+icon0
+killagain cancelkill: rti
+
+reallykill:
+doppler dropkill ifg
+snd6 icon8
+drop
+store store store   {88 stunner' store 5 hellbore' store 75 missile' store}
+sync
+icon0
+killagain rti
+
+##############################################
+preKAy:
+0 speedy' store
+energy' probe' setparam
+y 150 < KAatTop KAatBot ifeg
+
+KAatTop:
+stoprotate h' store
+xtrastart rti
+
+KAatBot:
+sbotrotate h' store
+xtrastart rti
+
+preKAx:
+0 speedx' store
+#killagain rti
+
+###########
+killagain:
+icon0
+y 150 < choosetopspec choosedownspec ife
+16 top' setparam
+284 bot' setparam
+startg top' setint
+startg bot' setint
+65 range' setparam
+kill range' setint
+inton
+
+smallsearch:
+0 aim' store 45 aim' store 90 aim' store 125 aim' store 180 aim' store 225 aim' store 270 aim' store 315 aim' store
+smallsearch jump
+
+goright:
+3 speedx' store
+return
+
+goleft:
+-3 speedx' store
+return
+
+startg:
+0 speedy' store
+energy' probe' setparam
+
+xtrastart:
+icon0
+inton
+600 range' setparam
+x 150 < goright goleft ife
+check range' setint
+turnxs right' setint
+turnxs left' setint
+
+moveloop:
+h call
+h call
+h call
+h call
+speedx chs speedx' store
+moveloop jump
+
+stoprotate:
+inton
+30 shield' store
+90 aim' store
+100 aim' store
+110 aim' store
+120 aim' store
+130 aim' store
+140 aim' store
+150 aim' store
+160 aim' store
+170 aim' store
+180 aim' store
+190 aim' store
+200 aim' store
+210 aim' store
+220 aim' store
+230 aim' store
+240 aim' store
+250 aim' store
+260 aim' store
+270 aim' store
+30 shield' store
+85 aim' store
+95 aim' store
+105 aim' store
+115 aim' store
+125 aim' store
+135 aim' store
+145 aim' store
+155 aim' store
+165 aim' store
+175 aim' store
+185 aim' store
+195 aim' store
+205 aim' store
+215 aim' store
+225 aim' store
+235 aim' store
+245 aim' store
+255 aim' store
+265 aim' store
+275 aim' store
+return
+
+sbotrotate:
+inton
+30 shield' store        #30 All
+90 aim' store
+80 aim' store
+70 aim' store
+60 aim' store
+50 aim' store
+40 aim' store
+30 aim' store
+20 aim' store
+10 aim' store
+0 aim' store
+350 aim' store
+340 aim' store
+330 aim' store
+320 aim' store
+310 aim' store
+300 aim' store
+290 aim' store
+280 aim' store
+270 aim' store
+30 shield' store
+85 aim' store
+95 aim' store
+85 aim' store
+75 aim' store
+65 aim' store
+55 aim' store
+45 aim' store
+35 aim' store
+25 aim' store
+15 aim' store
+5 aim' store
+355 aim' store
+345 aim' store
+335 aim' store
+325 aim' store
+315 aim' store
+305 aim' store
+295 aim' store
+285 aim' store
+275 aim' store
+return
+
+reallykill2:
+icon8
+snd4
+50 stunner' store
+12 hellbore' store
+100 fire' store
+energy 200 + shield' store
+sync
+icon0
+rti
+
+{d√∂da:
+sync
+k√∂rp√•
+48 stunner' store}
+
+kill5:
+icon8 snd8
+doppler 3 * aim + aim' store
+12 hellbore' store
+150 bullet' store
+sync
+icon0
+rti
+##§
+
+
+
+kill:       #Anv‰nds
+icon8
+doppler 3 * aim + aim' store
+5 hellbore' store
+75 missile' store 32 stunner' store
+sync rti
+
+playwithfire:
+snd6
+firetrack range' setint
+spamrotate rti
+
+firetrack:
+range dup 150 < and stunnersub ifg
+aim dup 4 sin speedx' sto -4 cos speedy' sto
+rti
+
+check:
+range dup 120 < and kill5 ifg #65, 90 disk
+probe -30 < reallykill2 ifg
+energy 130 > playwithfire ifg
+random 200 > firesub ifg
+rti
+
+firesub:
+1 bullet' store
+rti
+
+turnxs:
+speedx chs speedx' store inton
+#sync -600 radar' setparam sync  sync sync sync sync sync sync sync
+#sync sync sync sync sync sync sync sync sync
+sync -600 radar' setparam syncloop call
+syncloop call sync
+rti
+
+syncloop:
+sync sync sync sync sync sync sync sync
+return
+
+#energy -4 / speedx' store kanske?
+slow1:
+-2 speedy' store
+back1 jump
+
+choosetopspec:
+y 60 < slow1 ifg
+-5 speedy' store        #7
+
+back1:
+stoprotate h' store
+return
+
+slow2:
+2 speedy' store
+back2 jump
+
+choosedownspec:
+y 240 > slow2 ifg
+5 speedy' store         #7\
+
+back2:
+sbotrotate h' store
+return
+
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
+#Group Code:   GR
+GroupMode:
+3 robots' setparam
+Switch robots' setint
+50 range' setparam
+checkkill range' setint
+rightside right' setint
+leftside left' setint
+287 right' setparam
+13 left' setparam
+x 150 < -8 * 4 + speedx' store
+#id' probe' setparam
+spamrotate rti
+
+GRcheck:
+600 range' setparam
+retry range' setint
+inton
+0 aim' store
+-3 aim' store
+3 aim' store
+-6 aim' store
+6 aim' store
+-9 aim' store
+9 aim' store
+12 aim' store
+-12 aim' store
+180 aim' store
+177 aim' store
+183 aim' store
+174 aim' store
+186 aim' store
+171 aim' store
+189 aim' store
+168 aim' store
+192 aim' store
+return
+
+retry:
+energy 80 < skipshoot ifg
+#aim 180 / 180 * aim' store
+5 hell' store
+75 missile' store
+
+skipshoot:
+50 range' setparam
+checkkill range' setint
+x 150 > -16 * 8 + speedx' store
+283 right' setparam
+17 left' setparam
+spamrotate rti
+
+checkkill:
+doppler 3 * aim + aim' store
+5 hell' store
+75 missile' store
+12 stunner' store
+energy 0 < skipturn ifg
+speedx dup abs / -12 * speedx' store
+#sync sync sync sync sync sync sync sync sync sync sync sync sync #kanske lite f‰rre sync
+sync
+279 right' setparam
+21 left' setparam
+sync sync sync sync sync sync  sync sync sync skipturn: sync
+rti
+
+goback: rti
+
+rightside:
+0 speedx' store
+GRcheck call
+#debug
+60 range' setparam
+PrePlisKill  range' setint  #l‰gg till nÂt h‰r
+
+y 40 < PrePlisRightTop ifg
+y 260 > PrePlisRightBot ifg
+y 150 < -8 * 4 + speedy' store
+-1 right' setint
+-1 left' setint
+265 bot' setparam
+35 top' setparam
+PrePlisRightBot Bot' setint
+PrePlisRightTop Top' setint
+spamrotate rti
+
+PrePlisKill:
+doppler 3 * aim + aim' store
+5 hell' store
+75 missile' store
+18 stunner' store
+sync
+rti
+
+PrePlisRightTop:
+-1 bot' setint
+600 range' setparam #kr‰vs fˆr plisshoot ocksÂ
+
+plisshoot range' setint
+35 y - movey' store
+287 x - movex' store
+10 top' setparam
+290 right' setparam
+plisturn top' setint
+plisturn right' setint
+inton
+-1 speedx' store
+-1 speedy' store
+
+PlisRightTop:
+energy 2 / shield + shield' store
+PlisRightTopRotate call
+PlisRightTop rti
+
+PrePlisRightBot:
+-1 top' setint
+600 range' setparam #kr‰vs fˆr plisshoot ocksÂ
+
+plisshoot range' setint
+265 y - movey' store
+287 x - movex' store
+290 bot' setparam
+290 right' setparam
+plisturn bot' setint
+plisturn right' setint
+inton
+-1 speedx' store
+1 speedy' store
+
+PlisRightBot:
+energy 2 / shield + shield' store
+PlisRightBotRotate call
+PlisRightBot rti
+
+{16-32
+268-284}
+
+leftside:
+0 speedx' store
+GRcheck call
+60 range' setparam
+PrePlisKill  range' setint  #l‰gg till nÂt h‰r
+
+y 40 < PrePlisLeftTop ifg
+y 260 > PrePlisLeftBot ifg
+y 150 < -8 * 4 + speedy' store
+-1 right' setint
+-1 left' setint
+265 bot' setparam
+35 top' setparam
+PrePlisLeftBot Bot' setint
+PrePlisLeftTop Top' setint
+spamrotate rti
+
+PrePlisLeftTop:
+-1 bot' setint
+600 range' setparam #kr‰vs fˆr plisshoot ocksÂ
+
+plisshoot range' setint
+35 y - movey' store
+13 x - movex' store
+10 top' setparam
+10 left' setparam
+plisturn top' setint
+plisturn left' setint
+inton
+1 speedx' store
+-1 speedy' store
+
+PlisLeftTop:
+energy 2 / shield + shield' store
+PlisLeftTopRotate call
+PlisLeftTop rti
+
+plisTurn:
+speedy chs speedy' store
+speedx chs speedx' store
+rti
+
+PrePlisLeftBot:
+-1 top' setint
+600 range' setparam #kr‰vs fˆr plisshoot ocksÂ
+
+plisshoot range' setint
+265 y - movey' store
+13 x - movex' store
+289 bot' setparam
+11 left' setparam
+plisTurn bot' setint
+plisTurn left' setint
+inton
+1 speedx' store
+1 speedy' store
+
+PlisLeftBot:
+energy 2 / shield + shield' store
+ PlisLeftBotRotate call
+PlisLeftBot rti
+
+plisshoot:
+doppler
+range dup 60 < and PlisKill ifg
+#2 > energy 30 <  or goback ifg
+2 > shield 60 <  or goback ifg
+10 shield' store
+5 hellbore' store
+energy missile' store
+snd6
+rti
+
+PlisKill:
+3 * aim + aim' store
+5 hellbore' store
+75 missile' store
+12 stunner' store
+sync
+rti
+
+
+###Rotate loops
+
+PlisLeftBotRotate:
+-6 aim' store
+-3 aim' store
+0 aim' store
+3 aim' store
+6 aim' store
+9 aim' store
+12 aim' store
+15 aim' store
+18 aim' store
+21 aim' store
+24 aim' store
+27 aim' store
+30 aim' store
+33 aim' store
+36 aim' store
+39 aim' store
+42 aim' store
+45 aim' store
+48 aim' store
+51 aim' store
+54 aim' store
+57 aim' store
+60 aim' store
+63 aim' store
+66 aim' store
+69 aim' store
+72 aim' store
+75 aim' store
+78 aim' store
+81 aim' store
+84 aim' store
+87 aim' store
+90 aim' store
+93 aim' store
+96 aim' store
+rti
+
+PlisRightBotRotate:
+264 aim' store
+267 aim' store
+270 aim' store
+273 aim' store
+276 aim' store
+279 aim' store
+282 aim' store
+285 aim' store
+288 aim' store
+291 aim' store
+294 aim' store
+297 aim' store
+300 aim' store
+303 aim' store
+306 aim' store
+309 aim' store
+312 aim' store
+315 aim' store
+318 aim' store
+321 aim' store
+324 aim' store
+327 aim' store
+330 aim' store
+333 aim' store
+336 aim' store
+339 aim' store
+342 aim' store
+345 aim' store
+348 aim' store
+351 aim' store
+354 aim' store
+357 aim' store
+360 aim' store
+363 aim' store
+366 aim' store
+rti
+
+PlisLeftTopRotate:
+84 aim' store
+87 aim' store
+90 aim' store
+93 aim' store
+96 aim' store
+99 aim' store
+102 aim' store
+105 aim' store
+108 aim' store
+111 aim' store
+114 aim' store
+117 aim' store
+120 aim' store
+123 aim' store
+126 aim' store
+129 aim' store
+132 aim' store
+135 aim' store
+138 aim' store
+141 aim' store
+144 aim' store
+147 aim' store
+150 aim' store
+153 aim' store
+156 aim' store
+159 aim' store
+162 aim' store
+165 aim' store
+168 aim' store
+171 aim' store
+174 aim' store
+177 aim' store
+180 aim' store
+183 aim' store
+186 aim' store
+rti
+
+PlisRightTopRotate:
+174 aim' store
+177 aim' store
+180 aim' store
+183 aim' store
+186 aim' store
+189 aim' store
+192 aim' store
+195 aim' store
+198 aim' store
+201 aim' store
+204 aim' store
+207 aim' store
+210 aim' store
+213 aim' store
+216 aim' store
+219 aim' store
+222 aim' store
+225 aim' store
+228 aim' store
+231 aim' store
+234 aim' store
+237 aim' store
+240 aim' store
+243 aim' store
+246 aim' store
+249 aim' store
+252 aim' store
+255 aim' store
+258 aim' store
+261 aim' store
+264 aim' store
+267 aim' store
+270 aim' store
+273 aim' store
+276 aim' store
+rti
+
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
+Switch:
+-1 radar' setint
+600 radar' setparam
+600 range' setparam
+0 shield' store
+0 speedx' store
+0 speedy' store
+Isawhim range' setint
+spamrotate rti
+
+Kill6:
+12 hellbore' store
+100 fire' store
+48 stunner' store
+energy 200 + shield' store
+sync
+preparebackup jump
+
+Isawhim:
+#debug
+range -10 / probe > Kill6 ifg
+energy 130 < preparebackup ifg
+0 speedy' store
+Anyonetoclose jump
+
+preparebackup:
+-1 range' setint
+280 bot' setparam
+20 top' setparam
+280 right' setparam
+20 left' setparam
+preKAy top' setint
+preKAy bot' setint
+y 25 < y 275 > or preKAy ifg
+y 60 < goslowdown if
+y 240 > goslowup if
+y 150 < -12 * 6 +  speedy' store
+spamrotate rti
+
+goslowdown:
+-3 speedy' store
+spamrotate rti
+
+goslowup:
+3 speedy' store
+spamrotate rti
+
+
+
+{*BRISTER:
+
+C3
+Jagar roboten n√§r den √§r f√∂r l√•ngt borta f√∂r stunnersub
+C4
+F√∂rhoppningsvis uppgraderat GR
+C5
+Hesinator i gr
+C7
+anv'nder spinners GR
+C8
+anv'nder delar av KOVs program i gr
+C9
+F√∂rsiktigare med kill i Spinner biten av GR
+N√•gra buggar fixade
+1
+Samma som C10
+2   Vann TKOTH 5 1999
+Med Mar's GR kod
+2.1
+√Ñndrade avst√•ndet f√∂r skott i "Killagain" fr√•n 65 till 120, fixade lite kr√•ngel med "d√∂da" och lade till lite ljud och icon effekter.
+2.11
+Fixade bug med √∂verg√•ngen till Duel. Den anv√§nde ibland fel h. Detta √§r nu fixat.1
+4
+Fˆrsta uppgraderingen till Mortality stil. Verkar gÂtt r‰tt bra trots att jag inte kodat arcstunners pÂ massor av Âr.
+4.1 -
+Diverse fˆrb‰ttringar.
+4.2
+4.3 Dodgar mer + lite annat
+4.20 ar glˆmt att skriva h‰r pÂ evigheter. 4.20 sÂ mergades 4.4 ihop med den nya groupmodet som hette 20. Nya verkar till och med vara b‰ttre. Fixade nya iconer
+4.21 Fixade kills pÂ ett st‰lle d‰r det saknades
+
+Dark Knight 4 = 4.23 - deltog i T24
+}
+
+#Om den vinner, sÂ ‰r vinsten din spinner
+#Du kommer bli ihÂgkommen som en robot av ‰ra
+
+
+#!! NoStoWarnings

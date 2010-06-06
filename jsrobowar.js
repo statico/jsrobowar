@@ -825,6 +825,8 @@ var Program = Class.extend({
     var line_number = 0;
     var self = this;
 
+    source = source.replace(/\{[\s\S]*?\}/gm, ''); // Yeah, "." doesn't work here.
+
     function push_instruction(i) {
       self.instructions.push(i);
       self.line_numbers.push(line_number);
@@ -1187,6 +1189,17 @@ var Robot = Class.extend({
       case 'HELLBORE':
         this.shoot(name, value);
         return;
+      case 'ICON0':
+      case 'ICON1':
+      case 'ICON2':
+      case 'ICON3':
+      case 'ICON4':
+      case 'ICON5':
+      case 'ICON6':
+      case 'ICON7':
+      case 'ICON8':
+      case 'ICON9':
+        return;
       case 'ID':
       case 'KILLS':
         return;
@@ -1244,6 +1257,17 @@ var Robot = Class.extend({
         return;
       case 'SIGNAL':
         throw new Error('Teamplay not yet implemented');
+      case 'SND0':
+      case 'SND1':
+      case 'SND2':
+      case 'SND3':
+      case 'SND4':
+      case 'SND5':
+      case 'SND6':
+      case 'SND7':
+      case 'SND8':
+      case 'SND9':
+        return;
       case 'SPEEDX':
         this.set_speed('x', value);
         return;
@@ -1296,6 +1320,17 @@ var Robot = Class.extend({
         throw new Error('TODO: get_variable(' + name + ')');
       case 'HELLBORE':
         return 0;
+      case 'ICON0':
+      case 'ICON1':
+      case 'ICON2':
+      case 'ICON3':
+      case 'ICON4':
+      case 'ICON5':
+      case 'ICON6':
+      case 'ICON7':
+      case 'ICON8':
+      case 'ICON9':
+        return 0;
       case 'ID':
         throw new Error('TODO: get_variable(' + name + ')');
       case 'KILLS':
@@ -1328,6 +1363,17 @@ var Robot = Class.extend({
         return this.shield;
       case 'SIGNAL':
         throw new Error('TODO: get_variable(' + name + ')');
+      case 'SND0':
+      case 'SND1':
+      case 'SND2':
+      case 'SND3':
+      case 'SND4':
+      case 'SND5':
+      case 'SND6':
+      case 'SND7':
+      case 'SND8':
+      case 'SND9':
+        return 0;
       case 'SPEEDX':
         return this.vx;
       case 'SPEEDY':
