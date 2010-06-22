@@ -66,6 +66,14 @@ function fix360(value) {
   return (value < 0) ? 360 + value : value;
 }
 
+function deg2rad(degrees) {
+  return degrees * (Math.PI / 180);
+}
+
+function rad2deg(radians) {
+  return radians * (180 / Math.PI);
+}
+
 function unique(seq) {
   var o = {}, a = [];
   for (var i = 0; i < seq.length; i++) o[seq[i]] = 1;
@@ -145,7 +153,7 @@ var Game = Class.extend({
 
         robot.step();
 
-        if (!robot.running) {
+        if (!robot.is_running) {
           self.remove_robot(robot);  // Remove robot if dead.
         }
 
@@ -214,7 +222,7 @@ var Game = Class.extend({
 
   stop: function() {
     for (var i = 0, robot; robot = this.robots[i]; i++) {
-      robot.running = false;
+      robot.is_running = false;
     }
   },
 
@@ -306,12 +314,12 @@ var Arena = Class.extend({
     this.height = height;
   },
 
-  calculate_nearest_distance: function(observer, direction, objects) {
+  find_nearest_object: function(observer, direction, objects) {
     var SCAN_DEGREES = 10;  // In robowar.pdf under 'RADAR'.
     var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
     var aim_radians = direction * (Math.PI + Math.PI) / 360;
 
-    var closest = 0;
+    var closest = {object: undefined, distance: 0};
 
     for (var i = 0, enemy; enemy = objects[i]; i++) {
       if (enemy == observer) continue;
@@ -324,8 +332,9 @@ var Arena = Class.extend({
         var enemy_dir = Math.atan2(dx, -dy) + Math.PI;
 
         if (Math.abs(aim_radians - enemy_dir) < theta / 2) {
-          if (closest == 0 || closest > distance) {
-            closest = distance;
+          if (closest.distance == 0 || closest.distance > distance) {
+            closest.distance = distance;
+            closest.object = enemy;
           }
         }
       }
@@ -334,14 +343,30 @@ var Arena = Class.extend({
     return closest;
   },
 
+  find_nearest_robot: function(observer, direction) {
+    return this.find_nearest_object(observer, direction, this.robots);
+  },
+
+  find_nearest_projectile: function(observer, direction) {
+    return this.find_nearest_object(observer, direction, this.game.projectiles);
+  },
+
   do_range: function(robot) {
     var direction = fix360(robot.aim + robot.scan);
-    return this.calculate_nearest_distance(robot, direction, this.robots);
+    return this.find_nearest_robot(robot, direction).distance;
   },
 
   do_radar: function(robot) {
     var direction = fix360(robot.aim + robot.look);
-    return this.calculate_nearest_distance(robot, direction, this.game.projectiles);
+    return this.find_nearest_projectile(robot, direction).distance;
+  },
+
+  count_active_robots: function() {
+    var count = 0;
+    for (var i = 0, robot; robot = this.robots[i]; i++) {
+      if (robot.is_running) count++;
+    }
+    return count;
   },
 
   create_projectile: function(type, energy) {
@@ -825,7 +850,10 @@ var Program = Class.extend({
     var line_number = 0;
     var self = this;
 
-    source = source.replace(/\{[\s\S]*?\}/gm, ''); // Yeah, "." doesn't work here.
+    // Turn extended comments ("{..}") into hash comments. This makes the
+    // comments ignored by the parser while preserving line numbers.
+    var commentify = function(str) { return str.replace(/\S/g, '#') };
+    source = source.replace(/\{[\s\S]*?\}/gm, commentify); // Yeah, "." doesn't work here.
 
     function push_instruction(i) {
       self.instructions.push(i);
@@ -1038,6 +1066,21 @@ var InterruptQueue = Class.extend({
 
 });
 
+// These are defined in robowar.pdf under 'HISTORY'
+var HISTORY_ELEMENTS = {
+  NUM_BATTLES: 1,
+  PREV_BATTLE_KILLS: 2,
+  ALL_BATTLE_KILLS: 3,
+  PREV_BATTLE_POINTS: 4,
+  ALL_BATTLE_POINTS: 5,
+  LAST_BATTLE_TIMED_OUT: 6,
+  LAST_BATTLE_TEAMMATES_ALIVE: 7,
+  ALL_BATTLE_TEAMMATES_ALIVE: 8,
+  LAST_BATTLE_DAMAGE_REMAINING: 9,
+  LAST_BATTLE_CHRONONS: 10,
+  ALL_BATTLE_CHRONONS: 11,
+};
+
 var Robot = Class.extend({
 
   init: function(name, color, program) {
@@ -1045,7 +1088,7 @@ var Robot = Class.extend({
     this.color = color;
     this.program = program;
     this.speed = 10;
-    this.running = true;
+    this.is_running = true;
     this.chronons = 0;
     this.radius = 8;
     this.max_energy = 100;
@@ -1059,6 +1102,11 @@ var Robot = Class.extend({
     this.stack = [];
     this.ptr = 0;
     this.interrupts = new InterruptQueue();
+
+    this.probe_variable = new Variable('DAMAGE');
+    this.history_index;
+    this.history = [];
+    for (var i = 1; i <= 50; i++) this.history[i] = 0;
 
     this.aim = 0;
     this.scan = 0;
@@ -1121,6 +1169,25 @@ var Robot = Class.extend({
     this.arena.shoot(this, type, amount);
     this.energy -= amount;
     // TOOD can't move and shoot
+  },
+
+  do_probe: function() {
+    var direction = fix360(robot.aim);
+    var result = this.arena.find_nearest_robot(this, direction);
+    var robot = result.object;
+    if (!robot) return 0;
+
+    switch (this.probe_variable.name) {
+      case 'DAMAGE': return robot.damage;
+      case 'ENERGY': return robot.energy;
+      case 'SHIELD': return robot.shield;
+      case 'ID': return robot.id;
+      case 'TEAMMATES': throw new Error('Teamplay not yet implemented');
+      case 'AIM': return robot.aim;
+      case 'LOOK': return robot.look;
+      case 'SCAN': return robot.scan;
+      default: throw new Error('Uknown probe variable: ' + this.probe_variable);
+    }
   },
 
   translate: function(axis, energy) {
@@ -1317,7 +1384,7 @@ var Robot = Class.extend({
       case 'FRIEND':
         throw new Error('Teamplay not yet implemented');
       case 'HISTORY':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.history[this.history_index] || 0;
       case 'HELLBORE':
         return 0;
       case 'ICON0':
@@ -1346,7 +1413,7 @@ var Robot = Class.extend({
       case 'NUKE':
         return 0;
       case 'PROBE':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.do_probe();
       case 'RADAR':
         return this.arena.do_radar(this);
       case 'RANDOM':
@@ -1356,7 +1423,7 @@ var Robot = Class.extend({
       case 'RIGHT':
         return 0;
       case 'ROBOTS':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.arena.count_active_robots();
       case 'SCAN':
         return this.scan;
       case 'SHIELD':
@@ -1416,8 +1483,8 @@ var Robot = Class.extend({
 
     if (this.wall) this.take_damage(5);
     if (this.collision) this.take_damage(1);
-    if (this.damage <= 0) this.running = false;
-    if (this.energy < -200) this.running = false;
+    if (this.damage <= 0) this.is_running = false;
+    if (this.energy < -200) this.is_running = false;
 
     if (this.shield > this.max_shield)
       this.shield = Math.max(0, this.shield - 2.0);
@@ -1492,7 +1559,7 @@ var Robot = Class.extend({
       }
     }
 
-    for (var i = this.speed; i > 0 && this.running; ) {
+    for (var i = this.speed; i > 0 && this.is_running; ) {
       if (this.energy <= 0) {
         this.trace('Robot has no energy');
         break;
@@ -1508,10 +1575,10 @@ var Robot = Class.extend({
         i -= this.step_one();
       } catch (e) {
         var line = this.program.line_numbers[this.ptr];
-        var debug = this.program.instructions[this.ptr];
-        console.error(this.name, 'error on line ' + line + ', before ' + debug + ' - ' + e);
+        var instruction = this.program.instructions[this.ptr];
+        console.error(this.name, 'error on line ' + line + ', before ' + instruction + ' - ' + e);
         console.log(e.stack);
-        this.running = false;
+        this.is_running = false;
       }
     }
 
@@ -1560,19 +1627,21 @@ var Robot = Class.extend({
   },
 
   push: function(value) {
+    if (value == undefined)
+      throw new Error('undefined pushed onto the stack');
     this.stack.push(value);
     if (this.stack.length > 100) {
-      throw new Error("Stack overflow");
+      throw new Error('Stack overflow');
     }
   },
 
   pop_number: function() {
     if (this.stack.length == 0) {
-      throw new Error("Stack is empty");
+      throw new Error('Stack underflow');
     }
     var value = this.stack.pop();
     if (isNaN(value)) {
-      throw new Error("Invalid value on stack: " + value + " is not a Number");
+      throw new Error('Invalid value on stack: ' + value + ' is not a Number');
     } else {
       return value;
     }
@@ -1580,11 +1649,11 @@ var Robot = Class.extend({
 
   pop_variable: function() {
     if (this.stack.length == 0) {
-      throw new Error("Stack is empty");
+      throw new Error('Stack underflow');
     }
     var value = this.stack.pop();
     if (!(value instanceof Variable)) {
-      throw new Error("Invalid value on stack: " + value + " is not a Variable");
+      throw new Error('Invalid value on stack: ' + value + ' is not a Variable');
     } else {
       return value;
     }
@@ -1621,6 +1690,18 @@ var Robot = Class.extend({
     return 1;
   },
 
+  op_trig: function(func) {
+    return this.op_apply2(function(a, b) { return func(deg2rad(b)) * a });
+  },
+
+  op_arctrig: function(func) {
+    return this.op_apply2(function(a, b) {
+      var ratio = b / a;
+      if (ratio < -1 || ratio > 1) throw new Error('-1 < Num / Denom < 1 for ' + op.name);
+      return rad2deg(func(ratio));
+    });
+  },
+
   handle_operation: function(op) {
     var s = this.stack;
 
@@ -1642,15 +1723,19 @@ var Robot = Class.extend({
       case 'MAX': return this.op_apply2(function(a, b) { return Math.max(a, b) });
       case 'MIN': return this.op_apply2(function(a, b) { return Math.min(a, b) });
       case 'MOD': return this.op_apply2(function(a, b) { return b % a });
-      case 'NOT': return this.op_apply1(function(x) {x ? 1 : 0});
+      case 'NOT': return this.op_apply1(function(x) {return !x ? 1 : 0});
       case 'SQRT': return this.op_apply1(Math.sqrt);
 
-      case 'ARCCOS': throw new Error('TODO: ' + op.name);
-      case 'ARCSIN': throw new Error('TODO: ' + op.name);
-      case 'ARCTAN': throw new Error('TODO: ' + op.name);
-      case 'DIST': throw new Error('TODO: ' + op.name);
-      case 'SIN': case 'SINE': throw new Error('TODO: ' + op.name);
-      case 'TAN': case 'TANGENT': throw new Error('TODO: ' + op.name);
+      case 'SIN': case 'SINE': return this.op_trig(Math.sin);
+      case 'COS': case 'COSSINE': return this.op_trig(Math.cos);
+      case 'TAN': case 'TANGENT': return this.op_trig(Math.tan);
+      case 'ARCSIN': return this.op_arctrig(Math.asin);
+      case 'ARCCOS': return this.op_arctrig(Math.acos);
+      case 'ARCTAN': return this.op_arctrig(Math.atan);
+      case 'DIST':
+        var dy = this.y - this.pop_number();
+        var dx = this.x - this.pop_number();
+        return Math.sqrt( (dx * dx) + (dy * dy) );
 
       case 'STO':
       case 'STORE':
@@ -1754,10 +1839,17 @@ var Robot = Class.extend({
         return 1;
       case 'SETPARAM':
         var v = this.pop_variable();
-        var value = this.pop_number();
-        this.interrupts.set_param(v.name, value);
+        if (v.name == 'HISTORY') {
+          var value = this.pop_number();
+          this.history_index = value;
+        } else if (v.name == 'PROBE') {
+          var value = this.pop_variable();
+          this.probe_variable = value;
+        } else {
+          var value = this.pop_number();
+          this.interrupts.set_param(v.name, value);
+        }
         return 1;
-
       case 'BEEP':
         console.log('BEEP!');
         return 0;
@@ -1824,7 +1916,7 @@ var Scoreboard = Class.extend({
       label['energy'].attr('text', 'Energy: ' + robot.energy);
       label['damage'].attr('text', 'Damage: ' + robot.damage);
       label['shield'].attr('text', 'Shield: ' + robot.shield);
-      label['status'].attr('text', 'Status: ' + (robot.running ? 'running' : 'DEAD'));
+      label['status'].attr('text', 'Status: ' + (robot.is_running ? 'running' : 'DEAD'));
     }
   },
 
