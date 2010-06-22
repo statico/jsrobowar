@@ -1819,8 +1819,19 @@ var Robot = Class.extend({
         this.push(first);
         this.push(second);
         return 1;
-
-      case 'ROLL': throw new Error('TODO: ' + op.name);
+      case 'ROLL':
+        var count = this.pop_number();
+        var value = this.pop_number();
+        if (count > this.stack.length)
+          throw new Error('Tried rolling back ' + count + ' places, but ' +
+              'only ' + this.stack.length + ' items are in the stack.')
+        var temp = [];
+        for (var i = 0; i < count; i ++)
+          temp.push(this.stack.pop());
+        this.stack.push(value);
+        for (var i = 0; i < count; i ++)
+          this.stack.push(temp.pop());
+        return 1;
 
       case 'INTON':
         this.interrupts.enabled = true;
