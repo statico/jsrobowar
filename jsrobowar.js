@@ -361,6 +361,55 @@ var Arena = Class.extend({
     return this.find_nearest_projectile(robot, direction).distance;
   },
 
+  do_doppler: function(robot) {
+    var direction = fix360(robot.aim + robot.look);
+    var enemy = this.find_nearest_projectile(robot, direction).distance;
+    if (!enemy) return 0;
+
+    // The following is stolen from Robowar 4.5.2's Projectiles.c.
+    var dist = 0;
+    var target, doppler, tmp;
+    var m = Math.sin((robot.aim + robot.look + 270) % 360);
+    var n = -Math.sin((robot.aim + robot.look) % 360);
+
+    for (var i = 0, enemy; enemy = this.game.robots; i++) {
+      if (enemy == robot || !enemy.is_running) continue;
+        var a = robot.x;
+        var b = robot.y;
+        var c = enemy.x;
+        var d = enemy.y;
+        var t = (m*c + n*d - m*a -n*b); /* /(m*m+n*n) deleted because it seems to equal 1 */
+        if (t > 0 &&
+          (m*t+a-c)*(m*t+a-c)+
+          (n*t+b-d)*(n*t+b-d)<
+          (robot.radius * robot.radius - 9)) /* in sights */
+          if (dist == 0 || t < dist) {
+            dist = t;
+            target = enemy;
+            if (target.energy < 0 || target.stasis ||
+              target.collision || target.wall) doppler = 0;
+            else {
+              a = (a-c); /* a = rx */
+              b = (b-d); /* b = ry */
+              c = (a*target.vx + b*target.vy); /* c = r¥v */
+              t = (target.vx*target.vx+
+                target.vy*target.vy) -
+                (c*c) / (a*a+b*b);
+              tmp = Math.sqrt(t);
+              if (tmp-Math.floor(tmp) > 0.5) tmp+=1.0;
+              doppler = (a*target.vy-b*target.vx) > 0 ?
+                -tmp : tmp;
+            }
+          }
+      }
+
+    // TODO: Teamplay.
+    //if (who->team && who->team == rob[target].team)
+    //  dist = 0;  /* Don't shoot own team member */
+    console.info( dist==0 ? 0 : doppler ); // XXX
+    return dist==0 ? 0 : doppler;
+  },
+
   count_active_robots: function() {
     var count = 0;
     for (var i = 0, robot; robot = this.robots[i]; i++) {
@@ -1101,6 +1150,7 @@ var Robot = Class.extend({
     this.vector = [];
     this.stack = [];
     this.ptr = 0;
+    this.last_ptr = 0;
     this.interrupts = new InterruptQueue();
 
     this.probe_variable = new Variable('DAMAGE');
@@ -1237,7 +1287,7 @@ var Robot = Class.extend({
         return;
       case 'CHANNEL':
         throw new Error('Teamplay not yet implemented');
-      case 'CHRONONS':
+      case 'CHRONON':
       case 'COLLISION':
       case 'DAMAGE':
       case 'DOPPLER':
@@ -1369,14 +1419,14 @@ var Robot = Class.extend({
         return 0;
       case 'CHANNEL':
         throw new Error('Teamplay not yet implemented');
-      case 'CHRONONS':
+      case 'CHRONON':
         return this.chronons;
       case 'COLLISION':
         return this.collision;
       case 'DAMAGE':
         return this.damage;
       case 'DOPPLER':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return this.arena.do_doppler(this);
       case 'ENERGY':
         return this.energy;
       case 'FIRE':
@@ -1574,9 +1624,9 @@ var Robot = Class.extend({
         // Some instructions have no cost, like DEBUG, thus they return 0.
         i -= this.step_one();
       } catch (e) {
-        var line = this.program.line_numbers[this.ptr];
-        var instruction = this.program.instructions[this.ptr];
-        console.error(this.name, 'error on line ' + line + ', before ' + instruction + ' - ' + e);
+        var line = this.program.line_numbers[this.last_ptr];
+        var instruction = this.program.instructions[this.last_ptr];
+        console.error(this.name, 'error on line ' + line + ', at ' + instruction + ' - ' + e);
         console.log(e.stack);
         this.is_running = false;
       }
@@ -1595,11 +1645,13 @@ var Robot = Class.extend({
   step_one: function() {
     this.debug_stack();
     var instruction = this.program.instructions[this.ptr];
-    if (instruction == undefined) {
+    if (this.ptr >= this.program.instructions.length)
       throw new Error('Program finished');
-    }
-    this.trace(instruction.toString(), this.debug_stack());
+    if (instruction == undefined)
+      throw new Error('Undefined instruction');
+    this.trace('L' + this.program.line_numbers[this.ptr], instruction.toString(), this.debug_stack());
 
+    this.last_ptr = this.ptr;
     this.ptr++;
 
     if (instruction instanceof Variable) {
@@ -1627,6 +1679,7 @@ var Robot = Class.extend({
   },
 
   push: function(value) {
+    // TODO: Truncate decimals.
     if (value == undefined)
       throw new Error('undefined pushed onto the stack');
     this.stack.push(value);
@@ -1677,12 +1730,14 @@ var Robot = Class.extend({
   },
 
   op_jump: function(address) {
+    address = Math.floor(address);
     this.trace('Go to', this.program.address_to_label[address]);
     this.ptr = address;
     return 1;
   },
 
   op_call: function(address) {
+    address = Math.floor(address);
     this.trace('Jumping to', this.program.address_to_label[address], 'with return');
     var return_addr = this.ptr;
     this.ptr = address;
@@ -1839,6 +1894,8 @@ var Robot = Class.extend({
       case 'INTOFF':
         this.interrupts.enabled = false;
         return 1;
+      case 'FLUSHINT':
+        throw new Error('TODO: Operator ' + op.name);
       case 'RTI': // Equivalent to INTON RETURN
         this.interrupts.enabled = true;
         this.op_jump(this.pop_number());
