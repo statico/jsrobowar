@@ -1263,14 +1263,16 @@ var Robot = Class.extend({
   },
 
   set_speed: function(axis, value) {
-    value = Math.max(-20, Math.min(20, value)); // TODO warn here?
-    value = parseInt(value);
-    this.energy -= Math.abs(value * 2);
+    value = parseInt(Math.max(-20, Math.min(20, value))); // TODO warn here?
     switch (axis) {
       case 'x':
+        var difference = Math.abs(this.vx - value) * 2;
+        this.energy -= difference;
         this.vx = value;
         break;
       case 'y':
+        var difference = Math.abs(this.vy - value) * 2;
+        this.energy -= difference;
         this.vy = value;
         break;
     }
@@ -1993,7 +1995,13 @@ var Scoreboard = Class.extend({
       label['energy'].attr('text', 'Energy: ' + robot.energy);
       label['damage'].attr('text', 'Damage: ' + robot.damage);
       label['shield'].attr('text', 'Shield: ' + robot.shield);
-      label['status'].attr('text', 'Status: ' + (robot.is_running ? 'running' : 'DEAD'));
+      label['status'].attr('text', 'Status: ' + (
+        robot.energy < 0 ? 'DRAINED' :
+        robot.stasis > 0 ? 'STASIS' :
+        robot.wall ? 'WALL' :
+        robot.collision ? 'COLLISION' :
+        robot.is_running ? 'alive' :
+        'DEAD'));
     }
   },
 
@@ -2019,7 +2027,9 @@ var SoundEffects = (function() {
   }
 
   function make_play_callback(name) {
-    return function() { load(name).play() };
+    // TODO: Fix audio to be less terrible.
+    //return function() { load(name).play() };
+    return function() {};
   }
 
   var obj = new Object();
