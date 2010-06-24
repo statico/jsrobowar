@@ -1419,6 +1419,12 @@ var Robot = Class.extend({
   },
 
   get_variable: function(name) {
+    // Resolve label names first. Some simpler bots have label names with the
+    // same name as variables.
+    if (name in this.program.label_to_address) {
+      return this.program.label_to_address[name];
+    }
+
     switch (name) {
       case 'AIM':
         return this.aim;
@@ -1521,9 +1527,6 @@ var Robot = Class.extend({
       default:
         if (name in this.registers) {
           return this.registers[name];
-        }
-        if (name in this.program.label_to_address) {
-          return this.program.label_to_address[name];
         }
         throw new Error('Unknown variable or label: "' + name + '"');
     }
