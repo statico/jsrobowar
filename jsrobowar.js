@@ -379,7 +379,7 @@ var Arena = Class.extend({
     var m = Math.sin((robot.aim + robot.look + 270) % 360);
     var n = -Math.sin((robot.aim + robot.look) % 360);
 
-    for (var i = 0, enemy; enemy = this.game.robots; i++) {
+    for (var i = 0, enemy; enemy = this.game.robots[i]; i++) {
       if (enemy == robot || !enemy.is_running) continue;
         var a = robot.x;
         var b = robot.y;
