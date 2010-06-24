@@ -1099,6 +1099,10 @@ var InterruptQueue = Class.extend({
     this.queue = this.queue.sort(function(a, b) { return INTERRUPTS[a] - INTERRUPTS[b] });
   },
 
+  flush: function() {
+    this.queue = [];
+  },
+
   has_next: function() {
     if (this.queue.length == 0) return false;
 
@@ -1229,7 +1233,7 @@ var Robot = Class.extend({
   },
 
   do_probe: function() {
-    var direction = fix360(robot.aim);
+    var direction = fix360(this.aim);
     var result = this.arena.find_nearest_robot(this, direction);
     var robot = result.object;
     if (!robot) return 0;
@@ -1763,10 +1767,11 @@ var Robot = Class.extend({
     return this.op_apply2(function(a, b) { return func(deg2rad(b)) * a });
   },
 
-  op_arctrig: function(func) {
+  op_arctrig: function(op, func) {
     return this.op_apply2(function(a, b) {
       var ratio = b / a;
-      if (ratio < -1 || ratio > 1) throw new Error('-1 < Num / Denom < 1 for ' + op.name);
+      if (ratio < -1 || ratio > 1)
+        throw new Error('-1 < Num / Denom < 1 for ' + op.name);
       return rad2deg(func(ratio));
     });
   },
@@ -1783,9 +1788,11 @@ var Robot = Class.extend({
       case '!': return this.op_apply2(function(a, b) { return b != a ? 1 : 0 });
       case '>': return this.op_apply2(function(a, b) { return b > a ? 1 : 0 });
       case '<': return this.op_apply2(function(a, b) { return b < a ? 1 : 0 });
+
       case 'AND': return this.op_apply2(function(a, b) { return a && b ? 1 : 0 });
       case 'OR': return this.op_apply2(function(a, b) { return a || b ? 1 : 0 });
-      case 'XOR': case 'EOR': return this.op_apply2(function(a, b) { return (a ? !b : !!b) ? 1 : 0 });
+      case 'XOR': case 'EOR':
+        return this.op_apply2(function(a, b) { return (a ? !b : !!b) ? 1 : 0 });
 
       case 'ABS': return this.op_apply1(Math.abs);
       case 'CHS': return this.op_apply1(function(x) {return x * -1});
@@ -1798,9 +1805,15 @@ var Robot = Class.extend({
       case 'SIN': case 'SINE': return this.op_trig(Math.sin);
       case 'COS': case 'COSSINE': return this.op_trig(Math.cos);
       case 'TAN': case 'TANGENT': return this.op_trig(Math.tan);
-      case 'ARCSIN': return this.op_arctrig(Math.asin);
-      case 'ARCCOS': return this.op_arctrig(Math.acos);
-      case 'ARCTAN': return this.op_arctrig(Math.atan);
+      case 'ARCSIN': return this.op_arctrig(op, Math.asin);
+      case 'ARCCOS': return this.op_arctrig(op, Math.acos);
+      case 'ARCTAN':
+        var y = this.pop_number();
+        var x = this.pop_number();
+        var result = Math.atan2(-y, x);  // Flip Y coord.
+        // Robowar's Engine/Arena.c does this, so I will:
+        this.push(parseInt(450.5 - rad2deg(result)) % 360);
+        return 1;
       case 'DIST':
         var dy = this.y - this.pop_number();
         var dx = this.x - this.pop_number();
@@ -1824,7 +1837,6 @@ var Robot = Class.extend({
         var value = this.vector[index] || 0;
         this.push((value < 0 || value > 100) ? 0 : value);
         return 1;
-
 
       case 'IF':
         var first = this.pop_number();
@@ -1909,7 +1921,8 @@ var Robot = Class.extend({
         this.interrupts.enabled = false;
         return 1;
       case 'FLUSHINT':
-        throw new Error('TODO: Operator ' + op.name);
+        this.interrupts.flush();
+        return 1;
       case 'RTI': // Equivalent to INTON RETURN
         this.interrupts.enabled = true;
         this.op_jump(this.pop_number());
@@ -1932,10 +1945,14 @@ var Robot = Class.extend({
           this.interrupts.set_param(v.name, value);
         }
         return 1;
+
+      case 'DEBUG':
+      case 'DEBUGGER':
+        // TODO: Debugging.
+        return 0;
       case 'BEEP':
         console.log('BEEP!');
         return 0;
-
       case 'PRINT':
         var size = this.stack.length;
         if (size) {

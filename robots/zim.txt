@@ -1,0 +1,1460 @@
+# Zim
+
+#!!NoStoWarnings
+
+Robots 2 > GroupMode ifg
+snd4
+600 range' setparam
+energy' probe' setparam
+LockFirst range' setint
+inton
+Icon2
+
+Search:
+    0 aim' store
+    50 aim' store
+    100 aim' store
+    150 aim' store
+    200 aim' store
+    250 aim' store
+    300 aim' store
+    350 aim' store
+    40 aim' store
+    90 aim' store
+    140 aim' store
+    190 aim' store
+    240 aim' store
+    290  aim' store
+    340 aim' store
+    30 aim' store
+    80 aim' store
+    130 aim' store
+    180 aim' store
+    230 aim' store
+    280 aim' store
+    330 aim' store
+    20 aim' store
+    70 aim' store
+    120 aim' store
+    170 aim' store
+    220 aim' store
+    270 aim' store
+    320 aim' store
+    10 aim' store
+    60 aim' store
+    110 aim' store
+    160 aim' store
+    210 aim' store
+    260 aim' store
+    310 aim' store
+    5 aim' store
+    55 aim' store
+    105 aim' store
+    155 aim' store
+    205 aim' store
+    255 aim' store
+    305 aim' store
+    355 aim' store
+    45 aim' store
+    95 aim' store
+    145 aim' store
+    195 aim' store
+    245 aim' store
+    295  aim' store
+    345 aim' store
+    35 aim' store
+    85 aim' store
+    135 aim' store
+    185 aim' store
+    235 aim' store
+    285 aim' store
+    335 aim' store
+    25 aim' store
+    75 aim' store
+    125 aim' store
+    175 aim' store
+    225 aim' store
+    275 aim' store
+    325 aim' store
+    15 aim' store
+    65 aim' store
+    115 aim' store
+    165 aim' store
+    215 aim' store
+    265 aim' store
+    315 aim' store
+    2 aim' store
+    52 aim' store
+    102 aim' store
+    152 aim' store
+    202 aim' store
+    252 aim' store
+    302 aim' store
+    352 aim' store
+    42 aim' store
+    92 aim' store
+    142 aim' store
+    192 aim' store
+    242 aim' store
+    292 aim' store
+    342 aim' store
+    32 aim' store
+    82 aim' store
+    132 aim' store
+    182 aim' store
+    232 aim' store
+    282 aim' store
+    332 aim' store
+    22 aim' store
+    72 aim' store
+    122 aim' store
+    172 aim' store
+    222 aim' store
+    272 aim' store
+    322 aim' store
+    12 aim' store
+    62 aim' store
+    112 aim' store
+    162 aim' store
+    212 aim' store
+    262 aim' store
+    312 aim' store
+    7 aim' store
+    57 aim' store
+    107 aim' store
+    157 aim' store
+    207 aim' store
+    257 aim' store
+    307 aim' store
+    357 aim' store
+    47 aim' store
+    97 aim' store
+    147 aim' store
+    197 aim' store
+    247 aim' store
+    297  aim' store
+    347 aim' store
+    37 aim' store
+    87 aim' store
+    137 aim' store
+    187 aim' store
+    237 aim' store
+    287 aim' store
+    337 aim' store
+    27 aim' store
+    77 aim' store
+    127 aim' store
+    177 aim' store
+    227 aim' store
+    277 aim' store
+    327 aim' store
+    17 aim' store
+    67 aim' store
+    117 aim' store
+    167 aim' store
+    217 aim' store
+    267 aim' store
+    317 aim' store
+  Collision HugSearch ifg
+  Robots 1 = Spying ifg
+  Search rti
+
+LookOutYouIdiot:
+  x 10 < LeftWallHit ifg
+  x 290 > RightWallHit ifg
+  y 10 < TopWallHit ifg
+  y 290 < Hold ifg
+  0 speedy'
+  290 y - movey' sto
+  sto
+  0 shield' sto
+  rti
+
+LeftWallHit:
+  0 speedx'
+  10 x - movex' sto
+  sto
+  0 shield' sto
+  rti
+
+TopWallHit:
+  0 speedy'
+  10 y - movey' sto
+  sto
+  0 shield' sto
+  rti
+
+RightWallHit:
+  0 speedx' sto
+  290 x - movex' sto
+  0 shield' sto
+  rti
+
+LockFirst:
+  range dup 60 < and Hug ifg
+  dropall
+  doppler -14 arctan aim + dup
+  14 sin speedx' sto
+  -14 cos speedy' sto
+  GetStarted range' setint
+  inton
+  sync
+  ReAcquire call
+
+GetStarted:
+  debug
+  range dup dup 50 < and Hug ifg
+  drop
+  doppler -14 arctan aim look + dup aim' sto  + dup
+  14 sin speedx' sto
+  -14  cos speedy' sto
+  dropall
+  GetStarted
+  sync
+   ReAcquire:
+  range' setint
+  -75 look' sto
+  75 look' sto
+  -60 look' sto
+  60 look' sto
+  -45 look' sto
+  45 look' sto
+  -30 look' sto
+  30 look' sto
+  12 look' sto
+  -12 look' sto
+  9 look' sto
+  -9 look' sto
+  6 look' sto
+  -6 look' sto
+  3 look' sto
+  -3 look' sto
+  15 look' sto
+  -15 look' sto
+  18 look' sto
+  -18 look' sto
+  21 look' sto
+  -21 look' sto
+  24 look' sto
+  -24 look' sto
+  27 look' sto
+  -27 look' sto
+  intoff
+  Collision HugSearch ifg
+  LockFirst range' setint
+  0 look' sto  
+  dropall
+  Search rti
+
+ReHug:
+  probe -20 < Slay ifg
+Hug:
+  aim look + dup range dup 2 roll sin movex' sto
+  chs cos movey' sto
+  0 aim' sto
+  range chs movey' sto
+  180 aim' sto
+  range movey' sto
+  270 aim' sto
+  range 1 + chs movex' sto
+  90 aim' sto
+  range 1 - movex' sto
+  0 speedx' sto
+  0 speedy' sto
+  0 look' sto
+  energy shield + 10 min shield' sto
+  sync
+  Collision not ReHugSearch ifg
+
+HugLoop:
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  energy dup 130 > HugSlay ifg
+  shield + 10 min shield' sto
+  damage' probe' setparam
+  probe dup 40 < and FinishOff ifg
+  energy' probe' setparam
+  probe -10 < energy 35 > and JustSlay ifg
+  sync
+  Collision not range 1 ! or ReHugSearch ifg
+  HugLoop jump
+  
+HugSearch:
+  Hug range' setint
+  MainHugSearch rti
+
+ReHugSearch:
+  ReHug range' setint
+  inton
+MainHugSearch:
+  0 aim' sto
+  90 aim' sto
+  180 aim' sto
+  270 aim' sto
+  30 aim' sto
+  120 aim' sto
+  210 aim' sto
+  300 aim' sto
+  60 aim' sto
+  150 aim' sto
+  240 aim' sto
+  330 aim' sto
+  intoff
+  LockFirst range' setint
+  dropall
+  Search rti
+
+Slay:
+  damage' probe' setparam
+  28 stunner' sto
+  5 hell' sto
+  probe 2 / 1 + missile' sto
+  sync
+  dropall
+  GroupMode jump
+
+HugSlay:
+  125 nuke' sto
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  x 150 > LeapLeft ifg
+  70 movex' sto
+  sync
+  dropall
+  GroupMode jump
+
+LeapLeft:
+  -70 movex' sto
+  sync
+  dropall
+  GroupMode jump
+
+FinishOff:
+  30 nuke' sto
+  energy shield + 75 max shield' sto
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  sync
+  GroupMode jump
+
+JustSlay:
+  x 150 < SlayRight ifg
+  -15 movex' sto
+  intoff
+  sync
+  5 hell' sto
+  damage' probe' setparam
+  probe 2 / 1 + missile' sto
+  intoff
+  sync
+  energy' probe' setparam
+  dropall
+  GroupMode jump
+
+SlayRight:
+  15 movex' sto
+  270 aim' sto
+  intoff
+  sync
+  5 hell' sto
+  damage' probe' setparam
+  probe 2 / 1 + missile' sto
+  intoff
+  sync
+  energy' probe' setparam
+  dropall
+  GroupMode jump
+
+Spying:
+  snd5
+  intoff
+  sync
+  Spying 2 + jump
+
+# "Boy, that is big.  Well, I guess
+# somebody appreciates that size *does*
+# matter..."
+
+GroupMode:
+  LookOutYouFool wall' setint
+  CheckCollide Collision' setint
+  energy' probe' setparam
+  1 4 vstore
+  1 5 vstore
+  1 6 vstore
+  1 11 vstore
+  1 12 vstore
+  1 13 vstore
+  1 14 vstore
+  1 15 vstore
+  16
+  x y > GroupStartNE ifg
+  300 x - y > GroupCheckW1 GroupCheckS1 ifeg
+
+GroupStartNE:
+  300 x - y > GroupCheckN1 GroupCheckE1 ifeg
+
+GroupCheckN1:
+  y 25 < StopNorth GroupCheckN ifeg
+
+GroupCheckW1:
+  x 25 < StopWest GroupCheckW ifeg
+
+GroupCheckE1:
+  x 275 > StopEast GroupCheckE ifeg
+
+GroupCheckS1:
+  y 275 > StopSouth GroupCheckS ifeg
+
+SwapStartN:
+  drop
+  2 / dup not StartNorth ifg
+
+GroupCheckN:
+  SwapStartE range' setint
+  inton
+  0 aim' sto
+  10 aim' sto
+  350 aim' sto
+  20 aim' sto
+  340 aim' sto
+  30 aim' sto
+  330 aim' sto
+  intoff
+
+StartNorth:
+  dropall
+  20 top' setparam
+  StopNorth top' setint
+  -9 speedy'
+  GroupMid jump
+
+SwapStartE:
+  drop
+  2 / dup not StartEast ifg
+
+GroupCheckE:
+  SwapStartS range' setint
+  inton
+  90 aim' sto
+  100 aim' sto
+  80 aim' sto
+  110 aim' sto
+  70 aim' sto
+  120 aim' sto
+  60 aim' sto
+  intoff
+
+StartEast:
+  dropall
+  280 right' setparam
+  StopEast right' setint
+  9 speedx'
+  GroupMid jump
+
+SwapStartS:
+  drop
+  2 / dup not StartSouth ifg
+
+GroupCheckS:
+  SwapStartW range' setint
+  inton
+  180 aim' sto
+  190 aim' sto
+  170 aim' sto
+  200 aim' sto
+  160 aim' sto
+  210 aim' sto
+  150 aim' sto
+  intoff
+
+StartSouth:
+  dropall
+  280 bottom' setparam
+  StopSouth bottom' setint
+  9 speedy'
+  GroupMid jump
+
+SwapStartW:
+  drop
+  2 / dup not StartWest ifg
+
+GroupCheckW:
+  SwapStartN range' setint
+  inton
+  270 aim' sto
+  260 aim' sto
+  280 aim' sto
+  250 aim' sto
+  290 aim' sto
+  240 aim' sto
+  300 aim' sto
+  intoff
+
+StartWest:
+  dropall
+  20 left' setparam
+  StopWest left' setint
+  -9 speedx'
+
+# Args on stack for where to go and how fast
+
+GroupMid:
+  ScareShot range' setint
+  20 radar' setparam
+  ShieldUp radar' setint
+#  energy 70 - shield + 100 min shield' sto
+  sto   # Start moving
+  inton
+
+MidLoop:
+  0 aim' sto
+  40 aim' sto
+  80 aim' sto
+  120 aim' sto
+  160 aim' sto
+  200 aim' sto
+  240 aim' sto
+  280 aim' sto
+  320 aim' sto
+  10 aim' sto
+  50 aim' sto
+  90 aim' sto
+  130 aim' sto
+  170 aim' sto
+  210 aim' sto
+  250 aim' sto
+  290 aim' sto
+  330 aim' sto
+  20 aim' sto
+  60 aim' sto
+  100 aim' sto
+  140 aim' sto
+  180 aim' sto
+  220 aim' sto
+  260 aim' sto
+  300 aim' sto
+  340 aim' sto
+  30 aim' sto
+  70 aim' sto
+  110 aim' sto
+  150 aim' sto
+  190 aim' sto
+  230 aim' sto
+  270 aim' sto
+  310 aim' sto
+  350 aim' sto
+  MidLoop rti
+
+LookOutYouFool:
+  x 290 > StopEast ifg
+  x 10 < StopWest ifg
+  y 290 > StopSouth ifg
+  y 10 > Hold ifg
+
+StopNorth:
+  0 shield' sto
+  -1 chronon' setint
+  0 speedy' sto
+  sync
+  10 y - movey' sto
+  energy 70 - shield + shield' sto
+  sync
+  x 150 > CheckNRight CheckNLeft ifeg
+
+StopEast:
+  0 shield' sto
+  -1 chronon' setint
+  0 speedx' sto
+  sync
+  290 x - movex' sto
+  energy 70 - shield + shield' sto
+  sync
+  y 150 > CheckEDown CheckEUp ifeg
+
+StopSouth:
+  0 shield' sto
+  -1 chronon' setint
+  0 speedy' sto
+  sync
+  290 y - movey' sto
+  energy 70 - shield + shield' sto
+  sync
+  x 150 > CheckSRight CheckSLeft ifeg
+  
+StopWest:
+  0 shield' sto
+  -1 chronon' setint
+  0 speedx' sto
+  sync
+  10 x - movex' sto
+  energy 70 - shield + shield' sto
+  sync
+  y 150 > CheckWDown CheckWUp ifeg
+
+CheckNRight:
+  ReturnNLeft2 range' setint
+  ReturnNRight1 inton
+
+NRightSearch:
+  90 aim' sto
+  93 aim' sto
+  96 aim' sto
+  99 aim' sto
+  102 aim' sto
+  105 aim' sto
+  108 aim' sto
+  111 aim' sto
+  115 aim' sto
+  120 aim' sto
+  intoff
+  return
+
+CheckNLeft:
+  ReturnNRight2 range' setint
+  ReturnNLeft1 inton
+
+NLeftSearch:
+  270 aim' sto
+  267 aim' sto
+  264 aim' sto
+  261 aim' sto
+  258 aim' sto
+  255 aim' sto
+  252 aim' sto
+  249 aim' sto
+  245 aim' sto
+  240 aim' sto
+  intoff
+  return
+
+CheckEDown:
+  ReturnEUp2 range' setint
+  ReturnEDown1 inton
+
+EDownSearch:
+  180 aim' sto
+  183 aim' sto
+  186 aim' sto
+  189 aim' sto
+  192 aim' sto
+  195 aim' sto
+  198 aim' sto
+  201 aim' sto
+  205 aim' sto
+  210 aim' sto
+  intoff
+  return
+
+CheckEUp:
+  ReturnEDown2 range' setint
+  ReturnEUp1 inton
+
+EUpSearch:
+  0 aim' sto
+  357 aim' sto
+  354 aim' sto
+  351 aim' sto
+  348 aim' sto
+  345 aim' sto
+  342 aim' sto
+  339 aim' sto
+  335 aim' sto
+  330 aim' sto
+  intoff
+  return
+
+CheckSRight:
+  ReturnSLeft2 range' setint
+  ReturnSRight1 inton
+
+SRightSearch:
+  90 aim' sto
+  87 aim' sto
+  84 aim' sto
+  81 aim' sto
+  78 aim' sto
+  75 aim' sto
+  72 aim' sto
+  69 aim' sto
+  65 aim' sto
+  60 aim' sto
+  intoff
+  return
+
+CheckSLeft:
+  ReturnSRight2 range' setint
+  ReturnSLeft1 inton
+
+SLeftSearch:
+  270 aim' sto
+  267 aim' sto
+  264 aim' sto
+  261 aim' sto
+  258 aim' sto
+  255 aim' sto
+  252 aim' sto
+  249 aim' sto
+  245 aim' sto
+  240 aim' sto
+  intoff
+  return
+
+CheckWUp:
+  ReturnWDown2 range' setint
+  ReturnWUp1 inton   
+
+WUpSearch:
+  0 aim' sto
+  3 aim' sto
+  6 aim' sto
+  9 aim' sto
+  12 aim' sto
+  15 aim' sto
+  18 aim' sto
+  21 aim' sto
+  25 aim' sto
+  30 aim' sto
+  intoff
+  return
+
+CheckWDown:
+  ReturnWUp2 range' setint
+  ReturnWDown1 inton   
+
+WDownSearch:
+  180 aim' sto
+  177 aim' sto
+  174 aim' sto
+  171 aim' sto
+  168 aim' sto
+  165 aim' sto
+  162 aim' sto
+  159 aim' sto
+  155 aim' sto
+  150 aim' sto
+  intoff
+  return
+
+# "And now, my Black Jackovini Lash! . . ."
+
+ScareShot:
+  probe -30 < InstaKill if
+  range dup 65 < and CloseKill ifg
+#  doppler -12 arctan aim + aim' sto
+ScareShot2:
+  random 40 < energy 40 > and ScareShot3 ifg
+  chronon dup c < HoldScare ifg
+  1 fire' sto
+  5 + c' sto
+  rti
+  
+ScareShot3:
+  chronon dup c < HoldScare ifg
+  12 hell' sto
+  25 fire' sto
+  5 + c' sto
+  rti
+
+HoldScare:
+  drop
+  rti
+
+# ". . . Down, girl! . . ."
+
+CornerShot:
+  probe range -7 / < InstaKill if
+  range dup 90 < and CloseKill ifg
+  aim 90 mod not WallShot ifg
+  doppler -12 arctan aim + aim' sto
+  energy 125 < ScareShot2 ifg
+  12 hell' sto
+  25 fire' sto
+  chronon 5 + c' sto
+Hold:
+  rti
+
+WallShot:
+  range dup 170 < and ProtectKill if
+  doppler -12 arctan aim + aim' sto
+  energy 125 < ScareShot2 ifg
+  12 hell' sto
+  25 fire' sto
+  chronon 5 + c' sto
+  sync
+  rti
+
+ProtectKill:
+  chronon z < swap ifg
+  damage' probe' setparam
+  probe 0 shield' sto
+  1 + 2 / fire' sto
+  range 21 / 4 + stunner' sto
+  12 hell' sto
+  chronon 40 + z' sto
+  snd5
+  sync
+  energy' probe' setparam
+  energy 100 - shield + 100 min shield' sto
+  rti
+  
+# ". . . Down, I said! . . ."
+
+CloseKill:
+  sync
+  range dup 90 < and not Hold ifg
+  damage' probe' setparam
+  probe
+  doppler -12 arctan aim + aim' sto
+  40 stunner' sto
+  5 hell' sto
+  1 + 2 / missile' sto
+#  0 shield' sto
+  energy shield + 18 + shield' sto
+  snd5
+  sync
+  0 shield' sto
+  energy' probe' setparam
+#  energy 100 - shield + 100 min shield' sto
+  rti
+
+# ". . . And again!"
+
+InstaKill:
+  energy 90 < swap ifg
+  12 hell' sto
+  damage' probe' setparam
+  probe 1 + 2 / fire' sto
+  snd5
+  energy' probe' setparam
+  sync
+  rti
+
+ShieldUp:
+  energy 35 - shield + 100 min shield' sto
+  chronon 2 + chronon' setparam
+  ShieldDown chronon' setint
+  rti
+
+ShieldDown:
+  0 shield' sto
+  -1 chronon' setint
+  rti
+
+# Northwest corner
+
+ArriveNW:
+  dropall
+  flushint
+  0 speedx' sto
+  0 speedy' sto
+  sync
+  10 x - movex' sto
+  10 y - movey' sto
+  energy 100 - shield + 100 min shield' sto
+  sync
+  inton
+  intoff
+  60 radar' setparam
+  CornerShot range' setint
+  DodgeNW radar' setint
+  inton
+
+NWLoop:
+  90 aim' sto
+  110 aim' sto
+  130 aim' sto
+  150 aim' sto
+  170 aim' sto
+  180 aim' sto
+  100 aim' sto
+  120 aim' sto
+  140 aim' sto
+  160 aim' sto
+  180 aim' sto
+  95 aim' sto
+  115 aim' sto
+  135 aim' sto
+  155 aim' sto
+  175 aim' sto
+  105 aim' sto
+  125 aim' sto
+  145 aim' sto
+  165 aim' sto
+  Robots 3 < SoloSwitch if
+  NWLoop rti
+
+DodgeNW:
+  radar sync radar - vrecall not Hold ifg
+  aim 135 > DodgeNRight ifg
+
+DodgeWDown:
+  6 speedy' sto
+  90 bottom' setparam
+  ReturnWUp bottom' setint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  ScareShot range' setint
+  dropall
+  flushint
+  WestWallLoop rti
+
+DodgeNRight:
+  6 speedx' sto
+  90 right' setparam
+  ReturnNLeft right' setint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  ScareShot range' setint
+  dropall
+  flushint
+  NorthWallLoop rti
+
+ReturnNLeft1:
+  x 20 < ArriveNW ifg
+ReturnNLeft2:
+  NorthWallLoop 
+  ScareShot range' setint
+ReturnNLeft:
+  Robots 3 < SoloSwitch ifg
+  17 left' setparam
+  ArriveNW left' setint
+  shield 16 - shield' sto
+  -6 speedx' sto
+  rti
+
+ReturnWUp1:
+  y 20 < ArriveNW ifg
+ReturnWup2:
+  WestWallLoop
+  ScareShot range' setint
+ReturnWUp:
+  Robots 3 < SoloSwitch ifg
+  17 top' setparam
+  ArriveNW top' setint
+  shield 16 - shield' sto
+  -6 speedy' sto
+  rti
+
+# Northeast corner
+
+ArriveNE:
+  dropall
+  flushint
+  0 speedx' sto
+  0 speedy' sto
+  sync
+  290 x - movex' sto
+  10 y - movey' sto
+  energy 100 - shield + 100 min shield' sto
+  sync
+  inton
+  intoff
+  60 radar' setparam
+  CornerShot range' setint
+  DodgeNE radar' setint
+  inton
+
+NELoop:
+  180 aim' sto
+  200 aim' sto
+  220 aim' sto
+  240 aim' sto
+  260 aim' sto
+  270 aim' sto
+  190 aim' sto
+  210 aim' sto
+  230 aim' sto
+  250 aim' sto
+  270 aim' sto
+  185 aim' sto
+  205 aim' sto
+  225 aim' sto
+  245 aim' sto
+  265 aim' sto
+  195 aim' sto
+  215 aim' sto
+  235 aim' sto
+  255 aim' sto
+  Robots 3 < SoloSwitch if
+  NELoop rti
+
+DodgeNE:
+  radar sync radar - vrecall
+    not Hold ifg
+  aim 225 > DodgeEDown ifg
+
+DodgeNLeft:
+  -6 speedx' sto
+  dropall
+  flushint
+  210 left' setparam
+  ReturnNRight left' setint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  ScareShot range' setint
+  NorthWallLoop rti
+
+DodgeEDown:
+  6 speedy' sto
+  dropall
+  flushint
+  90 bottom' setparam
+  ReturnEUp bottom' setint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  ScareShot range' setint
+  EastWallLoop rti
+
+ReturnNRight1:
+  x 280 > ArriveNE ifg
+ReturnNRight2:
+  NorthWallLoop
+  ScareShot range' setint
+ReturnNRight:
+  Robots 3 < SoloSwitch ifg
+  283 right' setparam
+  ArriveNE right' setint
+  shield 16 - shield' sto
+  6 speedx' sto
+  rti
+    
+ReturnEUp1:
+  y 20 < ArriveNE ifg
+ReturnEUp2:
+  EastWallLoop
+  ScareShot range' setint
+ReturnEUp:
+  Robots 3 < SoloSwitch ifg
+  17 top' setparam
+  ArriveNE top' setint
+  shield 16 - shield' sto
+  -6 speedy' sto
+  rti
+
+# Southeast corner
+
+ArriveSE:
+  dropall
+  flushint
+  0 speedx' sto
+  0 speedy' sto
+  sync
+  290 x - movex' sto
+  290 y - movey' sto
+  energy 100 - shield + 100 min shield' sto
+  sync
+  inton
+  intoff
+  60 radar' setparam
+  DodgeSE radar' setint
+  CornerShot range' setint
+  inton
+
+SELoop:
+  0 aim' sto
+  340 aim' sto
+  320 aim' sto
+  300 aim' sto
+  280 aim' sto
+  270 aim' sto
+  350 aim' sto
+  330 aim' sto
+  310 aim' sto
+  290 aim' sto
+  270 aim' sto
+  355 aim' sto
+  335 aim' sto
+  315 aim' sto
+  295 aim' sto
+  275 aim' sto
+  345 aim' sto
+  325 aim' sto
+  305 aim' sto
+  285 aim' sto
+  Robots 3 < SoloSwitch if
+  SELoop rti
+
+DodgeSE:
+  radar sync radar - vrecall
+    not Hold ifg
+  aim 10 sin 7 / DodgeEUp ifg
+
+DodgeSLeft:
+  -6 speedx' sto
+  dropall 
+  flushint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  210 left' setparam
+  ReturnSRight left' setint
+  ScareShot range' setint
+  SouthWallLoop rti
+
+DodgeEUp:
+  -6 speedy' sto
+  dropall
+  flushint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  210 top' setparam
+  ReturnEDown top' setint
+  ScareShot range' setint
+  EastWallLoop rti
+
+ReturnSRight1:
+  x 280 > ArriveSE ifg
+ReturnSRight2:
+  SouthWallLoop
+  ScareShot range' setint
+ReturnSRight:
+  Robots 3 < SoloSwitch ifg
+  283 right' setparam
+  ArriveSE right' setint
+  shield 16 - shield' sto
+  6 speedx' sto
+  rti
+
+ReturnEDown1:
+  y 280 > ArriveSE ifg
+ReturnEDown2:
+  EastWallLoop
+  ScareShot range' setint
+ReturnEDown:
+  Robots 3 < SoloSwitch ifg
+  283 bottom' setparam
+  ArriveSE bottom' setint
+  shield 16 - shield' sto
+  6 speedy' sto
+  rti
+
+# Southwest corner
+
+ArriveSW:
+  dropall
+  flushint
+  0 speedx' sto
+  0 speedy' sto
+  sync
+  10 x - movex' sto
+  290 y - movey' sto
+  energy 100 - shield + 100 min shield' sto
+  sync
+  inton
+  intoff
+  60 radar' setparam
+  DodgeSW radar' setint
+  CornerShot range' setint
+  inton
+
+SWLoop:
+  0 aim' sto
+  20 aim' sto
+  40 aim' sto
+  60 aim' sto
+  80 aim' sto
+  90 aim' sto
+  10 aim' sto
+  30 aim' sto
+  50 aim' sto
+  70 aim' sto
+  90 aim' sto
+  5 aim' sto
+  25 aim' sto
+  45 aim' sto
+  65 aim' sto
+  85 aim' sto
+  15 aim' sto
+  35 aim' sto
+  55 aim' sto
+  75 aim' sto
+  Robots 3 < SoloSwitch if
+  SWLoop rti
+
+DodgeSW:
+  radar sync radar - vrecall
+    not Hold ifg
+  aim 45 > DodgeWUp ifg
+
+DodgeSRight:
+  7 speedx' sto
+  dropall
+  flushint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  120 right' setparam
+  ReturnSLeft right' setint
+  ScareShot range' setint
+  SouthWallLoop rti
+
+DodgeWUp:
+  -7 speedy' sto
+  dropall
+  flushint
+  25 radar' setparam
+  ShieldUp radar' setint
+#  -1 radar' setint
+  180 top' setparam
+  ReturnWDown top' setint
+  ScareShot range' setint
+  WestWallLoop rti
+
+ReturnSLeft1:
+  x 20 < ArriveSW ifg
+ReturnSLeft2:
+  SouthWallLoop  
+  ScareShot range' setint
+ReturnSLeft:
+  Robots 3 < SoloSwitch ifg
+  20 left' setparam
+  ArriveSW left' setint
+  shield 16 - shield' sto
+  -9 speedx' sto
+  rti
+
+ReturnWDown1:
+  y 280 > ArriveSW ifg
+ReturnWDown2:
+  WestWallLoop
+  ScareShot range' setint
+ReturnWDown:
+  Robots 3 < SoloSwitch ifg
+  280 bottom' setparam
+  ArriveSW bottom' setint
+  shield 16 - shield' sto
+  9 speedy' sto
+  rti
+
+# Wall loops
+
+WestWallLoop:
+  0 aim' sto
+  30 aim' sto
+  60 aim' sto
+  90 aim' sto
+  120 aim' sto
+  150 aim' sto
+  180 aim' sto
+  10 aim' sto
+  40 aim' sto
+  70 aim' sto
+  100 aim' sto
+  130 aim' sto
+  160 aim' sto
+  20 aim' sto
+  50 aim' sto
+  80 aim' sto
+  110 aim' sto
+  140 aim' sto
+  170 aim' sto
+  WestWallLoop rti
+
+NorthWallLoop:
+  90 aim' sto
+  120 aim' sto
+  150 aim' sto
+  180 aim' sto
+  210 aim' sto
+  240 aim' sto
+  270 aim' sto
+  100 aim' sto
+  130 aim' sto
+  160 aim' sto
+  190 aim' sto
+  220 aim' sto
+  250 aim' sto
+  110 aim' sto
+  140 aim' sto
+  170 aim' sto
+  200 aim' sto
+  230 aim' sto
+  260 aim' sto
+  NorthWallLoop rti
+
+EastWallLoop:
+  180 aim' sto
+  210 aim' sto
+  240 aim' sto
+  270 aim' sto
+  300 aim' sto
+  330 aim' sto
+  0 aim' sto
+  190 aim' sto
+  220 aim' sto
+  250 aim' sto
+  280 aim' sto
+  310 aim' sto
+  340 aim' sto
+  200 aim' sto
+  230 aim' sto
+  260 aim' sto
+  290 aim' sto
+  320 aim' sto
+  350 aim' sto
+  EastWallLoop rti
+
+SouthWallLoop:
+  270 aim' sto
+  300 aim' sto
+  330 aim' sto
+  0 aim' sto
+  30 aim' sto
+  60 aim' sto
+  90 aim' sto
+  280 aim' sto
+  310 aim' sto
+  340 aim' sto
+  10 aim' sto
+  40 aim' sto
+  70 aim' sto
+  290 aim' sto
+  320 aim' sto
+  350 aim' sto
+  20 aim' sto
+  50 aim' sto
+  80 aim' sto
+  SouthWallLoop rti
+
+# "Now we can get down to business without
+# interference or interruptions from any
+# of _them_."
+
+SoloSwitch:
+  snd6
+  -1 radar' setint
+  LockFirst range' setint
+  -1 chronon' setint
+  0 speedx' sto
+  0 speedy' sto
+  energy 100 - shield + 100 min shield' sto
+  -1 left' setint
+  -1 right' setint
+  -1 top' setint
+  -1 bottom' setint
+  -1 Collision' setint
+  Search rti
+
+CheckCollide:
+  CollideKill range' setint
+  0 radar' setparam
+  inton
+  0 aim' sto
+  30 aim' sto
+  60 aim' sto
+  90 aim' sto
+  120 aim' sto
+  150 aim' sto
+  180 aim' sto
+  210 aim' sto
+  240 aim' sto
+  270 aim' sto
+  300 aim' sto
+  330 aim' sto
+  intoff
+  Collision HugSearch GroupMode ifeg
+
+CollideKill:
+  range dup 10 < and Hug ifg
+  range 40 > CollideHold ifg
+  75 missile' 5 hell' sto sto
+  energy 10 + shield + shield' sto
+  sync
+  0 speedx' sto
+  0 speedy' sto
+  GroupMode jump
+
+CollideHold:
+  rti
+
+#!! NoStoWarnings
