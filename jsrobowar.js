@@ -1165,7 +1165,7 @@ var Robot = Class.extend({
     this.history = [];
     for (var i = 1; i <= 50; i++) this.history[i] = 0;
 
-    this.aim = 0;
+    this.aim = 90;
     this.scan = 0;
     this.look = 0;
     this.energy = this.max_energy;
