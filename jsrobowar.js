@@ -71,7 +71,7 @@ function deg2rad(degrees) {
 }
 
 function rad2deg(radians) {
-  return Math.floor(radians * (180 / Math.PI));
+  return parseInt(radians * (180 / Math.PI));
 }
 
 function unique(seq) {
@@ -123,8 +123,8 @@ var Game = Class.extend({
     var h = this.arena.height;
     var overlap = true;
     while (overlap) {
-      robot.x = Math.floor(Math.random() * w * .8 + w * .1);
-      robot.y = Math.floor(Math.random() * h * .8 + h * .1);
+      robot.x = parseInt(Math.random() * w * .8 + w * .1);
+      robot.y = parseInt(Math.random() * h * .8 + h * .1);
       overlap = false;
       for (var i = 0, other; other = this.robots[i]; i++) {
         overlap = overlap || robot.is_touching(other);
@@ -204,7 +204,7 @@ var Game = Class.extend({
               if (p.is_emp) {
                 a.energy = 0;
               } else if (p.is_stasis) {
-                a.stasis += Math.floor(p.value / 4);
+                a.stasis += parseInt(p.value / 4);
               } else {
                 a.damage -= p.value;
               }
@@ -403,7 +403,7 @@ var Arena = Class.extend({
                 target.vy*target.vy) -
                 (c*c) / (a*a+b*b);
               tmp = Math.sqrt(t);
-              if (tmp-Math.floor(tmp) > 0.5) tmp+=1.0;
+              if (tmp-parseInt(tmp) > 0.5) tmp+=1.0;
               doppler = (a*target.vy-b*target.vx) > 0 ?
                 -tmp : tmp;
             }
@@ -560,7 +560,7 @@ var Stunner = Projectile.extend({
 
   init: function(energy) {
     this._super();
-    this.value = Math.floor(energy / 4);
+    this.value = parseInt(energy / 4);
     this.speed = 14;
     this.is_stasis = true;
   },
@@ -584,7 +584,7 @@ var RubberBullet = Projectile.extend({
 
   init: function(energy) {
     this._super();
-    this.value = Math.floor(energy / 2);
+    this.value = parseInt(energy / 2);
   },
 
 });
@@ -1224,7 +1224,7 @@ var Robot = Class.extend({
   shoot: function(type, amount) {
     amount = Math.min(amount, this.max_energy);
     this.arena.shoot(this, type, amount);
-    this.energy -= Math.floor(amount);
+    this.energy -= parseInt(amount);
     // TOOD can't move and shoot
   },
 
@@ -1248,8 +1248,8 @@ var Robot = Class.extend({
   },
 
   teleport: function(axis, energy) {
-    var distance = Math.floor(energy / 2);
-    this.energy -= Math.floor(energy);
+    var distance = parseInt(energy / 2);
+    this.energy -= parseInt(energy);
     var r = this.radius;
     switch (axis) {
       case 'x':
@@ -1264,7 +1264,7 @@ var Robot = Class.extend({
 
   set_speed: function(axis, value) {
     value = Math.max(-20, Math.min(20, value)); // TODO warn here?
-    value = Math.floor(value);
+    value = parseInt(value);
     this.energy -= Math.abs(value * 2);
     switch (axis) {
       case 'x':
@@ -1475,7 +1475,7 @@ var Robot = Class.extend({
       case 'RADAR':
         return this.arena.do_radar(this);
       case 'RANDOM':
-        return Math.floor(Math.random() * 360);
+        return parseInt(Math.random() * 360);
       case 'RANGE':
         return this.arena.do_range(this);
       case 'RIGHT':
@@ -1739,14 +1739,14 @@ var Robot = Class.extend({
   },
 
   op_jump: function(address) {
-    address = Math.floor(address);
+    address = parseInt(address);
     this.trace('Go to', this.program.address_to_label[address]);
     this.ptr = address;
     return 1;
   },
 
   op_call: function(address) {
-    address = Math.floor(address);
+    address = parseInt(address);
     this.trace('Jumping to', this.program.address_to_label[address], 'with return');
     var return_addr = this.ptr;
     this.ptr = address;
@@ -1773,7 +1773,7 @@ var Robot = Class.extend({
       case '+': return this.op_apply2(function(a, b) { return b + a });
       case '-': return this.op_apply2(function(a, b) { return b - a });
       case '*': return this.op_apply2(function(a, b) { return b * a });
-      case '/': return this.op_apply2(function(a, b) { return Math.floor(b / a) });
+      case '/': return this.op_apply2(function(a, b) { return parseInt(b / a) });
       case '=': return this.op_apply2(function(a, b) { return b == a ? 1 : 0 });
       case '!': return this.op_apply2(function(a, b) { return b != a ? 1 : 0 });
       case '>': return this.op_apply2(function(a, b) { return b > a ? 1 : 0 });
