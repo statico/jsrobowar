@@ -62,6 +62,7 @@
 
 <script type="text/javascript">
   var game = undefined; // Really? I have to set this as undefined? C'mon...
+  var bot1 = 'pearl', bot2 = 'silo-iv';
 
   $(document).ready(function() {
 
@@ -86,7 +87,7 @@
         return;
       }
 
-      var r1 = new Robot('Player 1', $('#color1').val(), program1);
+      var r1 = new Robot(bot1, $('#color1').val(), program1);
       r1.max_energy = 60;
       r1.starting_damage = 150;
       r1.max_shield = 0;
@@ -95,7 +96,7 @@
       //r1.set_trace(true);
       game.add_robot(r1);
 
-      var r2 = new Robot('Player 2', $('#color2').val(), program2);
+      var r2 = new Robot(bot2, $('#color2').val(), program2);
       r2.max_energy = 100;
       r2.starting_damage = 150;
       r2.max_shield = 25;
@@ -111,8 +112,8 @@
       if (game) game.stop();
     });
 
-    $('#code1').load('robots/archivist.txt', function() {
-    $('#code2').load('robots/dark-knight.txt', function() {
+    $('#code1').load('robots/' + bot1 + '.txt', function() {
+    $('#code2').load('robots/' + bot2 + '.txt', function() {
     $('#play').click(); //XXX
     });
     });

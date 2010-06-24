@@ -1,0 +1,14 @@
+{Ghost - Deadlier than its AD&D counterpart
+Matthew Sakai
+IX a.d. Kal. May anno domini MCMXC (4/23/90)}
+
+start: random 72 / 1 + speedx' store random 72 / 1 + speedy' store speedy speedx arctan aim' store main jump
+main: x 200 > negx if energy 140 > shoot if y 200 > negy if radar rund if x 100 < posx if y 100 < posy if range runn if main jump
+negx: random -72 / 1 - speedx' store speedx speedy arctan aim' store return
+negy: random -72 / 1 - speedy' store speedx speedy arctan aim' store return
+posx: random 72 / 1 + speedx' store speedx speedy arctan aim' store return
+posy: random 72 / 1 + speedy' store speedx speedy arctan aim' store return
+shoot: 20 missile' store speedx chs speedx' store speedy chs speedy' store aim 180 + aim' store return
+rund: radar 80 < junk if speedx chs speedx' store speedy chs speedy' store aim 180 + aim' store return
+runn: range 80 < junk if speedx chs speedx' store speedy chs speedy' store aim 180 + aim' store return
+junk: drop return

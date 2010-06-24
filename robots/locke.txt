@@ -1,4 +1,3 @@
-	<source checksum="MD5:fc5ae5b252f22c3cc93d1ac7e7967888">
 #Locke v18
 #Occasionally referred to as "Locke II 2"
 #By Randy Munroe
@@ -1692,4 +1691,3 @@ return
 
 
 #!! NoStoWarnings
-	</source>

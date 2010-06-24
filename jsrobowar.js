@@ -71,7 +71,7 @@ function deg2rad(degrees) {
 }
 
 function rad2deg(radians) {
-  return radians * (180 / Math.PI);
+  return Math.floor(radians * (180 / Math.PI));
 }
 
 function unique(seq) {
@@ -79,6 +79,12 @@ function unique(seq) {
   for (var i = 0; i < seq.length; i++) o[seq[i]] = 1;
   for (var e in o) a.push(e);
   return a;
+}
+
+function pad(str, length) {
+  while (str.length < length)
+    str = str + ' ';
+  return str;
 }
 
 var LAYER_ARENA = 0;
@@ -145,7 +151,8 @@ var Game = Class.extend({
       // Update robots.
       for (var i = 0, robot; robot = self.robots[i]; i++) {
         var x = robot.x, y = robot.y, r = robot.radius;
-        robot.wall = (x <= r || y <= r || x >= w - r || y >= h - r);
+        robot.wall = (x < r || y < r || x > w - r || y > h - r);
+        // XXX Not sure if the above is correct. Should be <=/=> ?
 
         // Save the current X and Y of the robot in case one tries to move while touching.
         robot.old_x = x;
@@ -577,7 +584,7 @@ var RubberBullet = Projectile.extend({
 
   init: function(energy) {
     this._super();
-    this.value = energy * 0.5;
+    this.value = Math.floor(energy / 2);
   },
 
 });
@@ -1140,7 +1147,7 @@ var Robot = Class.extend({
     this.is_running = true;
     this.chronons = 0;
     this.radius = 8;
-    this.max_energy = 100;
+    this.max_energy = 150;
     this.max_shield = 30;
     this.starting_damage = 100;
     this.bullet_type = 'NORMAL';
@@ -1217,7 +1224,7 @@ var Robot = Class.extend({
   shoot: function(type, amount) {
     amount = Math.min(amount, this.max_energy);
     this.arena.shoot(this, type, amount);
-    this.energy -= amount;
+    this.energy -= Math.floor(amount);
     // TOOD can't move and shoot
   },
 
@@ -1240,9 +1247,9 @@ var Robot = Class.extend({
     }
   },
 
-  translate: function(axis, energy) {
+  teleport: function(axis, energy) {
     var distance = Math.floor(energy / 2);
-    this.energy -= energy;
+    this.energy -= Math.floor(energy);
     var r = this.radius;
     switch (axis) {
       case 'x':
@@ -1257,6 +1264,7 @@ var Robot = Class.extend({
 
   set_speed: function(axis, value) {
     value = Math.max(-20, Math.min(20, value)); // TODO warn here?
+    value = Math.floor(value);
     this.energy -= Math.abs(value * 2);
     switch (axis) {
       case 'x':
@@ -1335,10 +1343,10 @@ var Robot = Class.extend({
         this.shoot(name, value);
         return;
       case 'MOVEX':
-        this.translate('x', value);
+        this.teleport('x', value);
         return;
       case 'MOVEY':
-        this.translate('y', value);
+        this.teleport('y', value);
         return;
       case 'NUKE':
         this.shoot(name, value);
@@ -1422,7 +1430,7 @@ var Robot = Class.extend({
       case 'CHRONON':
         return this.chronons;
       case 'COLLISION':
-        return this.collision;
+        return this.collision ? 1 : 0;
       case 'DAMAGE':
         return this.damage;
       case 'DOPPLER':
@@ -1526,7 +1534,7 @@ var Robot = Class.extend({
     if (this.stasis > 0) {
       this.stasis--;
       this.trace('In stasis for ' + this.stasis + ' more chronons');
-      continue;
+      return;
     }
 
     this.energy = Math.min(this.max_energy, this.energy + 2);
@@ -1632,11 +1640,9 @@ var Robot = Class.extend({
       }
     }
 
-    if (this.energy > 0) {
-      var r = this.radius;
-      this.x = Math.max(r, Math.min(this.arena.width - r, this.x + this.vx));
-      this.y = Math.max(r, Math.min(this.arena.height - r, this.y + this.vy));
-    };
+    var r = this.radius;
+    this.x = Math.max(r, Math.min(this.arena.width - r, this.x + this.vx));
+    this.y = Math.max(r, Math.min(this.arena.height - r, this.y + this.vy));
 
     this.was_already_colliding = this.collision;
     this.was_already_on_wall = this.wall;
@@ -1649,7 +1655,10 @@ var Robot = Class.extend({
       throw new Error('Program finished');
     if (instruction == undefined)
       throw new Error('Undefined instruction');
-    this.trace('L' + this.program.line_numbers[this.ptr], instruction.toString(), this.debug_stack());
+    this.trace(
+      pad('L' + this.program.line_numbers[this.ptr], 6),
+      pad('' + instruction.toString(), 15),
+      this.debug_stack());
 
     this.last_ptr = this.ptr;
     this.ptr++;
@@ -1764,7 +1773,7 @@ var Robot = Class.extend({
       case '+': return this.op_apply2(function(a, b) { return b + a });
       case '-': return this.op_apply2(function(a, b) { return b - a });
       case '*': return this.op_apply2(function(a, b) { return b * a });
-      case '/': return this.op_apply2(function(a, b) { return b / a });
+      case '/': return this.op_apply2(function(a, b) { return Math.floor(b / a) });
       case '=': return this.op_apply2(function(a, b) { return b == a ? 1 : 0 });
       case '!': return this.op_apply2(function(a, b) { return b != a ? 1 : 0 });
       case '>': return this.op_apply2(function(a, b) { return b > a ? 1 : 0 });
