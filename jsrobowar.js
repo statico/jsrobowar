@@ -322,32 +322,30 @@ var Arena = Class.extend({
   },
 
   find_nearest_object: function(observer, direction, objects) {
-    var SCAN_DEGREES = 10;  // In robowar.pdf under 'RADAR'.
-    var theta = SCAN_DEGREES * (Math.PI + Math.PI) / 360;
-    var aim_radians = direction * (Math.PI + Math.PI) / 360;
+    // A port of RoboWar 4.5.2's Engine/Projectile.c radar()
+    var theta, range, close = Number.MAX_VALUE, close_obj;
+    var x = observer.x;
+    var y = observer.y;
+    var scan = fix360(direction);
 
-    var closest = {object: undefined, distance: 0};
+    for (var i = 0, cur; cur = objects[i]; i++) {
+      if (cur == observer) continue;
 
-    for (var i = 0, enemy; enemy = objects[i]; i++) {
-      if (enemy == observer) continue;
+      theta = parseInt((450 - rad2deg(Math.atan2(y-cur.y, cur.x-x))) % 360);
 
-      // Stolen from JRoboWar (lucas@elmorian.zetnet.co.uk), who got it right.
-      var dx = observer.x - enemy.x;
-      var dy = observer.y - enemy.y;
-      if (dx != 0 && dy != 0 && enemy.radius > 0) {
-        var distance = Math.sqrt( (dx * dx) + (dy * dy) );
-        var enemy_dir = Math.atan2(dx, -dy) + Math.PI;
-
-        if (Math.abs(aim_radians - enemy_dir) < theta / 2) {
-          if (closest.distance == 0 || closest.distance > distance) {
-            closest.distance = distance;
-            closest.object = enemy;
-          }
+      if ((Math.abs(theta - scan) < 20) || (Math.abs(theta - scan) > 340)) {
+        range = (y - cur.y) * parseInt(y - cur.y) +
+            (x - cur.x) * parseInt(x - cur.x);
+        if (range < close) {
+          close = range;
+          close_obj = cur;
         }
       }
     }
 
-    return closest;
+    if (close == Number.MAX_VALUE) result = 0;
+    else result = Math.sqrt(close);
+    return {object: close_obj, distance: result};
   },
 
   find_nearest_robot: function(observer, direction) {
@@ -413,7 +411,6 @@ var Arena = Class.extend({
     // TODO: Teamplay.
     //if (who->team && who->team == rob[target].team)
     //  dist = 0;  /* Don't shoot own team member */
-    console.info( dist==0 ? 0 : doppler ); // XXX
     return dist==0 ? 0 : doppler;
   },
 
@@ -1951,7 +1948,7 @@ var Robot = Class.extend({
         // TODO: Debugging.
         return 0;
       case 'BEEP':
-        console.log('BEEP!');
+        console.info('BEEP!');
         return 0;
       case 'PRINT':
         var size = this.stack.length;
