@@ -1,9 +1,8 @@
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 60, Damage: 150, Shield: 0, CPU: 30, Bullets: rubber
+}
 
-#Energy 60
-#Damage 150
-#Shields 0
-#Processor 30
-#Explosive bullets
 Start:
     x 150 < StartLeft ifg
 StartRight:

@@ -1,29 +1,31 @@
 {
-
-                                            T H E   R E V E N G E   O F   D A R K   K N I G H T
-
-
-    Written By Peter Strˆm
-
-                Completed 2005
-
-Credits:
-    Code                     -   Peter Strˆm
-
-    Sounds, Icons      -   Stolen from computer games
-
-This robot performs well in my tests, but I expect the competition in the Titan cathegory to be fierce this time. I hope it will have a chance for at least Titan 2nd place.
-
-It's really bad when the artist have to "explain" this icon, I know, but shield is supposed to glow in some medieval magical way when its shielding.
-
-This robot is, as the name already revealed, based on The Dark Knight which won T18. The group mode is totally new however, and is rather exprimental an non-mainstream.
-
-Peter Strˆm
-
-
-
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 150, Shield: 100, CPU: 50, Bullets: explosive, +all
 }
 
+{
+  T H E   R E V E N G E   O F   D A R K   K N I G H T
+
+    Written By Peter Strˆm
+    Completed 2005
+
+  Credits:
+    Code - Peter Strˆm
+    Sounds, Icons - Stolen from computer games
+
+  This robot performs well in my tests, but I expect the competition in the
+  Titan cathegory to be fierce this time. I hope it will have a chance for at
+  least Titan 2nd place.
+
+  It's really bad when the artist have to "explain" this icon, I know, but
+  shield is supposed to glow in some medieval magical way when its shielding.
+
+  This robot is, as the name already revealed, based on The Dark Knight which
+  won T18. The group mode is totally new however, and is rather exprimental an
+  non-mainstream.
+
+  Peter Strˆm
+}
 
 Start:
 robots 2 > GroupMode ifg

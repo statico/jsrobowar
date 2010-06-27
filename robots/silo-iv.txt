@@ -1,3 +1,8 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 100, Damage: 150, Shield: 0, CPU: 15, Bullets: rubber, +missiles
+}
+
 {An improvement without TacNuke...}
 {Matthew Sakai, 1/16/90}
 start: random aim' store 2 speedx' store 3 speedy' store

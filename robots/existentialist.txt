@@ -1,3 +1,8 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 100, Shield: 0, CPU: 15, Bullets: rubber, +missiles
+}
+
 {Existentialist - Life has no meaning what is given it through our actions.  (Life is like an onion ring, which also has no meaning except that which we chose to give it.)
 Matthew Sakai (a.k.a. The Great Prophet Alwyn)
 VII a.d. Kal. May anno domini MCMXC (4/25/90)}

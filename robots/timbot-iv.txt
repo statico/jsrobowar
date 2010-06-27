@@ -1,3 +1,8 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 100, Damage: 100, Shield: 0, CPU: 15, Bullets: norbal
+}
+
 # TimBot IV
 # (c) 1990 Tim Seufert
 # 1/5/90

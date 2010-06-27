@@ -1,10 +1,7 @@
-#Energy 150
-#Damage 150
-#Shields 0
-#Processor 15
-#Normal Bullets
-#   Stationary Gun Turret
-#   by [your name here]
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 150, Damage: 150, Shield: 0, CPU: 15, Bullets: normal
+}
 
 Main:
     range 0 > shoot if

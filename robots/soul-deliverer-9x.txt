@@ -1,15 +1,20 @@
-{********* Soul Deliverer *********}
-
-{    By Lucas Dixon - age 15
-
-Contact me (if you want) at:                    Elmorian@astral.demon.co.uk
-
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 150, Shield: 100, CPU: 50, Bullets: rubber, +missiles, +hellbores, +probes
 }
 
-{ 
+{
+  ********* Soul Deliverer *********
+  By Lucas Dixon - age 15
+
+  Contact me (if you want) at:
+  Elmorian@astral.demon.co.uk
+}
+
+{
 The inspiration:
 Fare thee well.
-A friend like thee might bear my soul to hell. 
+A friend like thee might bear my soul to hell.
 }
 
 FindEm collision' setint
@@ -49,10 +54,10 @@ Shoot_Err:
     150 fire'  12 missile'
     aim dup range dup 60 > GroupStart ifg
     sync
-    15 - 2 / dup 2 roll 
-    cos chs dup 
+    15 - 2 / dup 2 roll
+    cos chs dup
         movey' store movey' store
-    sin dup 
+    sin dup
         movex' store movex' store
     store
     store
@@ -157,7 +162,7 @@ RightBotCornerGoMain:
     150 aim' store
     90 aim' store
     180 aim' store
-    45 aim' store 
+    45 aim' store
     0 aim' store
     225 aim' store
     270 aim' store
@@ -193,11 +198,11 @@ RightBotMain:
 
 LeftBotCornerGoMain:
     225 aim' store
-    210 aim' store  
+    210 aim' store
     240 aim' store
     270 aim' store
     180 aim' store
-    135 aim' store 
+    135 aim' store
     90 aim' store
     315 aim' store
     0 aim' store
@@ -237,7 +242,7 @@ RightTopCornerGoMain:
     60 aim' store
     0 aim' store
     90 aim' store
-    135 aim' store 
+    135 aim' store
     180 aim' store
     315 aim' store
     270 aim' store
@@ -273,14 +278,14 @@ RightTopMain:
 
 LeftTopCornerGoMain:
     315 aim' store
-    300 aim' store 
+    300 aim' store
     330 aim' store
     0 aim' store
     270 aim' store
-    225 aim' store 
+    225 aim' store
     180 aim' store
     45 aim' store
-    90 aim' store 
+    90 aim' store
     b c and not LeftTopCornerGoMain ifg
 LeftTopMainSet:
     icon0
@@ -328,7 +333,7 @@ DodgeFrLB:
     radar not dodgeToTL ifg
     45 < DodgeToBR_FL DodgeToTL_FB ifeg
 DodgeFrRT:
-    -1 radar' Setparam 
+    -1 radar' Setparam
     aim    1 fire' store
     255 aim' store
     radar not DodgeToTL ifg
@@ -351,7 +356,7 @@ DodgeToBR:
     400 range' Setparam
     inton    dropall
     energy shield + 150 - shield' store
-    -1 radar' Setparam  
+    -1 radar' Setparam
     speedx speedy arctan 360 mod m' store
     RightBotCornerGoMain jump
 DodgeToBL:
@@ -368,7 +373,7 @@ DodgeToTL:
     x 30 <  StopX FastLeft ife
     y 30 <  StopY FastUp ife
     SplatToo range' setint
-    400 range' Setparam 
+    400 range' Setparam
     inton    dropall
     energy shield + 150 - shield' store
     -1 radar' Setparam
@@ -378,7 +383,7 @@ DodgeToTR:
     x 270 >  StopX FastRight ife
     y 30 <  StopY FastUp ife
     SplatToo range' setint
-    400 range' Setparam 
+    400 range' Setparam
     inton    dropall
     energy shield + 150 - shield' store
     -1 radar' Setparam
@@ -389,11 +394,11 @@ DodgeToBR_FT:
     icon7
     -4 speedx' store
     8 speedy' store
-    240 left' Setparam 
+    240 left' Setparam
         GDBR_FT left' setint
-    270 bot' Setparam 
+    270 bot' Setparam
         SlowDown bot' setint
-    400 range' Setparam 
+    400 range' Setparam
         SplatToo range' setint
     inton       -1 m' store
     dropall
@@ -403,22 +408,22 @@ GDBR_FT:
     3 speedx' store
     13 speedy' store
     energy shield + 150 - shield' store
-    285 right' Setparam   
+    285 right' Setparam
         Stopx right' setint
     inton
     150 m' store
     rti
-    
+
 DodgeToBR_FL:
     icon5
     -4 speedy' store
     8 speedx' store
-    240 top' Setparam 
-        GRBR_FL top' setint 
-    270 right' Setparam 
-        SlowRight right' setint 
-    400 range' Setparam 
-        SplatToo range' setint 
+    240 top' Setparam
+        GRBR_FL top' setint
+    270 right' Setparam
+        SlowRight right' setint
+    400 range' Setparam
+        SplatToo range' setint
     inton       -1 m' store
     dropall
     energy shield + 150 - shield' store
@@ -427,7 +432,7 @@ GRBR_FL:
     3 speedy' store
     13 speedx' store
     energy shield + 150 - shield' store
-    285 bot' Setparam 
+    285 bot' Setparam
         Stopy bot' setint
     inton
     120 m' store
@@ -436,11 +441,11 @@ GRBR_FL:
 DodgeToBL_FR:
     icon4
     -4 speedy' store
-    -8 speedx' store    
-    240 top' Setparam 
-        GLBL_FR top' setint 
-    30 left' Setparam 
-        SlowLeft left' setint 
+    -8 speedx' store
+    240 top' Setparam
+        GLBL_FR top' setint
+    30 left' Setparam
+        SlowLeft left' setint
     400 range' Setparam
         SplatToo range' setint
     inton       -1 m' store
@@ -451,7 +456,7 @@ GLBL_FR:
     3 speedy' store
     -13 speedx' store
     energy shield + 150 - shield' store
-    285 bot' Setparam 
+    285 bot' Setparam
         Stopy bot' setint
     inton
     240 m' store
@@ -461,9 +466,9 @@ DodgeToBL_FT:
     icon7
     4 speedx' store
     8 speedy' store
-    60 right' Setparam 
-        GDBL_FT right' setint 
-    270 bot' Setparam 
+    60 right' Setparam
+        GDBL_FT right' setint
+    270 bot' Setparam
         SlowDown bot' setint
     400 range' Setparam
         SplatToo range' setint
@@ -475,7 +480,7 @@ GDBL_FT:
     13 speedy' store
     -3 speedx' store
     energy shield + 150 - shield' store
-    15 left' Setparam 
+    15 left' Setparam
         Stopx left' setint
     inton
     210 m' store
@@ -485,11 +490,11 @@ DodgeToTL_FR:
     icon4
     4 speedy' store
     -8 speedx' store
-    60 bot' Setparam 
-        GLTL_FR bot' setint 
-    30 left' Setparam     
+    60 bot' Setparam
+        GLTL_FR bot' setint
+    30 left' Setparam
         SlowLeft left' setint
-    400 range' Setparam 
+    400 range' Setparam
         SplatToo range' setint
     inton       -1 m' store
     dropall
@@ -499,7 +504,7 @@ GLTL_FR:
     -3 speedy' store
     -13 speedx' store
     energy shield + 150 - shield' store
-    15 top' Setparam 
+    15 top' Setparam
         Stopy top' setint
     inton
     300 m' store
@@ -509,11 +514,11 @@ DodgeToTL_FB:
     icon6
     4 speedx' store
     -8 speedy' store
-    60 right' Setparam 
-        GUTL_FB right' setint  
-    30 top' Setparam 
+    60 right' Setparam
+        GUTL_FB right' setint
+    30 top' Setparam
         SlowUp top' setint
-    400 range' Setparam 
+    400 range' Setparam
         SplatToo range' setint
     inton       -1 m' store
     dropall
@@ -523,7 +528,7 @@ GUTL_FB:
     -13 speedy' store
     -3 speedx' store
     energy shield + 150 - shield' store
-    15 left' Setparam 
+    15 left' Setparam
         Stopx left' setint
     inton
     330 m' store
@@ -533,11 +538,11 @@ DodgeToTR_FL:
     icon5
     4 speedy' store
     8 speedx' store
-    60 bot' Setparam 
-        GRTR_FL bot' setint      
-    270 right' Setparam 
+    60 bot' Setparam
+        GRTR_FL bot' setint
+    270 right' Setparam
         SlowRight right' setint
-    400 range' Setparam 
+    400 range' Setparam
         SplatToo range' setint
     inton       -1 m' store
     dropall
@@ -547,7 +552,7 @@ GRTR_FL:
     -3 speedy' store
     13 speedx' store
     energy shield + 150 - shield' store
-    15 top' setint 
+    15 top' setint
         Stopy top' setint
     inton
     60 m' store
@@ -557,12 +562,12 @@ DodgeToTR_FB:
     icon6
     -4 speedx' store
     -8 speedy' store
-    240 left' Setparam 
-        GUTR_FB left' setint  
+    240 left' Setparam
+        GUTR_FB left' setint
     30 top' Setparam
         SlowUp top' setint
-    400 range' Setparam 
-        SplatToo range' setint 
+    400 range' Setparam
+        SplatToo range' setint
     inton       -1 m' store
     dropall
     energy shield + 150 - shield' store
@@ -571,7 +576,7 @@ GUTR_FB:
     -13 speedy' store
     3 speedx' store
     energy shield + 150 - shield' store
-    285 right' Setparam 
+    285 right' Setparam
         Stopx right' setint
     inton
     30 m' store
@@ -581,56 +586,56 @@ GUTR_FB:
 FastR:
     icon5
     12 speedx' store
-    275 right' Setparam 
-    SlowR right' setint 
+    275 right' Setparam
+    SlowR right' setint
     inton
     rti
 FastL:
     icon4
     -12 speedx' store
-    25 Left' Setparam 
+    25 Left' Setparam
     SlowL Left' setint
     inton
     rti
 FastU:
     icon6
     -12 speedy' store
-    25 Top' Setparam 
+    25 Top' Setparam
     SlowU Top' setint
     inton
     rti
 FastD:
     icon7
     12 speedy' store
-    275 Bot' Setparam 
+    275 Bot' Setparam
     SlowD Bot' setint
     inton
     rti
 SlowR:
     icon5
     3 speedx' store
-    288 right' Setparam 
-    OnR right' setint 
+    288 right' Setparam
+    OnR right' setint
     inton
     rti
 SlowL:
     icon4
     -3 speedx' store
-    12 Left' Setparam 
+    12 Left' Setparam
     OnL Left' setint
     inton
     rti
 SlowU:
     icon6
     -3 speedy' store
-    12 Top' Setparam 
+    12 Top' Setparam
     OnT Top' setint
     inton
     rti
 SlowD:
     icon7
     3 speedy' store
-    288 Bot' Setparam 
+    288 Bot' Setparam
     OnB Bot' setint
     inton
     rti
@@ -730,7 +735,7 @@ Blam:
     -1 range' Setparam
     chronon t - 14 < energy 60 < or DThome ifg
     abs 11 > CThome ifg
-    arcsin aim + 361 mod n min o max aim' 
+    arcsin aim + 361 mod n min o max aim'
     store
     35 12
     hellbore' store
@@ -789,8 +794,8 @@ FindEm:
     -160 Look' store
     0 Look' store
     collision LeapkillEm ifg
-    Blam range' setint  
-    400 range' Setparam 
+    Blam range' setint
+    400 range' Setparam
     inton
     rti
 KillEm:
@@ -799,7 +804,7 @@ KillEm:
     150 fire' store
     snd1
     0 look' store
-    -1 radar' Setparam 
+    -1 radar' Setparam
     sync
     Blam range' setint
     400 range' setparam
@@ -816,7 +821,7 @@ LeapLeftKill:
     Blam range' setint
     400 range' setparam
     inton
-    sync sync sync sync sync 
+    sync sync sync sync sync
     20 movex' store
     rti
 LeapRightKill:
@@ -827,7 +832,7 @@ LeapRightKill:
     Blam range' setint
     400 range' setparam
     inton
-    sync sync sync sync sync 
+    sync sync sync sync sync
     -20 movex' store
     rti
 

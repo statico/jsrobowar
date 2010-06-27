@@ -1,7 +1,10 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 150, Shield: 100, CPU: 50, Bullets: explosive, +all
+}
+
 # The (Dead) Parrot
-
 # By Peter Ström
-
 
 # What would a RoboWar tournament be without the 
 # manditory Monty Pyton robot? ; - )
@@ -12,9 +15,6 @@
 # The only thing I found was this bot called "The Parrot"
 # The robot is terrible, So I Monty-Pythoned it, and since it's as good as dead when 
 # the battle stars, I renamed it the Dead Parrot
-
-
-
 
 icon4
 

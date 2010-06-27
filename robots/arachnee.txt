@@ -1,4 +1,9 @@
 {
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 100, Damage: 100, Shield: 0, CPU: 30, Bullets: rubber, +missiles, +stunner
+}
+
+{
 #------------------ARACHNEE------------------#
 
 Created by :

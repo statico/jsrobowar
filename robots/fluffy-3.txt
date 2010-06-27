@@ -1,4 +1,7 @@
-
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 150, Shield: 100, CPU: 50, Bullets: explosive, +all
+}
 
 Start:
 
@@ -46,7 +49,7 @@ range dup  75 < and prebits ifg
    DodgeLeft1 RIGHT' SETINT
    movdown1 TOP' SETINT
    movup1 BOT' SETINT
-   
+
 inton
 60 a' sto
 
@@ -55,191 +58,191 @@ full_search:
 inton
 
 
-   0 aim'   23 aim'   46 aim' 
-  69 aim'   92 aim'  115 aim' 
- 138 aim'  161 aim'  184 aim' 
- 207 aim'  230 aim'  253 aim' 
+   0 aim'   23 aim'   46 aim'
+  69 aim'   92 aim'  115 aim'
+ 138 aim'  161 aim'  184 aim'
+ 207 aim'  230 aim'  253 aim'
  276 aim'  299 aim'  322 aim'
- 345 aim' 
+ 345 aim'
 sync
 sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-   8 aim'   31 aim' 
-  54 aim'   77 aim'  100 aim' 
- 123 aim'  146 aim'  169 aim' 
- 192 aim'  215 aim'  238 aim' 
- 261 aim'  284 aim'  307 aim'  
- 330 aim'  353 aim'  
+   8 aim'   31 aim'
+  54 aim'   77 aim'  100 aim'
+ 123 aim'  146 aim'  169 aim'
+ 192 aim'  215 aim'  238 aim'
+ 261 aim'  284 aim'  307 aim'
+ 330 aim'  353 aim'
 sync
 sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  16 aim' 
-  39 aim'   62 aim'   85 aim' 
- 108 aim'  131 aim'  154 aim' 
- 177 aim'  200 aim'  223 aim' 
- 246 aim'  269 aim'  292 aim'  
- 315 aim'  338 aim'    1 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 
-  24 aim'   47 aim'   70 aim' 
-  93 aim'  116 aim'  139 aim' 
- 162 aim'  185 aim'  208 aim' 
- 231 aim'  254 aim'  277 aim'
- 300 aim'  323 aim'  346 aim' 
-   9 aim'  
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 32 aim'   55 aim' 
-  78 aim'  101 aim'  124 aim' 
- 147 aim'  170 aim'  193 aim' 
- 216 aim'  239 aim'  262 aim'
- 285 aim'  308 aim'  331 aim' 
- 354 aim'   17 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  40 aim' 
-  63 aim'   86 aim'  109 aim' 
- 132 aim'  155 aim'  178 aim' 
- 201 aim'  224 aim'  247 aim'
- 270 aim'  293 aim'  316 aim' 
- 339 aim'    2 aim'   25 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 
-  48 aim'   71 aim'   94 aim' 
- 117 aim'  140 aim'  163 aim' 
- 186 aim'  209 aim'  232 aim' 
- 255 aim'  278 aim'  301 aim' 
- 324 aim'  347 aim'   10 aim' 
-  33 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  56 aim'   79 aim' 
- 102 aim'  125 aim'  148 aim' 
- 171 aim'  194 aim'  217 aim' 
- 240 aim'  263 aim'  286 aim' 
- 309 aim'  332 aim'  355 aim' 
-  18 aim'   41 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  64 aim' 
-  87 aim'  110 aim'  133 aim' 
- 156 aim'  179 aim'  202 aim' 
- 225 aim'  248 aim'  271 aim' 
- 294 aim'  317 aim'  340 aim' 
-   3 aim'   26 aim'   49 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  72 aim'   95 aim'  118 aim' 
- 141 aim'  164 aim'  187 aim' 
- 210 aim'  233 aim'  256 aim' 
- 279 aim'  302 aim'  325 aim' 
- 348 aim'   11 aim'   34 aim' 
-  57 aim'  
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  80 aim'  103 aim' 
- 126 aim'  149 aim'  172 aim' 
- 195 aim'  218 aim'  241 aim' 
- 264 aim'  287 aim'  310 aim' 
- 333 aim'  356 aim'   19 aim' 
-  42 aim'   65 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
-  88 aim' 
- 111 aim'  134 aim'  157 aim' 
- 180 aim'  203 aim'  226 aim' 
- 249 aim'  272 aim'  295 aim' 
- 318 aim'  341 aim'    4 aim' 
-  27 aim'   50 aim'   73 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 
-  96 aim'  119 aim'  142 aim' 
- 165 aim'  188 aim'  211 aim' 
- 234 aim'  257 aim'  280 aim' 
- 303 aim'  326 aim'  349 aim' 
-  12 aim'   35 aim'   58 aim' 
-  81 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 104 aim'  127 aim'  150 aim' 
- 173 aim'  196 aim' 
- 219 aim'  242 aim'  265 aim' 
- 288 aim'  311 aim'  334 aim' 
- 357 aim'   20 aim'   43 aim' 
-  66 aim'   89 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 112 aim'
- 135 aim'  158 aim'  181 aim' 
- 204 aim'  227 aim'  250 aim' 
- 273 aim'  296 aim'  319 aim' 
- 342 aim'    5 aim'   28 aim' 
-  51 aim'   74 aim'   97 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 120 aim'  143 aim'  166 aim' 
- 189 aim'  212 aim'  235 aim' 
- 258 aim'  281 aim'  304 aim' 
- 327 aim'  350 aim'   13 aim' 
-  36 aim'   59 aim'   82 aim' 
- 105 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 128 aim'  151 aim' 
- 174 aim'  197 aim'  220 aim' 
- 243 aim'  266 aim'  289 aim' 
- 312 aim'  335 aim'  358 aim' 
-  21 aim'   44 aim'   67 aim' 
-  90 aim'  113 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 136 aim' 
- 159 aim'  182 aim'  205 aim' 
- 228 aim'  251 aim'  274 aim' 
- 297 aim'  320 aim'  343 aim' 
-   6 aim'   29 aim'   52 aim' 
-  75 aim'   98 aim'  121 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 144 aim'  167 aim'  190 aim' 
- 213 aim'  236 aim'  259 aim' 
- 282 aim'  305 aim'  328 aim' 
- 351 aim'   14 aim'   37 aim' 
-  60 aim'   83 aim'  106 aim' 
- 129 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 152 aim'  175 aim' 
- 198 aim'  221 aim'  244 aim' 
- 267 aim'  290 aim'  313 aim' 
- 336 aim'  359 aim'   22 aim' 
-  45 aim'   68 aim'   91 aim' 
- 114 aim'  137 aim' 
-sync
-sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 160 aim' 
- 183 aim'  206 aim'  229 aim' 
- 252 aim'  275 aim'  298 aim' 
- 321 aim'  344 aim'    7 aim' 
-  30 aim'   53 aim'   76 aim' 
-  99 aim'  122 aim'  145 aim' 
+  16 aim'
+  39 aim'   62 aim'   85 aim'
+ 108 aim'  131 aim'  154 aim'
+ 177 aim'  200 aim'  223 aim'
+ 246 aim'  269 aim'  292 aim'
+ 315 aim'  338 aim'    1 aim'
 sync
 sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
 
- 168 aim'  191 aim'  214 aim' 
- 237 aim'  260 aim'  283 aim' 
- 306 aim'  329 aim'  352 aim'
-  15 aim'   38 aim'   61 aim' 
-  84 aim'  107 aim'  130 aim' 
- 153 aim' 
+  24 aim'   47 aim'   70 aim'
+  93 aim'  116 aim'  139 aim'
+ 162 aim'  185 aim'  208 aim'
+ 231 aim'  254 aim'  277 aim'
+ 300 aim'  323 aim'  346 aim'
+   9 aim'
 sync
 sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
- 176 aim'  199 aim' 
- 222 aim'  245 aim'  268 aim' 
- 291 aim'  314 aim'  337 aim' 
+ 32 aim'   55 aim'
+  78 aim'  101 aim'  124 aim'
+ 147 aim'  170 aim'  193 aim'
+ 216 aim'  239 aim'  262 aim'
+ 285 aim'  308 aim'  331 aim'
+ 354 aim'   17 aim'
 sync
-sto sto sto sto sto sto sto sto 
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  40 aim'
+  63 aim'   86 aim'  109 aim'
+ 132 aim'  155 aim'  178 aim'
+ 201 aim'  224 aim'  247 aim'
+ 270 aim'  293 aim'  316 aim'
+ 339 aim'    2 aim'   25 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+  48 aim'   71 aim'   94 aim'
+ 117 aim'  140 aim'  163 aim'
+ 186 aim'  209 aim'  232 aim'
+ 255 aim'  278 aim'  301 aim'
+ 324 aim'  347 aim'   10 aim'
+  33 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  56 aim'   79 aim'
+ 102 aim'  125 aim'  148 aim'
+ 171 aim'  194 aim'  217 aim'
+ 240 aim'  263 aim'  286 aim'
+ 309 aim'  332 aim'  355 aim'
+  18 aim'   41 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  64 aim'
+  87 aim'  110 aim'  133 aim'
+ 156 aim'  179 aim'  202 aim'
+ 225 aim'  248 aim'  271 aim'
+ 294 aim'  317 aim'  340 aim'
+   3 aim'   26 aim'   49 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  72 aim'   95 aim'  118 aim'
+ 141 aim'  164 aim'  187 aim'
+ 210 aim'  233 aim'  256 aim'
+ 279 aim'  302 aim'  325 aim'
+ 348 aim'   11 aim'   34 aim'
+  57 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  80 aim'  103 aim'
+ 126 aim'  149 aim'  172 aim'
+ 195 aim'  218 aim'  241 aim'
+ 264 aim'  287 aim'  310 aim'
+ 333 aim'  356 aim'   19 aim'
+  42 aim'   65 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  88 aim'
+ 111 aim'  134 aim'  157 aim'
+ 180 aim'  203 aim'  226 aim'
+ 249 aim'  272 aim'  295 aim'
+ 318 aim'  341 aim'    4 aim'
+  27 aim'   50 aim'   73 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+  96 aim'  119 aim'  142 aim'
+ 165 aim'  188 aim'  211 aim'
+ 234 aim'  257 aim'  280 aim'
+ 303 aim'  326 aim'  349 aim'
+  12 aim'   35 aim'   58 aim'
+  81 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 104 aim'  127 aim'  150 aim'
+ 173 aim'  196 aim'
+ 219 aim'  242 aim'  265 aim'
+ 288 aim'  311 aim'  334 aim'
+ 357 aim'   20 aim'   43 aim'
+  66 aim'   89 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 112 aim'
+ 135 aim'  158 aim'  181 aim'
+ 204 aim'  227 aim'  250 aim'
+ 273 aim'  296 aim'  319 aim'
+ 342 aim'    5 aim'   28 aim'
+  51 aim'   74 aim'   97 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 120 aim'  143 aim'  166 aim'
+ 189 aim'  212 aim'  235 aim'
+ 258 aim'  281 aim'  304 aim'
+ 327 aim'  350 aim'   13 aim'
+  36 aim'   59 aim'   82 aim'
+ 105 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 128 aim'  151 aim'
+ 174 aim'  197 aim'  220 aim'
+ 243 aim'  266 aim'  289 aim'
+ 312 aim'  335 aim'  358 aim'
+  21 aim'   44 aim'   67 aim'
+  90 aim'  113 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 136 aim'
+ 159 aim'  182 aim'  205 aim'
+ 228 aim'  251 aim'  274 aim'
+ 297 aim'  320 aim'  343 aim'
+   6 aim'   29 aim'   52 aim'
+  75 aim'   98 aim'  121 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 144 aim'  167 aim'  190 aim'
+ 213 aim'  236 aim'  259 aim'
+ 282 aim'  305 aim'  328 aim'
+ 351 aim'   14 aim'   37 aim'
+  60 aim'   83 aim'  106 aim'
+ 129 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 152 aim'  175 aim'
+ 198 aim'  221 aim'  244 aim'
+ 267 aim'  290 aim'  313 aim'
+ 336 aim'  359 aim'   22 aim'
+  45 aim'   68 aim'   91 aim'
+ 114 aim'  137 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 160 aim'
+ 183 aim'  206 aim'  229 aim'
+ 252 aim'  275 aim'  298 aim'
+ 321 aim'  344 aim'    7 aim'
+  30 aim'   53 aim'   76 aim'
+  99 aim'  122 aim'  145 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+ 168 aim'  191 aim'  214 aim'
+ 237 aim'  260 aim'  283 aim'
+ 306 aim'  329 aim'  352 aim'
+  15 aim'   38 aim'   61 aim'
+  84 aim'  107 aim'  130 aim'
+ 153 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 176 aim'  199 aim'
+ 222 aim'  245 aim'  268 aim'
+ 291 aim'  314 aim'  337 aim'
+sync
+sto sto sto sto sto sto sto sto
 full_search jump
 
 FirstFind:
@@ -330,21 +333,21 @@ range 0 = Findloop ifg
 sloxa:
 doppler -14 arctan aim  look + + aim' sto
  # 8 stunner' sto
-#speedx speedx 2 / - speedx' sto 
+#speedx speedx 2 / - speedx' sto
 sloxb Range' setint
 sync
 range 0 = Findloop ifg
 sloxb:
 doppler -14 arctan aim  look + + aim' sto
  # 8 stunner' sto
-speedx speedx 2 / - speedx' sto 
+speedx speedx 2 / - speedx' sto
 sloxc Range' setint
 sync
 range 0 = Findloop ifg
 sloxc:
 doppler -14 arctan aim  look + + aim' sto
  # 8 stunner' sto
-speedx speedx 2 / - speedx' sto 
+speedx speedx 2 / - speedx' sto
 sync
 
 0 speedx' sto
@@ -356,21 +359,21 @@ slowy:
 0 shield' sto
 sync
 #ScanLoop3 jump
-#speedy speedy 2 / - speedy' sto 
+#speedy speedy 2 / - speedy' sto
 sloya Range' setint
 sync
 range 0 = Findloop ifg
 sloya:
 doppler -14 arctan aim  look + + aim' sto
  # 8 stunner' sto
-speedy speedy 2 / - speedy' sto 
+speedy speedy 2 / - speedy' sto
 sloyb Range' setint
 sync
 range 0 = Findloop ifg
 sloyb:
 doppler -14 arctan aim  look + + aim' sto
 #  8 stunner' sto
-speedy speedy 2 / - speedy' sto 
+speedy speedy 2 / - speedy' sto
 sloyc Range' setint
 sync
 range 0 = Findloop ifg
@@ -378,8 +381,8 @@ sloyc:
 doppler -14 arctan aim  look + + aim' sto
 #  8 stunner' sto
 sync
-#ScanLoop3 jump 
-#ScanLoop3 jump 
+#ScanLoop3 jump
+#ScanLoop3 jump
 0 speedy' sto
 0 look' sto
  moveto range' setint
@@ -435,7 +438,7 @@ aim look + aim' sto
 range 4 / dup 4 +
 stunner' sto stunner' sto
      5 hell' sto
-        76 MISSILE' sto 
+        76 MISSILE' sto
       28 stunner' store
 sync
 radar 16 < moveaway ifg
@@ -503,7 +506,7 @@ coll2:
       range dup 35 < and shoot ifg
 find:
 shoot range' setint
-inton    
+inton
    #!! nostowarnings
 stackedScanLoop2:
 dropall
@@ -521,18 +524,18 @@ range 0 = full_search ifg
     5 hell' sto
     75 missile' sto
     28 stunner' sto
-      0 speedx' sto  
-      0 speedy' sto                                                                                             
-                                                                                           
+      0 speedx' sto
+      0 speedy' sto
+
       sync
 
      begining rti
 getoff:
 range chs 8 + m' sto
    aim  dup m chs sin movex' sto m cos movey' sto
-sync 
+sync
 adjustaim:
-aim a' sto 
+aim a' sto
 20 look' sto  range 6 > shoot ifg
 -20 look' sto  range 6 >  shoot ifg
 40 look' sto  range 6 > shoot ifg
@@ -672,7 +675,7 @@ rti
 
 hopdown1:
   10 y - movey' sto
- 
+
  1 d' sto
 rti
 
@@ -722,8 +725,8 @@ Group:
 #   Dodge2 RADAR' SETINT
    400 range' SETPARAM
    DoWhat range' SETINT
-   
-  
+
+
    Full_search rti
 
 RunAway:
@@ -748,7 +751,7 @@ stopy:
 firstbigshoty range' setint
 inton
  #  0 speedx' sto
-0 aim' sto 
+0 aim' sto
 180 aim' sto
 DoWhat range' setint
 InitLR:
@@ -937,7 +940,7 @@ energy' probe' setparam
 rti
 
 # ********************************************
-#  					shotstuff
+#           shotstuff
 # ********************************************
 Clear:
 rti
@@ -948,9 +951,9 @@ doppler -14 arctan aim + aim' sto
 
    12 hell' sto
    energy 80 min fire' sto
-#   0 speedx' sto  
-  #    0 speedy' sto                                                                                             
-                                   
+#   0 speedx' sto
+  #    0 speedy' sto
+
    0 shield' sto
  Group jump
 
@@ -960,7 +963,7 @@ killg:
     28 stunner' sto
     5 hell' sto
 
-    76  missile' store  
+    76  missile' store
    0 shield' sto
    sync sync sync
    flushint
@@ -971,7 +974,7 @@ Ekill:
     24 stunner' sto
 
     5 hell' sto
-    76  missile' store  
+    76  missile' store
    0 shield' sto
 
 aim 1 tan goX ifg
@@ -1123,7 +1126,7 @@ DodgeLeft2:
    -6 speedx' sto
    -1 d' sto
    bsleft rti
-   
+
 
 DodgeRight2:
    0 speedx' store
@@ -1242,8 +1245,8 @@ PreStartb jump
 
 PS:
    range dup 50 <  and killg ifg
-   probe -2 / range 12 / > energy 75 > and probekillb ifg                
-    
+   probe -2 / range 12 / > energy 75 > and probekillb ifg
+
    range 150 < k3 ifg
    chronon 2 mod Prestartb ifg
    doppler -12 arctan aim + aim' sto
@@ -1266,74 +1269,74 @@ rti
 
 k3:
  energy shield + 40 < PreStart ifg
-		 lockon range' setint
+     lockon range' setint
 
- 
-		Stunstream rti
-###############################################		StreamStuff
+
+    Stunstream rti
+###############################################   StreamStuff
 moveaway2:
 aim 1 tan goXmoveg ifg
 
   y 150 < 24 * 12 -  movey' sto
- 
+
   Return
 
 goXmoveg:
   x 150 < 24 * 12 -  movex' store
-  
+
   Return
 
 
 Stunstream:
 0 shield' sto
  doppler -14 arctan aim + aim' sto
-		
-		12 stunner' sto
+
+    12 stunner' sto
  0 speedx' sto
  0 speedy' sto
 sync
 
   range 0 = skip ifg
-	
-sync
- 
-  range 0 = skip ifg
-sync
-  
-  range 0 = skip ifg
-		12 stunner' sto
-
 
 sync
 
   range 0 = skip ifg
-probe -30 < moveaway ifg	 
+sync
+
+  range 0 = skip ifg
+    12 stunner' sto
+
+
+sync
+
+  range 0 = skip ifg
+probe -30 < moveaway ifg
 sync
 
 
   range 0 = skip ifg
-probe -30 < moveaway ifg	 	
+probe -30 < moveaway ifg
 sync
-		range 0 = skip ifg
-		16 stunner' sto
+    range 0 = skip ifg
+    16 stunner' sto
 
 sync
- 
-  range 0 = skip ifg
-	damage' probe' setparam
-probe -30 < moveaway ifg	 
-sync
- 
 
   range 0 = skip ifg
-	probe 2 / 1 + q' sto
+  damage' probe' setparam
+probe -30 < moveaway ifg
+sync
+
+
+  range 0 = skip ifg
+  probe 2 / 1 + q' sto
 sync
   tag range' setint
   range 0 = skip ifg
 tag:
 
 range 55 < Mkill ifg
-		16 stunner' sto
+    16 stunner' sto
    13 hell' sto
   q fire' sto
 
@@ -1347,13 +1350,13 @@ range 150 > PreStart ifg
    Stunstream jump
 
 LockLoop:
-    
+
  skip:
 
 inton
-			0 look' sto
+      0 look' sto
   30 look' sto
-		-30 look' sto
+    -30 look' sto
     3 look' store
     -3 look' store
     6 look' store
@@ -1383,7 +1386,7 @@ inton
 
 
     0 look' store
-  
+
    PreStart rti
 
 

@@ -1,4 +1,10 @@
-# NOTE: Lasers changed to bullets for JSRoboWar. -- Ian L.
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 100, Shield: 0, CPU: 15, Bullets: rubber, +tacnukes
+
+    # NOTE: Lasers changed to bullets for JSRoboWar. -- Ian L.
+}
+
 {   SUMMARY:
 Archivist
 A little absentminded, but studious.

@@ -1,8 +1,8 @@
-#Energy 150
-#Damage 150
-#Shields 0
-#Processor 15
-#Normal bullets
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 150, Damage: 150, Shield: 0, CPU: 15, Bullets: normal
+}
+
 Start:
     -5 speedx' store
 Loop:

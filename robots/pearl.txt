@@ -1,3 +1,8 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 60, Shield: 0, CPU: 15, Bullets: rubber, +missiles, +tacnukes
+}
+
 {Pearl - For the Strafing
 Matthew Sakai,4/13/90 (Friday, by coincidence)
 A totally new concept}

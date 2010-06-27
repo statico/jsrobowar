@@ -1,3 +1,8 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 40, Damage: 100, Shield: 0, CPU: 50, Bullets: rubber, +missiles, +probes
+}
+
 #Locke v18
 #Occasionally referred to as "Locke II 2"
 #By Randy Munroe
