@@ -8,9 +8,10 @@
 
   <link type="text/css" rel="stylesheet" media="screen" href="screen.css"/>
 
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-  <script type="text/javascript" src="js/raphael-1.4.3.min.js"></script>
-  <script type="text/javascript" src="js/base.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+  <script type="text/javascript" src="js/third-party/raphael-1.4.3.min.js"></script>
+  <script type="text/javascript" src="js/third-party/underscore-1.0.4.min.js"></script>
+  <script type="text/javascript" src="js/third-party/base.js"></script>
   <script type="text/javascript" src="js/jsrobowar.js"></script>
   <script type="text/javascript" src="js/gui.js"></script>
 
@@ -24,7 +25,7 @@
 <nav>
   <h1>JSRoboWar</h1>
   <ul>
-    <li><a href="#arena">Arena</a></li>
+    <li><a href="#play">Arena</a></li>
     <li><a href="#docs">Docs</a></li>
     <li><a href="#about">About</a></li>
   </ul>
@@ -32,27 +33,32 @@
 
 <div id="container">
 
-  <section id="arena">
+  <section id="play">
 
   <div id="game">
     <div id="arena"></div>
-    <div id="scoreboard"></div>
+    <div>
+      <div id="scoreboard"></div>
+      <div id="controls">
+        <button id="start">Battle</button>
+        <button id="stop">Halt</button>
+      </div>
+    </div>
   </div>
 
-  <div id="controls">
-    <button id="play">Play</button>
-    <button id="stop">Stop</button>
-  </div>
+  <div class="clear"></div>
 
   <fieldset id="choices">
     <legend>Robots</legend>
     <ol></ol>
   </fieldset>
 
-  <section>
-    <h2>Drafting Board</h2>
+  <section id="editor">
+    <h2>Robot X</h2>
+    <h3>Drafting Board</h3>
     <div id="errors"></div>
-    <h2>Hardware Depot</h2>
+    <div id="editors"></div>
+    <h3>Hardware Depot</h3>
   </section>
 
   </section>

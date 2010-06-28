@@ -1,25 +1,22 @@
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
+  background: #ccc;
   padding: 1em;
   font-family: sans-serif;
-  background-color: #999;
-  background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #999);
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#999));
 }
 textarea {
-  width: 45%;
+  width: 100%;
   height: 20em;
   font-family: 'Menlo', 'Monaco', 'Bitstream Vera Sans Mono', 'Lucida Sans Console', monospace;
   font-size: 11px;
 }
 
 #container, nav, footer {
-  width: 700px;
+  width: 590px;
   margin: 0 auto;
   background: #fff;
 }
@@ -52,7 +49,7 @@ nav a, nav h1 {
   padding: 0.5em 1em;
 }
 
-nav a[href="#arena"] {
+nav a[href="#play"] {
   background: #f99;
 }
 nav a[href="#docs"] {
@@ -62,7 +59,7 @@ nav a[href="#about"] {
   background: #99f;
 }
 
-nav.arena {
+nav.play {
   border-bottom: 8px solid #f99;
 }
 nav.docs {
@@ -84,11 +81,24 @@ footer, footer a {
 
 .errors {
   color: #c00;
+  white-space: pre-wrap;
 }
-#game div {
+#game > div {
   float: left;
-  padding-right: 1em;
+}
+#arena {
+  padding: 0;
+  border: 10px inset #ccc;
+  margin-right: 1em;
 }
 #controls {
+  text-align: center;
+}
+#controls button {
+  font-size: 120%;
+  padding: 0.3em;
+}
+
+.clear {
   clear: both;
 }

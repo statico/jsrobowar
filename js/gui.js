@@ -17,6 +17,8 @@
  *  along with JSRoboWar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if (!window.jQuery) alert('`jQuery` object missing. jquery.js is required.');
+
 $(document).ready(function() {
 
   // Navigation tabs ---------------------------------------------------------
@@ -31,7 +33,7 @@ $(document).ready(function() {
   };
 
   $('#container > section').hide();
-  set_section(document.location.hash.replace(/\W/g, '') || 'arena');
+  set_section(document.location.hash.replace(/\W/g, '') || 'play');
 
   $('nav li a').click(function() {
     var name = $(this).attr('href').substr(1);
@@ -44,6 +46,7 @@ $(document).ready(function() {
   // Robot choices -----------------------------------------------------------
 
   var ROBOT_SLOTS = 4;
+  var ROBOT_COLORS = ['#0ff', '#ff0', '#f99', '#0f0', '#f0f'];
   var ROBOT_CHOICES = [
     ['Tutorial robots', [
       ['corner-hopper', 'Corner Hopper'],
@@ -74,9 +77,23 @@ $(document).ready(function() {
     ]],
   ];
 
-  for (var i = 0; i < ROBOT_SLOTS; i++) {
+  function reveal_editor(i, errors) {
+    $('#editor h2').text('Robot ' + (i + 1));
+    if (errors)
+      $('#errors').show().text(errors);
+    else
+      $('#errors').hide().text(errors);
+
+    $('#editors textarea').slideUp();
+    $('#editor').slideDown();
+    $('#code' + i).slideDown();
+  }
+
+  _.each(_.range(ROBOT_SLOTS), function(i) {  // Scope i correctly.
+
+    // Create the drop-down menu.
     var select = $('<select/>').attr('id', 'choice' + i);
-    select.append($('<option/>').text('Choose a robot...'));
+    select.append($('<option/>').text('Choose a robot...').attr('value', ''));
     for (var j = 0, group; group = ROBOT_CHOICES[j]; j++) {
       var optgroup = $('<optgroup/>').attr('label', group[0]);
       for (var k = 0, choice; choice = group[1][k]; k++) {
@@ -85,72 +102,101 @@ $(document).ready(function() {
       select.append(optgroup);
     }
 
-    var edit = $('<a/>').text('Edit...').attr('href', '#');
+    // Create the edit button.
+    var edit_button = $('<button/>').text('Edit');
 
-    $('#choices ol').append($('<li/>').append(select).append(edit));
-  }
+    // Add the menu and the edit button to the page.
+    $('#choices ol').append($('<li/>').append(select, ' ', edit_button));
 
-});
+    // Create the robot code editor and add it to the page.
+    var textarea = $('<textarea/>').attr('id', 'code' + i);
+    textarea.hide();
+    $('#editors').append(textarea);
 
-/*
-  var game = undefined; // Really? I have to set this as undefined? C'mon...
-  var bot1 = 'arachnee';
-  var bot2 = 'zim';
+    // Typing into the textarea resets the bot choice.
+    textarea.change(function() {
+      select.val('');
+    });
 
-  $(document).ready(function() {
-
-    $('#play').click(function() {
-      $(this).text('Restart');
-
-      if (game) {
-        game.stop();
-        $('#arena').add('#scoreboard').children().remove();
+    // Load robot code into the editor when a robot is selected.
+    select.change(function() {
+      var name = $(this).val();
+      if (name) {
+        var path = 'robots/' + name + '.txt';
+        textarea.val('(Loading ' + path + ')');
+        textarea.attr('disabled', 'disabled');
+        textarea.load(path, function() {
+          textarea.attr('disabled', null);
+        });
+        // TODO: Hardware depot
       }
-      game = new Game($('#arena')[0], $('#scoreboard')[0]);
-
-      var program1 = new Program();
-      program1.parse($('#code1').val());
-
-      var program2 = new Program();
-      program2.parse($('#code2').val());
-
-      if (program1.errors || program2.errors) {
-        $('#errors1').val(program1.errors);
-        $('#errors2').val(program2.errors);
-        return;
-      }
-
-      var r1 = new Robot(bot1, $('#color1').val(), program1);
-      r1.max_energy = 60;
-      r1.starting_damage = 150;
-      r1.max_shield = 0;
-      r1.speed = 30;
-      r1.bullet_type = 'EXPLOSIVE';
-      //r1.set_trace(true);
-      game.add_robot(r1);
-
-      var r2 = new Robot(bot2, $('#color2').val(), program2);
-      r2.max_energy = 100;
-      r2.starting_damage = 150;
-      r2.max_shield = 25;
-      r2.speed = 15;
-      r2.bullet_type = 'RUBBER';
-      //r2.set_trace(true);
-      game.add_robot(r2);
-
-      //game.start();
     });
 
-    $('#stop').click(function() {
-      if (game) game.stop();
-    });
-
-    $('#code1').load('robots/' + bot1 + '.txt', function() {
-    $('#code2').load('robots/' + bot2 + '.txt', function() {
-    $('#play').click(); //XXX
-    });
+    // Make the edit button show the editor.
+    edit_button.click(function() {
+      reveal_editor(i);
     });
 
   });
-);
- */
+
+  // Hide the editor initially.
+  $('#editor').hide();
+
+  // Game initialization -----------------------------------------------------
+
+  var game = new Game($('#arena')[0], $('#scoreboard')[0]);
+
+  function setup_game() {
+    // Reset the robots and game state.
+    game.clear();
+
+    // Load each robot. Bail out if one doesn't compile.
+    _.each(_.range(ROBOT_SLOTS), function(i) {
+      var code = $('#code' + i).val();
+
+      var program = new Program();
+      program.parse(code);
+      if (program.errors) {
+        reveal_editor(i, program.errors);
+        return;
+      }
+
+      var select = $('#choice' + i);
+      var name = select.val() ? select.find(':selected').text() : 'Robot ' + (i + 1);
+      var robot = new Robot(name, ROBOT_COLORS[i], program);
+      // TODO: Hardware store
+      game.add_robot(robot);
+    });
+  };
+
+  // Play/pause button -------------------------------------------------------
+
+  var show_start_button = function() {
+    $('#start').show();
+    $('#stop').hide();
+  };
+
+  $('#start').click(function() {
+    setup_game();
+    game.start(show_start_button);
+    $(this).hide();
+    $('#stop').show();
+  });
+
+  $('#stop').click(function() {
+    game.stop();
+    show_start_button();
+  });
+
+  show_start_button();
+
+  // Auto-start demo mode ----------------------------------------------------
+
+  $('#choice0').val('arachnee').change();
+  $('#choice1').val('ghost').change();
+  $('#choice2').val('pearl').change();
+  $('#choice3').val('silo-iv').change();
+
+  _.delay(function() {$('#start').click()}, 600);
+
+});

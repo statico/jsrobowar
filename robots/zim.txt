@@ -247,7 +247,7 @@ GetStarted:
   intoff
   Collision HugSearch ifg
   LockFirst range' setint
-  0 look' sto  
+  0 look' sto
   dropall
   Search rti
 
@@ -353,7 +353,7 @@ HugLoop:
   sync
   Collision not range 1 ! or ReHugSearch ifg
   HugLoop jump
-  
+
 HugSearch:
   Hug range' setint
   MainHugSearch rti
@@ -670,7 +670,7 @@ StopSouth:
   energy 70 - shield + shield' sto
   sync
   x 150 > CheckSRight CheckSLeft ifeg
-  
+
 StopWest:
   0 shield' sto
   -1 chronon' setint
@@ -791,7 +791,7 @@ SLeftSearch:
 
 CheckWUp:
   ReturnWDown2 range' setint
-  ReturnWUp1 inton   
+  ReturnWUp1 inton
 
 WUpSearch:
   0 aim' sto
@@ -809,7 +809,7 @@ WUpSearch:
 
 CheckWDown:
   ReturnWUp2 range' setint
-  ReturnWDown1 inton   
+  ReturnWDown1 inton
 
 WDownSearch:
   180 aim' sto
@@ -837,7 +837,7 @@ ScareShot2:
   1 fire' sto
   5 + c' sto
   rti
-  
+
 ScareShot3:
   chronon dup c < HoldScare ifg
   12 hell' sto
@@ -886,7 +886,7 @@ ProtectKill:
   energy' probe' setparam
   energy 100 - shield + 100 min shield' sto
   rti
-  
+
 # ". . . Down, I said! . . ."
 
 CloseKill:
@@ -1004,7 +1004,7 @@ DodgeNRight:
 ReturnNLeft1:
   x 20 < ArriveNW ifg
 ReturnNLeft2:
-  NorthWallLoop 
+  NorthWallLoop
   ScareShot range' setint
 ReturnNLeft:
   Robots 3 < SoloSwitch ifg
@@ -1111,7 +1111,7 @@ ReturnNRight:
   shield 16 - shield' sto
   6 speedx' sto
   rti
-    
+
 ReturnEUp1:
   y 20 < ArriveNE ifg
 ReturnEUp2:
@@ -1175,7 +1175,7 @@ DodgeSE:
 
 DodgeSLeft:
   -6 speedx' sto
-  dropall 
+  dropall
   flushint
   25 radar' setparam
   ShieldUp radar' setint
@@ -1298,7 +1298,7 @@ DodgeWUp:
 ReturnSLeft1:
   x 20 < ArriveSW ifg
 ReturnSLeft2:
-  SouthWallLoop  
+  SouthWallLoop
   ScareShot range' setint
 ReturnSLeft:
   Robots 3 < SoloSwitch ifg

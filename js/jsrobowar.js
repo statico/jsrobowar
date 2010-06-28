@@ -17,6 +17,12 @@
  *  along with JSRoboWar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if (!window.Class) alert('`Class` object missing. base.js is required.');
+if (!window.Raphael) alert('`Raphael` object missing. raphael.js is required.');
+if (!window._) alert('`_` object missing. underscore.js is required.');
+
+// TODO: Use underscore.js
+
 // TODO: Remove layers -- they're not needed.
 var LAYER_ARENA = 0;
 var LAYER_ROBOTS = 1;
@@ -26,6 +32,13 @@ var Game = Class.extend({
 
   init: function(arena_el, scoreboard_el) {
     this.paper = Raphael(arena_el, 300, 300);
+    this.scoreboard = new Scoreboard(scoreboard_el, this);
+
+    this.clear();
+  },
+
+  clear: function() {
+    this.paper.clear();
 
     this.actors = [];
     this.actors[LAYER_ARENA] = [new ArenaView(this.paper, arena)];
@@ -37,7 +50,8 @@ var Game = Class.extend({
     this.chronons = 0;
     this.speed = 50;  // 1 chronon is this many ms, minimum.
 
-    this.scoreboard = new Scoreboard(scoreboard_el, this);
+    this.scoreboard.clear();
+
     this.arena = new Arena(this, this.paper.width, this.paper.height);
   },
 
@@ -65,7 +79,7 @@ var Game = Class.extend({
     this.robots.push(robot);
   },
 
-  start: function() {
+  start: function(opt_callback) {
     this.scoreboard.start();
 
     var w = this.arena.width;
@@ -147,20 +161,23 @@ var Game = Class.extend({
       if (any_colliding) SoundEffects.play_collision();
 
       self.scoreboard.update();
-      // Keep going if more than one bot is alive.
+
       if (self.robots.length > 1) {
+        // Keep going if more than one bot is alive.
         var elapsed = new Date() - start_time;
         var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed));
-        setTimeout(loop, delay);
+        self.next_loop = setTimeout(loop, delay);
+      } else {
+        // Game has ended.
+        self.scoreboard.declare_winner();
+        if (opt_callback) opt_callback();
       };
     };
     loop();
   },
 
   stop: function() {
-    for (var i = 0, robot; robot = this.robots[i]; i++) {
-      robot.is_running = false;
-    }
+    if (this.next_loop) clearTimeout(this.next_loop);
   },
 
   draw: function() {
@@ -714,7 +731,9 @@ var ExplosiveBulletView = ProjectileView.extend({
 
 var ArenaView = Actor.extend({
   init: function(paper, arena) {
-    this.el = paper.rect(0, 0, paper.width, paper.height).attr({ fill: '#666', stroke: null });
+    this.el = paper
+      .rect(0, 0, paper.width, paper.height)
+      .attr({ fill: '#666', stroke: '#666' });
   },
 });
 
@@ -865,7 +884,7 @@ var Program = Class.extend({
 
       // Literal
       var value = parseInt(token);
-      if (!isNaN(value)) {
+      if (!_.isNaN(value)) {
         push_instruction(new Literal(value));
         return;
       }
@@ -1459,6 +1478,10 @@ var Robot = Class.extend({
         if (name in this.registers) {
           return this.registers[name];
         }
+
+        // Allow for undefined A-Z registers.
+        if (name.match(/[A-Z]$/)) return 0;
+
         throw new Error('Unknown variable or label: "' + name + '"');
     }
   },
@@ -1638,7 +1661,7 @@ var Robot = Class.extend({
       throw new Error('Stack underflow');
     }
     var value = this.stack.pop();
-    if (isNaN(value)) {
+    if (_.isNaN(value)) {
       throw new Error('Invalid value on stack: ' + value + ' is not a Number');
     } else {
       return value;
@@ -1901,36 +1924,41 @@ var Scoreboard = Class.extend({
   init: function(scoreboard_el, game) {
     this.paper = Raphael(scoreboard_el, 250, 250);
     this.game = game;
+
+    this.clear();
+  },
+
+  clear: function() {
+    this.paper.clear();
   },
 
   start: function() {
     var p = this.paper;
-    p.clear();
 
     var PAD = 12;
-    var y = PAD * 2;
+    var y = PAD;
     var attr = {fill: 'black', 'text-anchor': 'start', 'font-size': PAD + 'px'};
 
     var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
 
-    var title = p.text(PAD, y, 'JSRoboWar').attr(attr).attr('font-size', '30px');
-    y += PAD * 3;
+    var title = p.text(PAD, y, 'JSRoboWar').attr(attr).attr('font-size', '20px');
+    y += PAD * 2;
 
     this.counter = p.text(PAD, y, 'Chronons: 0').attr(attr);
     y += PAD * 2;
 
     var labels = [];
     for (var i = 0, robot; robot = this.game.robots[i]; i++) {
-      p.rect(0, y - PAD, this.paper.width, PAD * 6).attr({fill: robot.color, stroke: null});
+      p.rect(0, y - PAD, p.width, PAD * 4).attr({fill: robot.color, stroke: null});
       labels.push({
         robot: robot,
         name: p.text(PAD, y + PAD * 0, robot.name).attr(attr).attr('font-weight', 'bold'),
         energy: p.text(PAD, y + PAD * 1, '').attr(attr),
-        damage: p.text(PAD, y + PAD * 2, '').attr(attr),
-        shield: p.text(PAD, y + PAD * 3, '').attr(attr),
-        status: p.text(PAD, y + PAD * 4, '').attr(attr),
+        damage: p.text(p.width / 2, y + PAD * 1, '').attr(attr),
+        shield: p.text(PAD, y + PAD * 2, '').attr(attr),
+        status: p.text(p.width / 2, y + PAD * 2, '').attr(attr),
       });
-      y += PAD * 6;
+      y += PAD * 4;
     }
     this.labels = labels;
   },
@@ -1943,12 +1971,21 @@ var Scoreboard = Class.extend({
       label['damage'].attr('text', 'Damage: ' + robot.damage);
       label['shield'].attr('text', 'Shield: ' + robot.shield);
       label['status'].attr('text', 'Status: ' + (
-        robot.energy < 0 ? 'DRAINED' :
+        robot.energy < 0 ? 'NO ENERGY' :
         robot.stasis > 0 ? 'STASIS' :
         robot.wall ? 'WALL' :
         robot.collision ? 'COLLISION' :
         robot.is_running ? 'alive' :
         'DEAD'));
+    }
+  },
+
+  declare_winner: function() {
+    for (var i = 0, label; label = this.labels[i]; i++) {
+      var robot = label['robot'];
+      if (label['robot'].is_running) {
+        label['status'].attr('text', 'Status: WINNER');
+      }
     }
   },
 
