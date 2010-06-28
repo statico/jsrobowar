@@ -195,6 +195,12 @@ $(document).ready(function() {
 
   show_start_button();
 
+  // Sound-toggle button -----------------------------------------------------
+
+  $('#sound').change(function() {
+    SoundEffects.enable($(this).attr('checked'));
+  }).change();
+
   // Auto-start demo mode ----------------------------------------------------
 
   $('#choice0').val('arachnee').change();

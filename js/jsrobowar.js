@@ -1993,6 +1993,8 @@ var Scoreboard = Class.extend({
 
 var SoundEffects = (function() {
 
+  var enabled = true;
+
   var sounds = {
     collision: "Collision",
     death: "Death",
@@ -2012,8 +2014,11 @@ var SoundEffects = (function() {
 
   function make_play_callback(name) {
     // TODO: Fix audio to be less terrible.
-    //return function() { load(name).play() };
-    return function() {};
+    return function() {
+      if (enabled) {
+        load(name).play();
+      }
+    };
   }
 
   var obj = new Object();
@@ -2023,6 +2028,10 @@ var SoundEffects = (function() {
     preload[name] = load(name);
     obj["play_" + name] = make_play_callback(name);
   }
+
+  obj.enable = function(value) {
+    enabled = value;
+  };
 
   return obj;
 
