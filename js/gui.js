@@ -207,7 +207,7 @@ $(document).ready(function() {
 
   // Auto-start demo mode ----------------------------------------------------
 
-  $('#choice0').val('arachnee').change();
+  $('#choice0').val('archivist').change();
   $('#choice1').val('ghost').change();
   $('#choice2').val('pearl').change();
   $('#choice3').val('silo-iv').change();
