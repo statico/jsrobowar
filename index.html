@@ -35,31 +35,30 @@
 
   <section id="play">
 
-  <div id="game">
-    <div id="arena"></div>
-    <div>
-      <div id="scoreboard"></div>
-      <div id="controls">
-        <button id="start">Battle</button>
-        <button id="stop">Halt</button>
+    <div id="game">
+      <div id="arena"></div>
+      <div>
+        <div id="scoreboard"></div>
+        <div id="controls">
+          <button id="start">Battle</button>
+          <button id="stop">Halt</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="clear"></div>
+    <div class="clearfix"></div>
 
-  <fieldset id="choices">
-    <legend>Robots</legend>
-    <ol></ol>
-  </fieldset>
+    <section id="editor">
+      <hr/>
+      <h2>Robot X</h2>
+      <div id="errors"></div>
+      <div id="editors"></div>
+    </section>
 
-  <section id="editor">
-    <h2>Robot X</h2>
-    <h3>Drafting Board</h3>
-    <div id="errors"></div>
-    <div id="editors"></div>
-    <h3>Hardware Depot</h3>
-  </section>
+    <fieldset id="choices">
+      <legend>Load a robot:</legend>
+      <ol></ol>
+    </fieldset>
 
   </section>
 
@@ -81,30 +80,41 @@
 
   <section id="about">
 
-  <h2>About RoboWar</h2>
-  <p>
-  RoboWar is an environment where virtual robots fight to the death using a variety of weapons and techniques. The robots are programmed using a <a href="http://en.wikipedia.org/wiki/Stack-oriented_programming_language">stack-oriented programming language</a> called RoboTalk. The robots are also configured using a set of hardware features, and the sum of the features determines the robot's class.
-  </p>
-  <p>
-  According to <a href="http://en.wikipedia.org/wiki/RoboWar">Wikipedia's article on RoboWar</a>, "25 RoboWar tournaments were held in the past between 1989 until roughly 2003, when tournaments became intermittent and many of the major coders moved on."
-  </p>
+    <h2>About RoboWar</h2>
+    <p>
+      RoboWar is an environment where virtual robots fight to the death using
+      a variety of weapons and techniques. The robots are programmed using a <a
+      href="http://en.wikipedia.org/wiki/Stack-oriented_programming_language">stack-oriented
+      programming language</a> called RoboTalk. The robots are also configured
+      using a set of hardware features, and the sum of the features determines
+      the robot's class.
+    </p>
+    <p>
+      According to <a href="http://en.wikipedia.org/wiki/RoboWar">Wikipedia's
+      article on RoboWar</a>, "25 RoboWar tournaments were held in the past
+      between 1989 until roughly 2003, when tournaments became intermittent and
+      many of the major coders moved on."
+    </p>
 
-  <h2>About JSRoboWar</h2>
-  <p>
-  JSRoboWar is a from-scratch port of RoboWar to JavaScript. JSRoboWar supports most of the functionality of the original except for teamplay, custom icons and sounds, and lasers (which are deprecated anyway).
-  </p>
-  <p>
-  JSRoboWar uses the <a href="http://raphaeljs.com/">Raphaël JavaScript Library</a> to draw to an HTML5 canvas.
-  </p>
+    <h2>About JSRoboWar</h2>
+    <p>
+      JSRoboWar is a from-scratch port of RoboWar to JavaScript. JSRoboWar
+      supports most of the functionality of the original except for teamplay,
+      custom icons and sounds, and lasers (which are deprecated anyway).
+    </p>
+    <p>
+      JSRoboWar uses the <a href="http://raphaeljs.com/">Raphaël JavaScript
+      Library</a> to draw to an HTML5 canvas.
+    </p>
 
-  <h2>Links of Interest</h2>
-  <ul>
-    <li><a href="http://en.wikipedia.org/wiki/RoboWar">RoboWar on Wikipedia</a></li>
-    <li><a href="http://robowar.sourceforge.net/RoboWar5/index.html">RoboWar 5</a> - Download the original Mac Classic application as well as the new Windows port</li>
-    <li><a href="http://stephan.kochen.nl/proj/robowarx/">RoboWarX</a> - An implementation in C#</li>
-    <li><a href="http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html">Paul Hansen's RoboWar Tutorial</a> - A great source for RoboTalk with lots of simple, sample bots</li>
-    <li><a href="http://github.com/statico/jsrobowar">JSRoboWar on GitHub</a> - The source code for what you're looking at</li>
-  </ul>
+    <h2>Links of Interest</h2>
+    <ul>
+      <li><a href="http://en.wikipedia.org/wiki/RoboWar">RoboWar on Wikipedia</a></li>
+      <li><a href="http://robowar.sourceforge.net/RoboWar5/index.html">RoboWar 5</a> - Download the original Mac Classic application as well as the new Windows port</li>
+      <li><a href="http://stephan.kochen.nl/proj/robowarx/">RoboWarX</a> - An implementation in C#</li>
+      <li><a href="http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html">Paul Hansen's RoboWar Tutorial</a> - A great source for RoboTalk with lots of simple, sample bots</li>
+      <li><a href="http://github.com/statico/jsrobowar">JSRoboWar on GitHub</a> - The source code for what you're looking at</li>
+    </ul>
 
   </section>
 

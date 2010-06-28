@@ -77,8 +77,13 @@ $(document).ready(function() {
     ]],
   ];
 
+  function get_robot_name(i) {
+    var select = $('#choice' + i);
+    return select.val() ? select.find(':selected').text() : 'Custom Robot ' + (i + 1);
+  }
+
   function reveal_editor(i, errors) {
-    $('#editor h2').text('Robot ' + (i + 1));
+    $('#editor h2').text(get_robot_name(i));
     if (errors)
       $('#errors').show().text(errors);
     else
@@ -113,9 +118,10 @@ $(document).ready(function() {
     textarea.hide();
     $('#editors').append(textarea);
 
-    // Typing into the textarea resets the bot choice.
+    // Changing resets the bot choice to reflect "a custom bot."
     textarea.change(function() {
       select.val('');
+      $('#editor h2').text(get_robot_name(i));
     });
 
     // Load robot code into the editor when a robot is selected.
@@ -162,8 +168,7 @@ $(document).ready(function() {
       }
 
       var select = $('#choice' + i);
-      var name = select.val() ? select.find(':selected').text() : 'Robot ' + (i + 1);
-      var robot = new Robot(name, ROBOT_COLORS[i], program);
+      var robot = new Robot(get_robot_name(i), ROBOT_COLORS[i], program);
       // TODO: Hardware store
       game.add_robot(robot);
     });

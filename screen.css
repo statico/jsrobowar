@@ -10,7 +10,7 @@ body {
 }
 textarea {
   width: 100%;
-  height: 20em;
+  height: 40em;
   font-family: 'Menlo', 'Monaco', 'Bitstream Vera Sans Mono', 'Lucida Sans Console', monospace;
   font-size: 11px;
 }
@@ -79,10 +79,6 @@ footer, footer a {
   color: #333;
 }
 
-.errors {
-  color: #c00;
-  white-space: pre-wrap;
-}
 #game > div {
   float: left;
 }
@@ -98,7 +94,27 @@ footer, footer a {
   font-size: 120%;
   padding: 0.3em;
 }
+#errors {
+  color: #c00;
+  background: #fee;
+  border: 2px solid #f00;
+  padding: 1em;
+  margin-bottom: 1em;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+#choices {
+  padding: 0.2em;
+  border: 2px solid #ccc;
+}
+#editor, #choices {
+  margin-top: 1em;
+}
 
-.clear {
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
   clear: both;
+  visibility: hidden;
 }
