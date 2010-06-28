@@ -344,9 +344,7 @@ var Arena = Class.extend({
               a = (a-c); /* a = rx */
               b = (b-d); /* b = ry */
               c = (a*target.vx + b*target.vy); /* c = r¥v */
-              t = (target.vx*target.vx+
-                target.vy*target.vy) -
-                (c*c) / (a*a+b*b);
+              t = (target.vx*target.vx+ target.vy*target.vy) - (c*c) / (a*a+b*b);
               tmp = Math.sqrt(t);
               if (tmp-parseInt(tmp) > 0.5) tmp+=1.0;
               doppler = (a*target.vy-b*target.vx) > 0 ?
@@ -358,6 +356,7 @@ var Arena = Class.extend({
     // TODO: Teamplay.
     //if (who->team && who->team == rob[target].team)
     //  dist = 0;  /* Don't shoot own team member */
+
     return dist==0 ? 0 : doppler;
   },
 
@@ -400,8 +399,9 @@ var Arena = Class.extend({
 
   shoot: function(robot, type, energy) {
     var aim_radians = robot.aim * (Math.PI + Math.PI) / 360;
-    var p = this.create_projectile(type, energy);
     var radius = robot.radius + 7;
+
+    var p = this.create_projectile(type, energy);
     p.x = robot.x + Math.sin(aim_radians) * radius;
     p.y = robot.y - Math.cos(aim_radians) * radius;
     p.energy = energy;

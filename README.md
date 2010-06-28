@@ -1,7 +1,7 @@
 JSRoboWar
 =========
 
-To see it in action, go to [jsrobowar.appspot.com](http://jsrobowar.appspot.com/).
+To see it in action, go to [http://statico.github.com/jsrobowar/](http://statico.github.com/jsrobowar/).
 
 Code layout:
 
@@ -13,5 +13,4 @@ Code layout:
 * `index.html` -- The main UI featuring the Arena and robot code editor.
 * `robots/` -- A selection of robots from [the original RoboWar application](http://robowar.sf.net/) and [Paul Hansen's RoboWar Tutorial](http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html).
 * `sounds/` -- Sounds from [the original RoboWar application](http://robowar.sf.net/).
-* `app.yaml` and `index.yaml` -- Bits for [App Engine](http://code.google.com/appengine/)
 * `LICENSE` -- The license for this source code.
