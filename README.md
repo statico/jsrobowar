@@ -5,8 +5,7 @@ To see it in action, go to [jsrobowar.appspot.com](http://jsrobowar.appspot.com/
 
 Code layout:
 
-* `js/model.js` -- The core JSRoboWar engine.
-* `js/view.js` -- Any classes which render the models to a canvas.
+* `js/jsrobowar.js` -- The core JSRoboWar engine.
 * `js/gui.js` -- All code used to set up `index.html`.
 * `js/third-party/base.js` -- A JavaScript object system by John Resig.
 * `js/third-party/raphael-*.js` -- The [Raphaël JavaScript library](http://raphaeljs.com/).
