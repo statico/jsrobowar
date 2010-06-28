@@ -1,6 +1,6 @@
 {
     Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
-    Energy: 100, Damage: 100, Shield: 0, CPU: 15, Bullets: norbal
+    Energy: 100, Damage: 100, Shield: 0, CPU: 15, Bullets: normal
 }
 
 # TimBot IV

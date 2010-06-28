@@ -41,6 +41,55 @@ $(document).ready(function() {
     return false;
   });
 
+  // Robot choices -----------------------------------------------------------
+
+  var ROBOT_SLOTS = 4;
+  var ROBOT_CHOICES = [
+    ['Tutorial robots', [
+      ['corner-hopper', 'Corner Hopper'],
+      ['dgt-with-probes', 'Defensive Gun Turret'],
+      ['shape-changer', 'Shape Changer'],
+      ['stationary', 'Stationary Bot'],
+      ['wall-hugger', 'Wall-Hugger'],
+      ['wall-seeker', 'Wall-Seeker'],
+      ['wanderer', 'Wanderer'],
+    ]],
+    ['Mortal class', [
+      ['arachnee', 'Arachnee'],
+      ['archivist', 'Archivist'],
+      ['existentialist', 'Existentialist'],
+      ['ghost', 'Ghost'],
+      ['invisible-stalker', 'Invisible Stalker'],
+      ['locke', 'Lock v18'],
+      ['pearl', 'Pearl'],
+      ['silo-iv', 'Silo IV'],
+      ['timbot-iv', 'Timbot IV'],
+    ]],
+    ['Titan class', [
+      ['dark-knight-4', 'Dark Knight 4'],
+      ['fluffy-3', 'Fluffy 3'],
+      ['soul-deliverer-9x', 'Soul Deliverer 9x'],
+      ['the-dead-parrot', 'The Dead Parrot'],
+      ['zim', 'Zim'],
+    ]],
+  ];
+
+  for (var i = 0; i < ROBOT_SLOTS; i++) {
+    var select = $('<select/>').attr('id', 'choice' + i);
+    select.append($('<option/>').text('Choose a robot...'));
+    for (var j = 0, group; group = ROBOT_CHOICES[j]; j++) {
+      var optgroup = $('<optgroup/>').attr('label', group[0]);
+      for (var k = 0, choice; choice = group[1][k]; k++) {
+        optgroup.append($('<option/>').attr('value', choice[0]).text(choice[1]));
+      }
+      select.append(optgroup);
+    }
+
+    var edit = $('<a/>').text('Edit...').attr('href', '#');
+
+    $('#choices ol').append($('<li/>').append(select).append(edit));
+  }
+
 });
 
 /*
