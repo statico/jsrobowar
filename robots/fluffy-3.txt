@@ -1,0 +1,1396 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 150, Shield: 100, CPU: 50, Bullets: explosive, +all
+}
+
+Start:
+
+begining:
+1 q' sto
+dropall
+flushint
+energy' probe' setparam
+     robots 2 > group ifg
+
+ 70 range' SETPARAM
+checkclose range' setint
+inton
+0 aim' store
+22 aim' store
+44 aim' store
+66 aim' store
+88 aim' store
+110 aim' store
+132 aim' store
+154 aim' store
+176 aim' store
+198 aim' store
+220 aim' store
+242 aim' store
+264 aim' store
+286 aim' store
+308 aim' store
+330 aim' store
+checkclose:
+range dup  75 < and prebits ifg
+
+
+
+  600 range' SETPARAM
+   90 radar' SETPARAM
+  #moveto range' setint
+    firstfind range' setint
+
+    GetOutOfTheWay radar' setint
+
+   coll2 COLLISION' SETINT
+   wallstuff1 WALL' SETINT
+   DodgeRight1 LEFT' SETINT
+   DodgeLeft1 RIGHT' SETINT
+   movdown1 TOP' SETINT
+   movup1 BOT' SETINT
+
+inton
+60 a' sto
+
+#!!nostowarnings
+full_search:
+inton
+
+
+   0 aim'   23 aim'   46 aim'
+  69 aim'   92 aim'  115 aim'
+ 138 aim'  161 aim'  184 aim'
+ 207 aim'  230 aim'  253 aim'
+ 276 aim'  299 aim'  322 aim'
+ 345 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+   8 aim'   31 aim'
+  54 aim'   77 aim'  100 aim'
+ 123 aim'  146 aim'  169 aim'
+ 192 aim'  215 aim'  238 aim'
+ 261 aim'  284 aim'  307 aim'
+ 330 aim'  353 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  16 aim'
+  39 aim'   62 aim'   85 aim'
+ 108 aim'  131 aim'  154 aim'
+ 177 aim'  200 aim'  223 aim'
+ 246 aim'  269 aim'  292 aim'
+ 315 aim'  338 aim'    1 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+  24 aim'   47 aim'   70 aim'
+  93 aim'  116 aim'  139 aim'
+ 162 aim'  185 aim'  208 aim'
+ 231 aim'  254 aim'  277 aim'
+ 300 aim'  323 aim'  346 aim'
+   9 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 32 aim'   55 aim'
+  78 aim'  101 aim'  124 aim'
+ 147 aim'  170 aim'  193 aim'
+ 216 aim'  239 aim'  262 aim'
+ 285 aim'  308 aim'  331 aim'
+ 354 aim'   17 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  40 aim'
+  63 aim'   86 aim'  109 aim'
+ 132 aim'  155 aim'  178 aim'
+ 201 aim'  224 aim'  247 aim'
+ 270 aim'  293 aim'  316 aim'
+ 339 aim'    2 aim'   25 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+  48 aim'   71 aim'   94 aim'
+ 117 aim'  140 aim'  163 aim'
+ 186 aim'  209 aim'  232 aim'
+ 255 aim'  278 aim'  301 aim'
+ 324 aim'  347 aim'   10 aim'
+  33 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  56 aim'   79 aim'
+ 102 aim'  125 aim'  148 aim'
+ 171 aim'  194 aim'  217 aim'
+ 240 aim'  263 aim'  286 aim'
+ 309 aim'  332 aim'  355 aim'
+  18 aim'   41 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  64 aim'
+  87 aim'  110 aim'  133 aim'
+ 156 aim'  179 aim'  202 aim'
+ 225 aim'  248 aim'  271 aim'
+ 294 aim'  317 aim'  340 aim'
+   3 aim'   26 aim'   49 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  72 aim'   95 aim'  118 aim'
+ 141 aim'  164 aim'  187 aim'
+ 210 aim'  233 aim'  256 aim'
+ 279 aim'  302 aim'  325 aim'
+ 348 aim'   11 aim'   34 aim'
+  57 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  80 aim'  103 aim'
+ 126 aim'  149 aim'  172 aim'
+ 195 aim'  218 aim'  241 aim'
+ 264 aim'  287 aim'  310 aim'
+ 333 aim'  356 aim'   19 aim'
+  42 aim'   65 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+  88 aim'
+ 111 aim'  134 aim'  157 aim'
+ 180 aim'  203 aim'  226 aim'
+ 249 aim'  272 aim'  295 aim'
+ 318 aim'  341 aim'    4 aim'
+  27 aim'   50 aim'   73 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+  96 aim'  119 aim'  142 aim'
+ 165 aim'  188 aim'  211 aim'
+ 234 aim'  257 aim'  280 aim'
+ 303 aim'  326 aim'  349 aim'
+  12 aim'   35 aim'   58 aim'
+  81 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 104 aim'  127 aim'  150 aim'
+ 173 aim'  196 aim'
+ 219 aim'  242 aim'  265 aim'
+ 288 aim'  311 aim'  334 aim'
+ 357 aim'   20 aim'   43 aim'
+  66 aim'   89 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 112 aim'
+ 135 aim'  158 aim'  181 aim'
+ 204 aim'  227 aim'  250 aim'
+ 273 aim'  296 aim'  319 aim'
+ 342 aim'    5 aim'   28 aim'
+  51 aim'   74 aim'   97 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 120 aim'  143 aim'  166 aim'
+ 189 aim'  212 aim'  235 aim'
+ 258 aim'  281 aim'  304 aim'
+ 327 aim'  350 aim'   13 aim'
+  36 aim'   59 aim'   82 aim'
+ 105 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 128 aim'  151 aim'
+ 174 aim'  197 aim'  220 aim'
+ 243 aim'  266 aim'  289 aim'
+ 312 aim'  335 aim'  358 aim'
+  21 aim'   44 aim'   67 aim'
+  90 aim'  113 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 136 aim'
+ 159 aim'  182 aim'  205 aim'
+ 228 aim'  251 aim'  274 aim'
+ 297 aim'  320 aim'  343 aim'
+   6 aim'   29 aim'   52 aim'
+  75 aim'   98 aim'  121 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 144 aim'  167 aim'  190 aim'
+ 213 aim'  236 aim'  259 aim'
+ 282 aim'  305 aim'  328 aim'
+ 351 aim'   14 aim'   37 aim'
+  60 aim'   83 aim'  106 aim'
+ 129 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 152 aim'  175 aim'
+ 198 aim'  221 aim'  244 aim'
+ 267 aim'  290 aim'  313 aim'
+ 336 aim'  359 aim'   22 aim'
+  45 aim'   68 aim'   91 aim'
+ 114 aim'  137 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 160 aim'
+ 183 aim'  206 aim'  229 aim'
+ 252 aim'  275 aim'  298 aim'
+ 321 aim'  344 aim'    7 aim'
+  30 aim'   53 aim'   76 aim'
+  99 aim'  122 aim'  145 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+
+ 168 aim'  191 aim'  214 aim'
+ 237 aim'  260 aim'  283 aim'
+ 306 aim'  329 aim'  352 aim'
+  15 aim'   38 aim'   61 aim'
+  84 aim'  107 aim'  130 aim'
+ 153 aim'
+sync
+sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto sto
+ 176 aim'  199 aim'
+ 222 aim'  245 aim'  268 aim'
+ 291 aim'  314 aim'  337 aim'
+sync
+sto sto sto sto sto sto sto sto
+full_search jump
+
+FirstFind:
+
+ aim look + aim' sto
+0 look' sto
+ range dup  80 < and  prebits ifg
+
+
+radar dup 120 < and GetOutOfTheWay ifg
+25  scan' sto
+-25 scan' sto
+0 scan' sto
+range 0 = Findloop ifg
+probe -2 / range 12 / > PK ifg
+energy 150 =  StoreShield ifg
+#shield 50 > creep ifg
+
+FirstFind rti
+
+StoreShield:
+2 shield + shield' sto
+dropall
+FirstFind jump
+
+
+
+Creep:
+debug
+range 0 = Findloop ifg
+ range dup  70 <  JustDontSitThere ifg
+#range energy shield + 30 - 2 / <  JustDontSitThere2 ifg
+radar dup 90 < 0 ! and GetOutOfTheWay ifg
+energy 150 =  StoreShield ifg
+
+doppler 3  chs arctan aim  + dup 3 sin speedx' sto 3 chs cos speedy' sto
+creep jump
+
+
+
+GetOutOfTheWay:
+
+
+
+aim 1 tan DodgeX ifg
+DodgeY:
+radar dup 29 < and DodgeY3 ifg
+doppler 2 / -14 arctan aim + aim' sto
+12 Stunner' sto
+ y 150 - dup ABS  / -16 * speedy' store
+sync sync
+-1 radar' setparam
+
+  slowy  jump
+
+DodgeY3:
+   y 150 < 40 * 20  - movey' sto
+
+-1 radar' setparam
+moveto range' setint
+  slowy jump
+
+DodgeX:
+radar dup 12 < and DodgeX3 ifg
+doppler 2 / -14 arctan aim + aim' sto
+12 Stunner' sto
+  x 150 < 32 * 16 - speedx' store
+moveto range' setint
+sync sync
+-1 radar' setparam
+
+ slowx  jump
+
+DodgeX3:
+
+  x 150 < 40 * 20 - movex' store
+moveto range' setint
+
+  slowx  jump
+
+
+
+slowx:
+0 shield' sto
+sloxa Range' setint
+sync
+range 0 = Findloop ifg
+sloxa:
+doppler -14 arctan aim  look + + aim' sto
+ # 8 stunner' sto
+#speedx speedx 2 / - speedx' sto
+sloxb Range' setint
+sync
+range 0 = Findloop ifg
+sloxb:
+doppler -14 arctan aim  look + + aim' sto
+ # 8 stunner' sto
+speedx speedx 2 / - speedx' sto
+sloxc Range' setint
+sync
+range 0 = Findloop ifg
+sloxc:
+doppler -14 arctan aim  look + + aim' sto
+ # 8 stunner' sto
+speedx speedx 2 / - speedx' sto
+sync
+
+0 speedx' sto
+0 look' sto
+moveto range' setint
+full_search jump
+
+slowy:
+0 shield' sto
+sync
+#ScanLoop3 jump
+#speedy speedy 2 / - speedy' sto
+sloya Range' setint
+sync
+range 0 = Findloop ifg
+sloya:
+doppler -14 arctan aim  look + + aim' sto
+ # 8 stunner' sto
+speedy speedy 2 / - speedy' sto
+sloyb Range' setint
+sync
+range 0 = Findloop ifg
+sloyb:
+doppler -14 arctan aim  look + + aim' sto
+#  8 stunner' sto
+speedy speedy 2 / - speedy' sto
+sloyc Range' setint
+sync
+range 0 = Findloop ifg
+sloyc:
+doppler -14 arctan aim  look + + aim' sto
+#  8 stunner' sto
+sync
+#ScanLoop3 jump
+#ScanLoop3 jump
+0 speedy' sto
+0 look' sto
+ moveto range' setint
+full_search jump
+
+ReRange:
+moveto range' setint
+moveto jump
+
+prebits:
+-1 radar' setparam
+#8 stunner' sto
+#sync
+aim 4 - dup 8 +
+doppler -14 arctan  + aim' sto
+24  stunner' sto
+doppler -14 arctan  + aim' sto
+24  stunner' sto
+JustDontSitThere range' setint
+sync
+
+JustDontSitThere:
+
+
+doppler  aim  90 - +   dup energy 4 / # 33 -
+
+ dup 2 roll  # stack= aim range aim range
+
+  sin movex' store
+  chs cos  movey' store
+aim 35 + aim' sto
+0 shield' sto
+600 range' setparam
+sync
+Closekill RANGE' SETINT
+aim 25 + aim' sto
+range 0 = FindLoop ifg
+
+
+#0 shield' sto
+#sync
+
+
+
+Closekill:
+#probe -30 < moveaway ifg
+m2 RANGE' SETINT
+sync
+range 0 = findloop ifg
+m2:
+aim look + aim' sto
+ #doppler -14 ARCTAN aim look + + aim' sto
+range 4 / dup 4 +
+stunner' sto stunner' sto
+     5 hell' sto
+        76 MISSILE' sto
+      28 stunner' store
+sync
+radar 16 < moveaway ifg
+prestart Jump
+
+
+FindLoop:
+inton
+  0 look' sto
+  30 look' sto
+ -30 look' sto
+    3 look' store
+    -3 look' store
+    6 look' store
+    -6 look' store
+    9 look' store
+    -9 look' store
+    12 look' store
+    -12 look' store
+    15 look' store
+    -15 look' store
+    18 look' store
+    -18 look' store
+    21 look' store
+    -21 look' store
+    24 look' store
+    -24 look' store
+    30 look' store
+    -30 look' store
+    36 look' store
+    -36 look' store
+    42 look' store
+    -42 look' store
+   48 look' store
+    -48 look' store
+   60 look' store
+    -60 look' store
+    0 look' store
+  intoff
+full_search rti
+
+
+
+PreStarta:
+
+energy 140 > begining ifg
+flushint
+dropall
+
+inton
+   #!! nostowarnings
+stackedScanLoop4a:
+
+  0 aim'  30 aim'  60 aim'  90 aim'
+120 aim' 150 aim' 180 aim' 210 aim'
+240 aim' 270 aim' 300 aim' 330 aim'
+ sync
+sto sto sto sto
+sto sto sto sto
+sto sto sto sto
+#!!stowarnings
+PreStart jump
+
+coll2:
+      range dup 35 < and shoot ifg
+find:
+shoot range' setint
+inton
+   #!! nostowarnings
+stackedScanLoop2:
+dropall
+  0 aim' sto  30 aim' sto  60 aim' sto  90 aim' sto
+120 aim' sto 150 aim' sto 180 aim' sto 210 aim' sto
+240 aim' sto 270 aim' sto 300 aim' sto 330 aim' sto
+
+#!!stowarnings
+
+ full_search jump
+shoot:
+range 0 = full_search ifg
+  range dup 7 < and getoff  ifg
+     aim look + aim' store
+    5 hell' sto
+    75 missile' sto
+    28 stunner' sto
+      0 speedx' sto
+      0 speedy' sto
+
+      sync
+
+     begining rti
+getoff:
+range chs 8 + m' sto
+   aim  dup m chs sin movex' sto m cos movey' sto
+sync
+adjustaim:
+aim a' sto
+20 look' sto  range 6 > shoot ifg
+-20 look' sto  range 6 >  shoot ifg
+40 look' sto  range 6 > shoot ifg
+-40 look' sto  range 6 > shoot ifg
+65 look' sto  range 6 >  shoot ifg
+-65 look' sto  range 6 > shoot ifg
+a aim' sto
+shoot jump
+
+
+cang:
+ 45 z' sto
+1 fire' sto
+return
+
+moveto:
+range 0 = full_search ifg
+ probe -30 < moveaway ifg
+range dup 35 < and  kill ifg
+
+energy 20 < prestarta ifg
+debug
+ range 130 < stunfirstLITE if
+q radar dup  170 < and and siderun ifg
+ doppler -8  arctan aim  + dup 8 sin speedx' sto 8 chs cos speedy' sto
+
+dropall
+
+moveto jump
+rti
+siderun:
+ doppler -8  arctan aim 26 + + dup 8 sin speedx' sto 8 chs cos speedy' sto
+dropall
+
+moveto rti
+
+stunfirstLITE:
+      doppler 2 / -14 arctan aim + aim' sto
+  8 stunner' sto
+0 q' sto
+chronon 2 mod moveto ifg
+sync
+12 stunner' sto
+
+
+return
+
+kill:
+doppler  aim + aim' sto
+energy stunner' sto
+sync
+range 0 = full_search ifg
+  range dup 7 < and getoff  ifg
+doppler -5 arctan aim + aim' sto
+5 hell' sto
+76 missile' sto
+
+sync
+begining jump
+
+ProbeKillb:
+Probing range' setint
+range 0 = findloop ifg
+Probing:
+aim look + aim' sto
+
+0 look' sto
+
+Range dup 60 < and Mkill ifg
+   12 hell' sto
+  probe  2 /  fire' sto
+#DoWhat range' setint
+energy' probe' setparam
+0 look' sto
+    start  rti
+
+Pk:
+
+12 hell' sto
+75 fire' sto
+rti
+moveaway:
+aim 1 tan goXmove ifg
+
+  y 150 > 42 * 21 -  movey' sto
+damage' probe' setparam
+ProbeKillb Rti
+
+goXmove:
+  x 150 > 42 * 21 -  movex' store
+damage' probe' setparam
+  ProbeKillb Rti
+
+ wallstuff1:
+   0 speedx' store
+   0 speedy' store
+290 x -  0 < hopleft1 ifg
+ 10 x - chs 0 < hopright1 ifg
+   290 y -  0 < hopup1 ifg
+10 y - chs 0 < hopdown1 ifg
+rti
+
+DodgeLeft1:
+   0 speedx' store
+   -1 d' sto
+   290 x -  0 < hopleft ifg
+   rti
+
+DodgeRight1:
+   0 speedx' store
+   1 d' sto
+ 10 x - chs 0 < hopright ifg
+   rti
+
+movup1:
+   0 speedy' store
+   290 y -  0 < hopup ifg
+   rti
+
+movdown1:
+   0 speedy' store
+ 10 y - chs 0 < hopdown ifg
+
+   rti
+
+hopright1:
+  10 x - movex' sto
+
+ 1 d' sto
+rti
+
+hopleft1:
+ 290 x - movex' sto
+
+ -1 d' sto
+rti
+
+hopdown1:
+  10 y - movey' sto
+
+ 1 d' sto
+rti
+
+
+hopup1:
+290  y  - movey' sto
+
+ -1 d' sto
+rti
+# ********************************************
+# ********************************************
+
+
+
+Group:
+
+   icon0
+    coll2 COLLISION' SETINT
+   3 robots' SETPARAM
+   prestart robots' SETINT
+   150 range' SETPARAM
+   wallstuffirst WALL' SETINT
+   DodgeRightF LEFT' SETINT
+   DodgeLeftF RIGHT' SETINT
+   movdownF TOP' SETINT
+   movupF BOT' SETINT
+   30 radar' SETPARAM
+ #  Dodge2 RADAR' SETINT
+   RunAway range' SETINT
+
+   INTON
+
+
+  x 150 < -6 * 3 + dup speedx' store
+
+0 arctan aim' sto
+
+   full_search jump
+
+ Start2:
+   dropall
+   energy' probe' setparam
+   coll2 COLLISION' SETINT
+      3 robots' SETPARAM
+   PreStart robots' SETINT
+   40 radar' SETPARAM
+#   Dodge2 RADAR' SETINT
+   400 range' SETPARAM
+   DoWhat range' SETINT
+
+
+   Full_search rti
+
+RunAway:
+
+   range dup 55 <  and Ekill ifg
+ x dup 21 < swap 279 > or leap1 ifg
+  y dup 21 < swap 279 > or leap1 ifg
+    aim  dup -5 sin speedx' sto 5 cos speedy' sto
+speedx speedy arctan aim' sto
+   chronon 5 < leap ifg
+leap1:
+   400 range' SETPARAM
+   DoWhat range' SETINT
+    3 robots' SETPARAM
+   PreStart robots' SETINT
+leap:
+
+RTI
+
+
+stopy:
+firstbigshoty range' setint
+inton
+ #  0 speedx' sto
+0 aim' sto
+180 aim' sto
+DoWhat range' setint
+InitLR:
+
+   x 240 > Rstart ifg
+   -6 speedy' sto
+   6 speedx' sto
+   wallstuff WALL' SETINT
+   20 left' setparam
+   280 right' setparam
+   20 top' setparam
+   280 bot' setparam
+   DodgeRight2 LEFT' SETINT
+   DodgeLeft2 RIGHT' SETINT
+   movdown2 TOP' SETINT
+   movup2 BOT' SETINT
+speedx speedy arctan aim' sto
+   Mainroutine rti
+
+Rstart:
+   6 speedy' sto
+   -6 speedx' sto
+   wallstuff WALL' SETINT
+   20 left' setparam
+   280 right' setparam
+   20 top' setparam
+   280 bot' setparam
+   DodgeRight2 LEFT' SETINT
+   DodgeLeft2 RIGHT' SETINT
+   movdown2 TOP' SETINT
+   movup2 BOT' SETINT
+speedx speedy arctan aim' sto
+   Mainroutine rti
+
+
+stopx:
+debug
+firstbigshotx range' setint
+inton
+ #  0 speedx' sto
+90 aim' sto
+270 aim' sto
+DoWhat range' setint
+InitTB:
+   y 240 > Bstart ifg
+   6 speedy' sto
+   6 speedx' sto
+   wallstuff WALL' SETINT
+   20 left' setparam
+   280 right' setparam
+   20 top' setparam
+   280 bot' setparam
+   DodgeRight2 LEFT' SETINT
+   DodgeLeft2 RIGHT' SETINT
+   movdown2 TOP' SETINT
+   movup2 BOT' SETINT
+speedx speedy arctan aim' sto
+   Mainroutine rti
+
+ Bstart:
+   -6 speedy' sto
+   -6 speedx' sto
+   wallstuff WALL' SETINT
+   20 left' setparam
+   280 right' setparam
+   20 top' setparam
+   280 bot' setparam
+   DodgeRight2 LEFT' SETINT
+   DodgeLeft2 RIGHT' SETINT
+   movdown2 TOP' SETINT
+   movup2 BOT' SETINT
+speedx speedy arctan aim' sto
+   Mainroutine rti
+
+firstbigshotx:
+   energy 100 < clear ifg
+    12 hell' sto
+   76 fire' sto
+DoWhat range' setint
+     rti
+firstbigshoty:
+   energy 100 < clear ifg
+    12 hell' sto
+   76 fire' sto
+DoWhat range' setint
+     rti
+
+
+
+Mainroutine:
+   robots 2 = prestart ifg
+   energy 3 +  shield' sto
+   chronon t' sto
+   t random 60 / + CHRONON' setparam
+   Mainroutine CHRONON' setint
+sync
+   0 shield' sto
+
+Rti
+
+GoCentrey:
+
+y 150 > ymoveup  ifg
+6 speedy' sto
+150 Bot' setparam
+stopy bot' setint
+rti
+
+ymoveup:
+
+-6 speedy' sto
+150 Top' setparam
+stopy Top' setint
+rti
+
+
+GoCentrex:
+
+x 150 > xmoveL  ifg
+6 speedx' sto
+150 right' setparam
+stopx right' setint
+rti
+xmoveL:
+-6 speedx' sto
+150 left' setparam
+stopx left' setint
+rti
+
+ bsleft:
+bigshotx range' setint
+2 aim' sto
+178 aim' sto
+354 aim' sto
+186 aim' sto
+348 aim' sto
+192 aim' sto
+DoWhat range' setint
+rti
+
+ bsright:
+bigshotx range' setint
+358 aim' sto
+182 aim' sto
+6 aim' sto
+176 aim' sto
+12 aim' sto
+168 aim' sto
+DoWhat range' setint
+rti
+
+ bsup:
+bigshoty range' setint
+92 aim' sto
+268 aim' sto
+84 aim' sto
+276 aim' sto
+78 aim' sto
+282 aim' sto
+DoWhat range' setint
+rti
+
+ bsdown:
+
+bigshoty range' setint
+88 aim' sto
+272 aim' sto
+96 aim' sto
+266 aim' sto
+102 aim' sto
+260 aim' sto
+
+DoWhat range' setint
+rti
+
+
+
+DoWhat:
+range dup 70 <  and killg ifg
+range dup 90 <  and Notherkillg ifg
+energy 50 < Start2 ifg
+ probe -2 / range 12 / >  energy 75 > and probekill ifg
+damage' probe' setparam
+probe 31 <  energy 40 > and probekill ifg
+energy' probe' setparam
+rti
+
+# ********************************************
+#           shotstuff
+# ********************************************
+Clear:
+rti
+Notherkillg:
+    energy 100 < clear ifg
+doppler -14 arctan aim + aim' sto
+12 stunner' sto
+
+   12 hell' sto
+   energy 80 min fire' sto
+#   0 speedx' sto
+  #    0 speedy' sto
+
+   0 shield' sto
+ Group jump
+
+
+killg:
+    doppler aim + aim' sto
+    28 stunner' sto
+    5 hell' sto
+
+    76  missile' store
+   0 shield' sto
+   sync sync sync
+   flushint
+rti
+
+Ekill:
+    doppler aim + aim' sto
+    24 stunner' sto
+
+    5 hell' sto
+    76  missile' store
+   0 shield' sto
+
+aim 1 tan goX ifg
+
+  y 150 > 16 * 8 -  speedy' sto
+   DoWhat range' SETINT
+    3 robots' SETPARAM
+   sync
+   flushint
+   DoWhat range' SETINT
+    3 robots' SETPARAM
+speedx speedy arctan aim' sto
+dropall
+ full_search rti
+
+goX:
+  x 150 > 16 * 8 -  speedx' store
+   sync
+   flushint
+   DoWhat range' SETINT
+    3 robots' SETPARAM
+speedx speedy arctan aim' sto
+dropall
+
+full_search  rti
+
+ProbeKill:
+damage' probe' setparam
+
+range 0 = clear ifg
+Range 60 < Mkill ifg
+probe 13 <  energy  60 > and laserKill ifg
+
+   12 hell' sto
+  probe 2 / 2 + fire' sto
+DoWhat range' setint
+energy' probe' setparam
+     rti
+
+LaserKill:
+
+60 laser' sto
+RTI
+
+Mkill:
+range 4 / dup 4 +
+stunner' sto stunner' sto
+   5 hell' sto
+  probe 2 / 2 +  missile' sto
+DoWhat range' setint
+energy' probe' setparam
+     rti
+
+bigshotx:
+ #  0 shield' sto
+   energy 100 < robots 2 = or clear ifg
+   doppler -14 arctan aim + aim' sto
+   12 hell' sto
+   76 fire' sto
+DoWhat range' setint
+     rti
+
+bigshoty:
+ #  0 shield' sto
+   energy 100 < robots 2 = or clear ifg
+   doppler -14 arctan aim + aim' sto
+   12 hell' sto
+   76 fire' sto
+DoWhat range' setint
+     rti
+# ********************************************
+
+ wallstuffirst:
+   0 speedx' store
+   0 speedy' store
+   290 x -  0 < hopleftF ifg
+   10 x - chs 0 < hoprightF ifg
+   290 y -  0 < hopupF ifg
+   10 y - chs 0 < hopdownF ifg
+rti
+
+DodgeLeftF:
+   0 speedx' store
+   290 x -  0 < hopleftF ifg
+   2 aim' sto range firstbigshotx if
+   178 aim' sto range firstbigshotx if
+   -1 d' sto
+
+   GoCentrey rti
+
+DodgeRightF:
+   0 speedx' store
+   358 aim' sto range firstbigshotx if
+   182 aim' sto range firstbigshotx if
+   1 d' sto
+ 10 x - chs 0 < hoprightF ifg
+  GoCentrey rti
+
+movupF:
+   0 speedy' store
+   290 y -  0 < hopupF ifg
+   90 aim' sto range firstbigshotx if
+   270 aim' sto range firstbigshotx if
+ -1 d' sto
+  GoCentrex rti
+
+movdownF:
+   0 speedy' store
+ 10 y - chs 0 < hopdownF ifg
+   90 aim' sto range firstbigshotx if
+   270 aim' sto range firstbigshotx if
+ 1 d' sto
+  GoCentrex rti
+
+hopleftF:
+ 290 x - movex' sto
+
+ -1 d' sto
+ GoCentrex rti
+
+hoprightF:
+ 10 x - movex' sto
+
+ 1 d' sto
+ GoCentrex  rti
+
+hopdownF:
+  10 y - movey' sto
+ 1 d' sto
+GoCentrey rti
+
+
+hopupF:
+290  y  - movey' sto
+ -1 d' sto
+GoCentrey rti
+
+# Mainwallstuff
+ wallstuff:
+   290 x -  0 < hopleft ifg
+   10 x - chs 0 < hopright ifg
+   290 y -  0 < hopup ifg
+   10 y - chs 0 < hopdown ifg
+rti
+
+DodgeLeft2:
+   0 speedx' store
+   290 x -  0 < hopleft ifg
+   -6 speedx' sto
+   -1 d' sto
+   bsleft rti
+
+
+DodgeRight2:
+   0 speedx' store
+ 10 x - chs 0 < hopright ifg
+   6 speedx' sto
+ 1 d' sto
+  bsright rti
+
+movup2:
+   0 speedy' store
+   290 y -  0 < hopup ifg
+   -6 speedy' sto
+ -1 d' sto
+  bsup rti
+
+movdown2:
+   0 speedy' store
+ 10 y - chs 0 < hopdown ifg
+   6 speedy' sto
+ 1 d' sto
+  bsdown rti
+
+hopright:
+   0 speedx' store
+  10 x - movex' sto
+   6 speedx' sto
+ 1 d' sto
+rti
+
+hopleft:
+   0 speedx' store
+ 290 x - movex' sto
+   -6 speedx' sto
+ -1 d' sto
+rti
+
+hopdown:
+   0 speedy' store
+  10 y - movey' sto
+   6 speedy' sto
+ 1 d' sto
+rti
+
+
+hopup:
+   0 speedy' store
+290  y  - movey' sto
+   -6 speedy' sto
+ -1 d' sto
+rti
+# ********************************************
+
+PreStart:
+intoff
+flushint
+dropall
+   wallstuff1 WALL' SETINT
+   DodgeRight1 LEFT' SETINT
+   DodgeLeft1 RIGHT' SETINT
+   movdown1 TOP' SETINT
+   movup1 BOT' SETINT
+   1500 chronon' setparam
+  2 robots' SETPARAM
+   leap2 robots' SETINT
+ 0 shield' sto
+energy 145 > begining ifg
+1 d' sto
+ RunAway2 range' setint
+ 30 radar' setparam
+ PreStartshield radar' setint
+
+inton
+simpleaimloop:
+aim 4 + aim' sto
+simpleaimloop rti
+
+RunAway2:
+
+   range dup 55 <  and Ekill ifg
+    x dup 21 < swap 279 > or leap2 ifg
+  y dup 21 < swap 279 > or leap2 ifg
+  #  aim  dup -5 sin speedx' sto
+  aim 7 cos speedy' sto
+  400 range' SETPARAM
+   PS range' SETINT
+
+
+PreStartb jump
+
+leap2:
+
+   400 range' SETPARAM
+   PS range' SETINT
+    leapnew:
+
+
+
+
+
+PreStartb:
+energy 145 > begining ifg
+inton
+   #!! nostowarnings
+stackedScanLoop4:
+
+  0 aim'  30 aim'  60 aim'  90 aim'
+120 aim' 150 aim' 180 aim' 210 aim'
+240 aim' 270 aim' 300 aim' 330 aim'
+ sync
+sto sto sto sto
+sto sto sto sto
+sto sto sto sto
+#!!stowarnings
+  x 6 * 10 / 10  sin d * speedx' sto
+PreStartb jump
+
+PS:
+   range dup 50 <  and killg ifg
+   probe -2 / range 12 / > energy 75 > and probekillb ifg
+
+   range 150 < k3 ifg
+   chronon 2 mod Prestartb ifg
+   doppler -12 arctan aim + aim' sto
+   1 fire' sto
+   dropall
+   sync
+  PreStartb jump
+
+PreStartshield:
+  energy 24 - shield + shield' sto
+   chronon c' sto
+   c 5 + CHRONON' setparam
+   shieldoff CHRONON' setint
+rti
+
+shieldoff:
+   0 shield' sto
+   1500 chronon' setparam
+rti
+
+k3:
+ energy shield + 40 < PreStart ifg
+     lockon range' setint
+
+
+    Stunstream rti
+###############################################   StreamStuff
+moveaway2:
+aim 1 tan goXmoveg ifg
+
+  y 150 < 24 * 12 -  movey' sto
+
+  Return
+
+goXmoveg:
+  x 150 < 24 * 12 -  movex' store
+
+  Return
+
+
+Stunstream:
+0 shield' sto
+ doppler -14 arctan aim + aim' sto
+
+    12 stunner' sto
+ 0 speedx' sto
+ 0 speedy' sto
+sync
+
+  range 0 = skip ifg
+
+sync
+
+  range 0 = skip ifg
+sync
+
+  range 0 = skip ifg
+    12 stunner' sto
+
+
+sync
+
+  range 0 = skip ifg
+probe -30 < moveaway ifg
+sync
+
+
+  range 0 = skip ifg
+probe -30 < moveaway ifg
+sync
+    range 0 = skip ifg
+    16 stunner' sto
+
+sync
+
+  range 0 = skip ifg
+  damage' probe' setparam
+probe -30 < moveaway ifg
+sync
+
+
+  range 0 = skip ifg
+  probe 2 / 1 + q' sto
+sync
+  tag range' setint
+  range 0 = skip ifg
+tag:
+
+range 55 < Mkill ifg
+    16 stunner' sto
+   13 hell' sto
+  q fire' sto
+
+PreStart
+rti
+
+LockOn:
+  aim look + aim' store
+   0 look' store
+range 150 > PreStart ifg
+   Stunstream jump
+
+LockLoop:
+
+ skip:
+
+inton
+      0 look' sto
+  30 look' sto
+    -30 look' sto
+    3 look' store
+    -3 look' store
+    6 look' store
+    -6 look' store
+    9 look' store
+    -9 look' store
+    12 look' store
+    -12 look' store
+    15 look' store
+    -15 look' store
+    18 look' store
+    -18 look' store
+    21 look' store
+    -21 look' store
+    24 look' store
+    -24 look' store
+    30 look' store
+    -30 look' store
+    36 look' store
+    -36 look' store
+    42 look' store
+    -42 look' store
+   48 look' store
+    -48 look' store
+   60 look' store
+    -60 look' store
+
+
+    0 look' store
+
+   PreStart rti
+
+
+
+
+
+#!! NoStoWarnings

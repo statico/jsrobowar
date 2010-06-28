@@ -1,0 +1,32 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 100, Shield: 0, CPU: 15, Bullets: rubber, +missiles
+}
+
+{Existentialist - Life has no meaning what is given it through our actions.  (Life is like an onion ring, which also has no meaning except that which we chose to give it.)
+Matthew Sakai (a.k.a. The Great Prophet Alwyn)
+VII a.d. Kal. May anno domini MCMXC (4/25/90)}
+
+start:y 275 > lft if 5 speedx' store 
+right: range shoot if x 274 > rd if collision back if right jump
+up: range shoot if y 26 < ur if collision back if up jump
+lft: -5 speedx' store 270 aim' store
+left: range shoot if x 26 < lu if collision back if left jump
+down: range shoot if y 274 > dl if collision back if down jump
+ur: -4 speedy' store 1 speedx' store range shoot if collision back if -2 speedy' store 3 speedx' store range shoot if collision back if 0 speedy' store 5 speedx' store range shoot if collision back if 90 aim' store drop right jump
+lu: -4 speedx' store -1 speedy' store range shoot if collision back if -2 speedx' store -3 speedy' store range shoot if collision back if 0 speedx' store -5 speedy' store range shoot if collision back if 0 aim' store drop up jump
+dl: 4 speedy' store -1 speedx' store range shoot if collision back if 2 speedy' store -3 speedx' store range shoot if collision back if 0 speedy' store -5 speedx' store range shoot if collision back if 270 aim' store drop a 1 + a' store a 2 > next if left jump
+rd: 4 speedx' store 1 speedy' store range shoot if collision back if 2 speedx' store 3 speedy' store range shoot if collision back if 0 speedx' store 5 speedy' store range shoot if collision back if 180 aim' store drop down jump
+back: 5 dup swap drop drop range hi if aim 50 + aim' store collision back if return
+hi: collision hit if drop return
+hit:50 missile' store drop drop collision back if return
+shoot: energy missile' store return
+next: drop random aim' store -2 speedx' store -3 speedy' store
+main: x 275 > left1 if x 25 < right1 if y 275 > up1 if y 25 < down1 if collision kill if aim 17 + aim' store range 0 > attack if main jump
+kill: range 0 > attack if aim 50 + aim' store collision not ec if kill jump
+ec: drop main jump
+attack: 50 missile' store 50 missile' store return
+up1: -3 speedy' store return
+left1: -2 speedx' store return
+down1: 3 speedy' store return
+right1: 2 speedx' store return

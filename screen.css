@@ -1,0 +1,94 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding: 1em;
+  font-family: sans-serif;
+  background-color: #999;
+  background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #999);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#999));
+}
+textarea {
+  width: 45%;
+  height: 20em;
+  font-family: 'Menlo', 'Monaco', 'Bitstream Vera Sans Mono', 'Lucida Sans Console', monospace;
+  font-size: 11px;
+}
+
+#container, nav, footer {
+  width: 700px;
+  margin: 0 auto;
+  background: #fff;
+}
+#container {
+  padding: 1em;
+  border-style: solid;
+  border-color: #666;
+  border-width: 0px 2px 2px 2px;
+}
+
+nav {
+  padding: 0.5em 1em;
+  background: #666;
+  border: 2px solid #666;
+}
+nav, nav a {
+  color: #fff;
+}
+nav h1 {
+  font-size: 100%;
+}
+nav ul, nav li {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+nav a, nav h1 {
+  display: inline;
+  padding: 0.5em 1em;
+}
+
+nav a[href="#arena"] {
+  background: #f99;
+}
+nav a[href="#docs"] {
+  background: #6c6;
+}
+nav a[href="#about"] {
+  background: #99f;
+}
+
+nav.arena {
+  border-bottom: 8px solid #f99;
+}
+nav.docs {
+  border-bottom: 8px solid #6c6;
+}
+nav.about {
+  border-bottom: 8px solid #99f;
+}
+
+footer {
+  background: transparent;
+  font-size: small;
+  text-align: center;
+  margin-top: 1em;
+}
+footer, footer a {
+  color: #333;
+}
+
+.errors {
+  color: #c00;
+}
+#game div {
+  float: left;
+  padding-right: 1em;
+}
+#controls {
+  clear: both;
+}

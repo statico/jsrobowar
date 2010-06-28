@@ -1,0 +1,26 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 100, Shield: 0, CPU: 15, Bullets: rubber, +missiles
+}
+
+{Invisible Stalker
+Deadly as its AD&D counterpart
+Matthew Sakai
+XII a.d. Kal. May anno domini MCMXC (4/20/90)}
+
+start: random 60 / 5 + speedx' store random 60 / 5 + speedy' store main jump
+ss: drop
+main: collision run if x 200 > negx if energy 140 > shoot collision run if if radar junk if y 200 > negy collision run if if x 100 < posx if energy 75 < collision run if mn if y 100 < posy if main jump
+negx: random -60 / 5 - speedx' store return
+negy: random -60 / 5 - speedy' store return
+posx: random 60 / 5 + speedx' store return
+posy: random 60 / 5 + speedy' store return
+mn: drop
+man: collision run if x 200 > ngx if y 200 > ngy collision run if if x 100 < psx if energy 100 > collision run if ss if y 100 < psy if man jump
+ngx: random -60 / 1 - speedx' store return
+ngy: random -60 / 1 - speedy' store return
+psx: random 60 / 1 + speedx' store return
+psy: random 60 / 1 + speedy' store return
+shoot: 20 missile' store return
+run:speedx chs speedx' store speedy chs speedy' store return
+junk: speedx chs speedx' store return

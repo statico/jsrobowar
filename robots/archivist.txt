@@ -1,0 +1,1909 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 100, Shield: 0, CPU: 15, Bullets: rubber, +tacnukes
+
+    # NOTE: Lasers changed to bullets for JSRoboWar. -- Ian L.
+}
+
+{   SUMMARY:
+Archivist
+A little absentminded, but studious.
+
+Written by Camden Elliott-Williams for T24 on the new Windows version.
+
+Icons are from (yes) a picture of me age 17.  Fear the fro!
+}
+{   HISTORY:
+None. :D
+}
+{   DESCRIPTION:
+My attempt at a low-processor "absentminded" bot.  One of the many big drains (in my opinion) on attempts at low bots is that they can't do very accurate doppler led shots because chronons elapse while they try.  With lasers and nukes, I never have to worry about doppler.  Potentially foolish, but the laser opening kills practically all 30 damage bots, of which there has been a growing trend.  The biggest weakness is shields; any equipped shields absolutely ruin lasers.  However, as people on the mailing list have so accurately pointed out, no one really considers equipped shields worth it nowadays.  Maybe lasers are the reason this could change (although >25 equipped shields is still very questionable).  Maybe you'll see such a bot from me in T25, as I continue my quest to prove the "impossible."
+
+I found that it is incredibly hard to pull off a very high group score when other bots can deal 10 times the ranged damage with the same energy investment.  Survival is closer to par, but the kill points are very poor.  If I had the space, I'd definately make multiple group modes with one for nuking while there are lots of bots around, and one for lasers with fewer bots.
+
+As for the "studious" side, this also is my first attempted use of history.  It mainly consists of the first 3 lines, but they do a pretty fair job I believe.  The concept of mod-based history is (as far as I know) original, though I've barely studied other history bots.  It seems like an ideal setup.  Originally, I had it set to mod 2, but found that mod 4 worked best because the energy drain with the full laser caused one loss to a >30 damage bot to be two losses far too often, and the full laser works so consistently against 30 damage bots that dropping it to 1/4 the kills didn't matter as much.  Another benefit of small mod history is that it doesn't particularly require extra long tournaments (although longer is always better).  Bot0rz, the only history bot I've looked at, waited atleast 10 failed battles before switching.  I used to understand this as, well, one unlucky battle doesn't mean that strategy shouldn't be used.  But, thinking further, switching at every loss allows a quicker return to the better strategy, and if the second strategy succeeds, why bother to return at that point?  This allows a very simple method of integer ratios of strategies.  Blah, that was kind of a spew, but I'm really proud of this algorithm.
+
+I would have liked to try 10 processor, but then the very soonest a bot could be sighted would be chronon 4, and the drop to 3 aim changes/chronon just seems too slow... I would be in awe of anyone who could make a WC bot with 5 or 10 processor at this age of RoboWar.  As it is, this is probably the best meshed bot code I've ever made.  I'm hoping to place this 15 processor bot in the WC, furthering my crusade to prove that lower processors are still potentially viable if the author is innovative enough.
+}
+{   THANKS!
+My scencerest thanks to Kevin Hertzberg for all the hard work he's put into the Windows version.  He built this game for the coders, you and me.  Kevin: if you build it, they will come.  I hope I can in part live up to this beast of a game called RoboWar.
+}
+
+ snd4
+
+robots 2 ! GroupStart ifg
+
+Collided collision' setint
+
+history
+5 history' setparam {or 3, depending on what I'm going for}
+ history - 4 mod Second ifg
+
+First:
+    Primary range' setint
+    inton
+
+AimLoop: icon0
+# 36
+    0 aim'  72 aim' 144 aim' 216 aim' 288 aim'
+ sync
+     store    store    store    store    store
+  108 aim' 180 aim' 252 aim' 324 aim'  36 aim'
+     store    store    store    store    store
+# +18
+  162 aim' 234 aim' 306 aim'  18 aim'  90 aim'
+     store    store    store    store    store
+  270 aim' 342 aim'  54 aim' 126 aim' 198 aim'
+     store    store    store    store    store
+# +27
+  315 aim'  27 aim'  99 aim' 171 aim' 243 aim'
+     store    store    store    store    store
+   63 aim' 135 aim' 207 aim' 279 aim' 351 aim'
+     store    store    store    store    store
+# +9
+   81 aim' 153 aim' 225 aim' 297 aim'   9 aim'
+     store    store    store    store    store
+  189 aim' 261 aim' 333 aim'  45 aim' 117 aim'
+     store    store    store    store    store
+# +21
+  237 aim' 309 aim'  21 aim'  93 aim' 165 aim'
+     store    store    store    store    store
+  345 aim'  57 aim' 129 aim' 201 aim' 273 aim'
+     store    store    store    store    store
+# +3
+    3 aim'  75 aim' 147 aim' 219 aim' 291 aim'
+     store    store    store    store    store
+  111 aim' 183 aim' 255 aim' 327 aim'  39 aim'
+     store    store    store    store    store
+# +30
+  174 aim' 246 aim' 318 aim'  30 aim' 102 aim'
+     store    store    store    store    store
+  282 aim' 354 aim'  66 aim' 138 aim' 210 aim'
+     store    store    store    store    store
+# +12
+  300 aim'  12 aim'  84 aim' 156 aim' 228 aim'
+     store    store    store    store    store
+   48 aim' 120 aim' 192 aim' 264 aim' 336 aim'
+     store    store    store    store    store
+# +24
+   96 aim' 168 aim' 240 aim' 312 aim'  24 aim'
+     store    store    store    store    store
+  204 aim' 276 aim' 348 aim'  60 aim' 132 aim'
+     store    store    store    store    store
+# +6
+  222 aim' 294 aim'   6 aim'  78 aim' 150 aim'
+     store    store    store    store    store
+  330 aim'  42 aim' 114 aim' 186 aim' 258 aim'
+     store    store    store    store    store
+# +33
+   33 aim' 105 aim' 177 aim' 249 aim' 321 aim'
+     store    store    store    store    store
+  141 aim' 213 aim' 285 aim' 357 aim'  69 aim'
+     store    store    store    store    store
+# +15
+  159 aim' 231 aim' 303 aim'  15 aim'  87 aim'
+     store    store    store    store    store
+  267 aim' 339 aim'  51 aim' 123 aim' 195 aim'
+     store    store    store    store    store
+AimLoop jump
+
+Primary:
+    energy fire' store
+    dropall
+    aim 1 tan FloatX ifg
+
+FloatY:
+    y dup 150 < FloatU ifg
+
+FloatD:
+     298 swap - 11 / dup not WallStallB ifg
+     dup speedy' store
+     290 swap - bottom' setparam
+    WallStallB bottom' setint
+    Thunder range' setint
+    AimLoop rti
+
+FloatU:
+     2 swap - 11 / dup not WallStallT ifg
+     dup speedy' store
+     10 swap - top' setparam
+    WallStallT top' setint
+    Thunder range' setint
+    AimLoop rti
+
+FloatX:
+    x dup 150 > FloatR ifg
+
+FloatL:
+     2 swap - 11 / dup not WallStallL ifg
+     dup speedx' store
+     10 swap - left' setparam
+    WallStallL left' setint
+    Thunder range' setint
+    AimLoop rti
+
+FloatR:
+     298 swap - 11 / dup not WallStallR ifg
+     dup speedx' store
+     290 swap - right' setparam
+    WallStallR right' setint
+    Thunder range' setint
+    AimLoop rti
+
+
+#################### Secondary Lights   ###################
+
+Second:
+    Secondary range' setint
+    AimLoop rti
+
+Secondary:
+    dropall
+    aim 1 tan ScareX ifg
+
+ScareY:
+    y 150 < ScareD ifg
+
+ScareU:
+    -13 speedy' store
+    23 top' setparam
+    WallStallT top' setint
+    Thunder range' setint
+    AimLoop rti
+
+ScareD:
+    13 speedy' store
+    277 bottom' setparam
+    WallStallB bottom' setint
+    Thunder range' setint
+    AimLoop rti
+
+ScareX:
+    x 150 < ScareR ifg
+
+ScareL:
+    -13 speedx' store
+    23 left' setparam
+    WallStallL left' setint
+    Thunder range' setint
+    AimLoop rti
+
+ScareR:
+    13 speedx' store
+    277 right' setparam
+    WallStallR right' setint
+    Thunder range' setint
+    AimLoop rti
+
+
+#################### Wall Stalls        ###################
+
+WallStallL:
+    dropall
+    10 x - speedx' store
+    60 radar' setparam
+    AlertWallL radar' setint
+    0 speedx' store
+    ConsiderWallL range' setint
+    WallLAimLoop rti
+
+WallStallT:
+    dropall
+    10 y - speedy' store
+    60 radar' setparam
+    AlertWallT radar' setint
+    0 speedy' store
+    ConsiderWallT range' setint
+    WallTAimLoop rti
+
+WallStallR:
+    dropall
+    290 x - speedx' store
+    60 radar' setparam
+    AlertWallR radar' setint
+    0 speedx' store
+    ConsiderWallR range' setint
+    WallRAimLoop rti
+
+WallStallB:
+    dropall
+    290 y - speedy' store
+    60 radar' setparam
+    AlertWallB radar' setint
+    0 speedy' store
+    ConsiderWallB range' setint
+    WallBAimLoop rti
+
+
+#################### Wall Alerts        ###################
+
+AlertWallL:
+    aim 30 / 2 * AlertWallLTable + jump
+
+AlertWallLTable:
+    {  0 -  29}     WallLFleeDR jump
+    { 30 -  59}     WallLFleeD jump
+    { 60 -  89}     WallLFleeChoose jump
+    { 90 - 119}     WallLFleeChoose jump
+    {120 - 149}     WallLFleeU jump
+    {150 - 179}     WallLFleeUR jump
+    {180 - 209}     WallLFleeUR jump
+    {210 - 239}     WallLFleeU jump
+    {240 - 269}     WallLFleeChoose jump
+    {270 - 399}     WallLFleeChoose jump
+    {300 - 329}     WallLFleeD jump
+    {330 - 359}     WallLFleeDR jump
+
+AlertWallT:
+    aim 30 / 2 * AlertWallTTable + jump
+
+AlertWallTTable:
+    {  0 -  29}     WallTFleeChoose jump
+    { 30 -  59}     WallTFleeL jump
+    { 60 -  89}     WallTFleeDL jump
+    { 90 - 119}     WallTFleeDL jump
+    {120 - 149}     WallTFleeL jump
+    {150 - 179}     WallTFleeChoose jump
+    {180 - 209}     WallTFleeChoose jump
+    {210 - 239}     WallTFleeR jump
+    {240 - 269}     WallTFleeDR jump
+    {270 - 399}     WallTFleeDR jump
+    {300 - 329}     WallTFleeR jump
+    {330 - 359}     WallTFleeChoose jump
+
+AlertWallR:
+    aim 30 / 2 * AlertWallRTable + jump
+
+AlertWallRTable:
+    {  0 -  29}     WallRFleeDL jump
+    { 30 -  59}     WallRFleeD jump
+    { 60 -  89}     WallRFleeChoose jump
+    { 90 - 119}     WallRFleeChoose jump
+    {120 - 149}     WallRFleeU jump
+    {150 - 179}     WallRFleeUL jump
+    {180 - 209}     WallRFleeUL jump
+    {210 - 239}     WallRFleeU jump
+    {240 - 269}     WallRFleeChoose jump
+    {270 - 399}     WallRFleeChoose jump
+    {300 - 329}     WallRFleeD jump
+    {330 - 359}     WallRFleeDL jump
+
+AlertWallB:
+    aim 30 / 2 * AlertWallBTable + jump
+
+AlertWallBTable:
+    {  0 -  29}     WallBFleeChoose jump
+    { 30 -  59}     WallBFleeL jump
+    { 60 -  89}     WallBFleeUL jump
+    { 90 - 119}     WallBFleeUL jump
+    {120 - 149}     WallBFleeL jump
+    {150 - 179}     WallBFleeChoose jump
+    {180 - 209}     WallBFleeChoose jump
+    {210 - 239}     WallBFleeR jump
+    {240 - 269}     WallBFleeUR jump
+    {270 - 399}     WallBFleeUR jump
+    {300 - 329}     WallBFleeR jump
+    {330 - 359}     WallBFleeChoose jump
+
+
+#################### Wall L Flights     ###################
+
+WallLFleeChoose:
+    y 150 < WallLFleeD2 WallLFleeU2 ifeg
+
+WallLFleeU:
+    y 39 < WallLFleeD2 ifg
+WallLFleeU2:
+    -14 speedy' store
+    24 top' setparam
+    CornerSetTL top' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallLAimLoop rti
+
+WallLFleeD:
+    y 261 > WallLFleeU2 ifg
+WallLFleeD2:
+    14 speedy' store
+    276 bottom' setparam
+    CornerSetBL bottom' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallLAimLoop rti
+
+WallLFleeUR:
+    y 33 < WallTFleeR2 ifg
+    -1 radar' setint
+    -11 speedy' store
+    11 speedx' store
+    21 top' setparam
+    WallTStop top' setint
+    Thunder range' setint
+    279 right' setparam
+    CornerSetTR right' setint
+    AimLoop rti
+
+WallLFleeDR:
+    y 267 > WallBFleeR2 ifg
+    -1 radar' setint
+    11 speedy' store
+    11 speedx' store
+    279 bottom' setparam
+    WallBStop bottom' setint
+    Thunder range' setint
+    279 right' setparam
+    CornerSetBR right' setint
+    AimLoop rti
+
+
+#################### Wall T Flights     ###################
+
+WallTFleeChoose:
+    x 150 > WallTFleeL2 WallTFleeR2 ifeg
+
+WallTFleeR:
+    x 261 > WallTFleeL2 ifg
+WallTFleeR2:
+    14 speedx' store
+    276 right' setparam
+    CornerSetTR right' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallTAimLoop rti
+
+WallTFleeL:
+    x 39 < WallTFleeR2 ifg
+WallTFleeL2:
+    -14 speedx' store
+    24 left' setparam
+    CornerSetTL left' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallTAimLoop rti
+
+WallTFleeDR:
+    x 267 > WallRFleeD2 ifg
+    -1 radar' setint
+    11 speedy' store
+    11 speedx' store
+    279 right' setparam
+    WallRStop right' setint
+    Thunder range' setint
+    279 bottom' setparam
+    CornerSetBR bottom' setint
+    AimLoop rti
+
+WallTFleeDL:
+    x 33 < WallLFleeD2 ifg
+    -1 radar' setint
+    11 speedy' store
+    -11 speedx' store
+    21 left' setparam
+    WallLStop left' setint
+    Thunder range' setint
+    279 bottom' setparam
+    CornerSetBL bottom' setint
+    AimLoop rti
+
+
+#################### Wall R Flights     ###################
+
+WallRFleeChoose:
+    y 150 > WallRFleeU2 WallRFleeD2 ifeg
+
+WallRFleeD:
+    y 261 > WallRFleeU2 ifg
+WallRFleeD2:
+    14 speedy' store
+    276 bottom' setparam
+    CornerSetBR bottom' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallRAimLoop rti
+
+WallRFleeU:
+    y 39 < WallRFleeD2 ifg
+WallRFleeU2:
+    -14 speedy' store
+    24 top' setparam
+    CornerSetTR top' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallRAimLoop rti
+
+WallRFleeDL:
+    y 267 > WallBFleeL2 ifg
+    -1 radar' setint
+    11 speedy' store
+    -11 speedx' store
+    279 bottom' setparam
+    WallBStop bottom' setint
+    Thunder range' setint
+    21 left' setparam
+    CornerSetBL left' setint
+    AimLoop rti
+
+WallRFleeUL:
+    y 33 < WallTFleeL2 ifg
+    -1 radar' setint
+    -11 speedy' store
+    -11 speedx' store
+    21 top' setparam
+    WallTStop top' setint
+    Thunder range' setint
+    21 left' setparam
+    CornerSetTL left' setint
+    AimLoop rti
+
+
+#################### Wall B Flights     ###################
+
+WallBFleeChoose:
+    x 150 < WallBFleeR2 WallBFleeL2 ifeg
+
+WallBFleeL:
+    x 39 < WallBFleeR2 ifg
+WallBFleeL2:
+    -14 speedx' store
+    24 left' setparam
+    CornerSetBL left' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallBAimLoop rti
+
+WallBFleeR:
+    x 261 > WallBFleeL2 ifg
+WallBFleeR2:
+    14 speedx' store
+    276 right' setparam
+    CornerSetBR right' setint
+    -1 radar' setint
+    Thunder range' setint
+    WallBAimLoop rti
+
+WallBFleeUL:
+    x 33 < WallLFleeU2 ifg
+    -1 radar' setint
+    -11 speedy' store
+    -11 speedx' store
+    21 left' setparam
+    WallLStop left' setint
+    Thunder range' setint
+    21 top' setparam
+    CornerSetTL top' setint
+    AimLoop rti
+
+WallBFleeUR:
+    x 267 > WallRFleeU2 ifg
+    -1 radar' setint
+    -11 speedy' store
+    11 speedx' store
+    279 right' setparam
+    WallRStop right' setint
+    Thunder range' setint
+    21 top' setparam
+    CornerSetTR top' setint
+    AimLoop rti
+
+
+#################### Wall Stops     ###################
+
+WallLStop:
+    0 speedx' store
+    WallLAimLoop rti
+
+WallTStop:
+    0 speedy' store
+    WallTAimLoop rti
+
+WallRStop:
+    0 speedx' store
+    WallRAimLoop rti
+
+WallBStop:
+    0 speedy' store
+    WallBAimLoop rti
+
+
+#################### Wall Considerations    ###################
+
+ConsiderWallL:
+    energy 65 / 10 * fire' store    {lightning}
+    range 130 < AlertWallL ifg
+    rti
+
+ConsiderWallT:
+    energy 65 / 10 * fire' store    {lightning}
+    range 130 < AlertWallT ifg
+    rti
+
+ConsiderWallR:
+    energy 65 / 10 * fire' store    {lightning}
+    range 130 < AlertWallR ifg
+    rti
+
+ConsiderWallB:
+    energy 65 / 10 * fire' store    {lightning}
+    range 130 < AlertWallB ifg
+    rti
+
+
+#################### Wall Aim Loops     ###################
+
+WallLAimLoop: icon6
+   71 aim' 109 aim'  35 aim' 145 aim'
+    sync
+        store    store    store    store
+    WallLAimLoop
+   90 aim'  53 aim' 127 aim'  17 aim' 163 aim'
+    {sync}
+        store    store    store    store    store
+  103 aim'  65 aim' 139 aim'  29 aim' 175 aim'
+    {sync}
+        store    store    store    store    store
+   83 aim' 121 aim'  47 aim' 157 aim'  11 aim'
+    {sync}
+        store    store    store    store    store
+   97 aim'  59 aim' 133 aim'  23 aim' 169 aim'
+    {sync}
+        store    store    store    store    store
+   77 aim' 115 aim'  41 aim' 151 aim'   5 aim'
+    {sync}
+        store    store    store    store    store
+  106 aim'  68 aim' 142 aim'  32 aim' 179 aim'
+    {sync}
+        store    store    store    store    store
+   86 aim' 124 aim'  50 aim' 160 aim'  14 aim'
+    {sync}
+        store    store    store    store    store
+   94 aim'  56 aim' 130 aim'  20 aim' 166 aim'
+    {sync}
+        store    store    store    store    store
+   74 aim' 112 aim'  38 aim' 148 aim'   1 aim'
+    {sync}
+        store    store    store    store    store
+  100 aim'  62 aim' 136 aim'  26 aim' 172 aim'
+    {sync}
+        store    store    store    store    store
+   80 aim' 118 aim'  44 aim' 154 aim'   8 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+WallTAimLoop: icon7
+  161 aim' 199 aim' 125 aim' 235 aim'
+    sync
+        store    store    store    store
+    WallTAimLoop
+  180 aim' 143 aim' 217 aim' 107 aim' 253 aim'
+    {sync}
+        store    store    store    store    store
+  193 aim' 155 aim' 229 aim' 119 aim' 265 aim'
+    {sync}
+        store    store    store    store    store
+  173 aim' 211 aim' 137 aim' 247 aim' 101 aim'
+    {sync}
+        store    store    store    store    store
+  187 aim' 149 aim' 223 aim' 113 aim' 259 aim'
+    {sync}
+        store    store    store    store    store
+  167 aim' 205 aim' 131 aim' 241 aim'  95 aim'
+    {sync}
+        store    store    store    store    store
+  196 aim' 158 aim' 232 aim' 122 aim' 269 aim'
+    {sync}
+        store    store    store    store    store
+  176 aim' 214 aim' 140 aim' 250 aim' 104 aim'
+    {sync}
+        store    store    store    store    store
+  184 aim' 146 aim' 220 aim' 110 aim' 256 aim'
+    {sync}
+        store    store    store    store    store
+  164 aim' 202 aim' 128 aim' 238 aim'  91 aim'
+    {sync}
+        store    store    store    store    store
+  190 aim' 152 aim' 226 aim' 116 aim' 262 aim'
+    {sync}
+        store    store    store    store    store
+ 170 aim' 208 aim' 134 aim' 244 aim'  98 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+WallRAimLoop: icon8
+  251 aim' 289 aim' 215 aim' 325 aim'
+    sync
+        store    store    store    store
+    WallRAimLoop
+  270 aim' 233 aim' 307 aim' 197 aim' 343 aim'
+    {sync}
+        store    store    store    store    store
+  283 aim' 245 aim' 319 aim' 209 aim' 355 aim'
+    {sync}
+        store    store    store    store    store
+  263 aim' 301 aim' 227 aim' 337 aim' 191 aim'
+    {sync}
+        store    store    store    store    store
+  277 aim' 239 aim' 313 aim' 203 aim' 349 aim'
+    {sync}
+        store    store    store    store    store
+  257 aim' 295 aim' 221 aim' 331 aim' 185 aim'
+    {sync}
+        store    store    store    store    store
+  286 aim' 248 aim' 322 aim' 212 aim' 359 aim'
+    {sync}
+        store    store    store    store    store
+  266 aim' 304 aim' 230 aim' 340 aim' 194 aim'
+    {sync}
+        store    store    store    store    store
+  274 aim' 236 aim' 310 aim' 200 aim' 346 aim'
+    {sync}
+        store    store    store    store    store
+  254 aim' 292 aim' 218 aim' 328 aim' 181 aim'
+    {sync}
+        store    store    store    store    store
+  280 aim' 242 aim' 316 aim' 206 aim' 352 aim'
+    {sync}
+        store    store    store    store    store
+  260 aim' 298 aim' 224 aim' 334 aim' 188 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+WallBAimLoop: icon9
+  341 aim'  19 aim' 305 aim'  55 aim'
+    sync
+        store    store    store    store
+    WallBAimLoop
+    0 aim' 323 aim'  37 aim' 287 aim'  73 aim'
+    {sync}
+        store    store    store    store    store
+   13 aim' 335 aim'  49 aim' 299 aim'  85 aim'
+    {sync}
+        store    store    store    store    store
+  353 aim'  31 aim' 317 aim'  67 aim' 281 aim'
+    {sync}
+        store    store    store    store    store
+    7 aim' 329 aim'  43 aim' 293 aim'  79 aim'
+    {sync}
+        store    store    store    store    store
+  347 aim'  25 aim' 311 aim'  61 aim' 275 aim'
+    {sync}
+        store    store    store    store    store
+   16 aim' 338 aim'  52 aim' 302 aim'  89 aim'
+    {sync}
+        store    store    store    store    store
+  356 aim'  34 aim' 320 aim'  70 aim' 284 aim'
+    {sync}
+        store    store    store    store    store
+    4 aim' 326 aim'  40 aim' 290 aim'  76 aim'
+    {sync}
+        store    store    store    store    store
+  344 aim'  22 aim' 308 aim'  58 aim' 271 aim'
+    {sync}
+        store    store    store    store    store
+   10 aim' 332 aim'  46 aim' 296 aim'  82 aim'
+    {sync}
+        store    store    store    store    store
+  350 aim'  28 aim' 314 aim'  64 aim' 278 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+#################### Corner Sets        ###################
+
+CornerSetTL:
+    10 x - speedx' store
+    10 y - speedy' store
+    dropall {sync}
+    0 speedx' store
+    0 speedy' store
+CornerSetTLMid:
+    AlertCornerTL radar' setint
+    ConsiderCornerTL range' setint
+    CornerTLAimLoop rti
+
+CornerSetTR:
+    290 x - speedx' store
+    10 y - speedy' store
+    dropall {sync}
+    0 speedx' store
+    0 speedy' store
+CornerSetTRMid:
+    AlertCornerTR radar' setint
+    ConsiderCornerTR range' setint
+    CornerTRAimLoop rti
+
+CornerSetBR:
+    290 x - speedx' store
+    290 y - speedy' store
+    dropall {sync}
+    0 speedx' store
+    0 speedy' store
+CornerSetBRMid:
+    AlertCornerBR radar' setint
+    ConsiderCornerBR range' setint
+    CornerBRAimLoop rti
+
+CornerSetBL:
+    10 x - speedx' store
+    290 y - speedy' store
+    dropall {sync}
+    0 speedx' store
+    0 speedy' store
+CornerSetBLMid:
+    AlertCornerBL radar' setint
+    ConsiderCornerBL range' setint
+    CornerBLAimLoop rti
+
+
+#################### Corner Alerts      ###################
+
+AlertCornerTL: snd4
+    aim 135 < WallLFleeD2 WallTFleeR2 ifeg
+
+AlertCornerTR: snd4
+    aim 225 < WallTFleeL2 WallRFleeD2 ifeg
+
+AlertCornerBR: snd4
+    aim 225 - 90 / WallBFleeL2 WallRFleeU2 ifeg
+
+AlertCornerBL: snd4
+    aim 135 - 90 / WallBFleeR2 WallLFleeU2 ifeg
+
+
+#################### Corner Considerations###################
+
+ConsiderCornerTL:
+    energy 65 / 10 * fire' store    {lightning}
+    range 150 < AlertCornerTL ifg
+    rti
+
+ConsiderCornerTR:
+    energy 65 / 10 * fire' store    {lightning}
+    range 150 < AlertCornerTR ifg
+    rti
+
+ConsiderCornerBR:
+    energy 65 / 10 * fire' store    {lightning}
+    range 150 < AlertCornerBR ifg
+    rti
+
+ConsiderCornerBL:
+    energy 65 / 10 * fire' store    {lightning}
+    range 150 < AlertCornerBL ifg
+    rti
+
+
+#################### Corner Aim Loops   ###################
+
+CornerTLAimLoop:
+  126 aim' 144 aim' 108 aim' 162 aim'
+    sync
+        store    store    store    store
+    CornerTLAimLoop
+   99 aim' 135 aim' 153 aim' 117 aim' 171 aim'
+    {sync}
+        store    store    store    store    store
+CornerTLAimLoopMid:
+  179 aim' 141 aim' 123 aim' 159 aim' 105 aim'
+    {sync}
+        store    store    store    store    store
+   95 aim' 132 aim' 150 aim' 114 aim' 168 aim'
+    {sync}
+        store    store    store    store    store
+  175 aim' 138 aim' 120 aim' 156 aim' 102 aim'
+    {sync}
+        store    store    store    store    store
+   91 aim' 129 aim' 147 aim' 111 aim' 165 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+CornerTRAimLoop:
+  216 aim' 234 aim' 198 aim' 252 aim'
+    sync
+        store    store    store    store
+    CornerTRAimLoop
+  189 aim' 225 aim' 243 aim' 207 aim' 261 aim'
+    {sync}
+        store    store    store    store    store
+CornerTRAimLoopMid:
+  269 aim' 231 aim' 213 aim' 249 aim' 195 aim'
+    {sync}
+        store    store    store    store    store
+  185 aim' 222 aim' 240 aim' 204 aim' 258 aim'
+    {sync}
+        store    store    store    store    store
+  265 aim' 228 aim' 210 aim' 246 aim' 192 aim'
+    {sync}
+        store    store    store    store    store
+  181 aim' 219 aim' 237 aim' 201 aim' 255 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+CornerBRAimLoop:
+  306 aim' 324 aim' 288 aim' 342 aim'
+    sync
+        store    store    store    store
+    CornerBRAimLoop
+  279 aim' 315 aim' 333 aim' 297 aim' 351 aim'
+    {sync}
+        store    store    store    store    store
+CornerBRAimLoopMid:
+  359 aim' 321 aim' 303 aim' 339 aim' 285 aim'
+    {sync}
+        store    store    store    store    store
+  275 aim' 312 aim' 330 aim' 294 aim' 348 aim'
+    {sync}
+        store    store    store    store    store
+  355 aim' 318 aim' 300 aim' 336 aim' 282 aim'
+    {sync}
+        store    store    store    store    store
+  271 aim' 309 aim' 327 aim' 291 aim' 345 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+CornerBLAimLoop:
+   36 aim'  54 aim'  18 aim'  72 aim'
+    sync
+        store    store    store    store
+    CornerBLAimLoop
+    9 aim'  45 aim'  63 aim'  27 aim'  81 aim'
+    {sync}
+        store    store    store    store    store
+CornerBLAimLoopMid:
+   89 aim'  51 aim'  33 aim'  69 aim'  15 aim'
+    {sync}
+        store    store    store    store    store
+    5 aim'  42 aim'  60 aim'  24 aim'  78 aim'
+    {sync}
+        store    store    store    store    store
+   85 aim'  48 aim'  30 aim'  66 aim'  12 aim'
+    {sync}
+        store    store    store    store    store
+    1 aim'  39 aim'  57 aim'  21 aim'  75 aim'
+    {sync}
+        store    store    store    store    store
+     jump
+
+#################### Storms         ###################
+
+Thunder:    {bot is moving}
+    energy 65 / 5 * fire' store {lightning}
+    range 45 < Clouds ifg
+    rti
+
+Clouds:
+    energy 2 / 10 + nuke' store
+    -1 range' setint
+    rti
+
+
+Collided:
+    Freak range' setint
+    inton
+    22 aim' store   112 aim' store
+    202 aim' store  292 aim' store
+    67 aim' store   157 aim' store
+    247 aim' store  337 aim' store
+    intoff
+    Second jump
+
+Freak:
+    aim dup 1 tan FreakX ifg
+
+FreakY:
+    0 speedx' store
+    y 150 < FreakD ifg
+
+FreakU:
+    -14 speedy' store
+    energy nuke' store
+    WallStallT top' setint
+    24 top' setparam
+    -1 range' setint
+    collision -60 * movey' store
+    AimLoop rti
+
+FreakD:
+    14 speedy' store
+    energy nuke' store
+    WallStallB bottom' setint
+    276 bottom' setparam
+    -1 range' setint
+    collision 60 * movey' store
+    AimLoop rti
+
+
+FreakX:
+    0 speedy' store
+    x 150 < FreakR ifg
+
+FreakL:
+    -14 speedx' store
+    energy nuke' store
+    WallStallL left' setint
+    24 left' setparam
+    -1 range' setint
+    collision -60 * movex' store
+    AimLoop rti
+
+FreakR:
+    14 speedx' store
+    energy nuke' store
+    WallStallR right' setint
+    276 right' setparam
+    -1 range' setint
+    collision 60 * movex' store
+    AimLoop rti
+
+
+#############################################################
+##   ###    ###   ## ### #    ####### ### ##   ##    ##     #
+# ### ## ### # ### # ### # ### ######  #  # ### # ### # #####
+# ######    ## ### # ### #    ####### # # # ### # ### #   ###
+# ##  ## ## ## ### # ### # ########## ### # ### # ### # #####
+##   ### ### ##   ###   ## ########## ### ##   ##    ##     #
+#############################################################
+
+GroupStart:
+    GShield radar' setint
+    26 radar' setparam
+    GShieldOff shield' setint
+    GCollided collision' setint
+    x dup y + 300 > GWallAreasBR ifg
+
+GWallAreasTL:
+     y - 0 > GWallAreaT ifg
+
+GWallAreaL:
+    {11 x - abs sqrt dup not GWallStallL ifg}
+    10 810 x 44 + / 15 - dup not GWallStallL ifg
+     dup speedx' store
+     - left' setparam
+    GWallStallL left' setint
+    GStartXThunder range' setint
+    45 range' setparam
+    AimLoop rti
+
+GWallAreaT:
+    10 810 y 44 + / 15 - dup not GWallStallT ifg
+     dup speedy' store
+     - top' setparam
+    GWallStallT top' setint
+    GStartYThunder range' setint
+    45 range' setparam
+    AimLoop rti
+
+GWallAreasBR:
+     y - 0 < GWallAreaB ifg
+
+GWallAreaR:
+    290 -810 344 x - / 15 + dup not GWallStallR ifg
+     dup speedx' store
+     - right' setparam
+    GWallStallR right' setint
+    GStartXThunder range' setint
+    45 range' setparam
+    AimLoop rti
+
+GWallAreaB:
+    290 -810 344 y - / 15 + dup not GWallStallB ifg
+     dup speedy' store
+     - bottom' setparam
+    GWallStallB bottom' setint
+    GStartYThunder range' setint
+    45 range' setparam
+    AimLoop rti
+
+#################### Group Wall Stalls
+
+GWallStallL:
+    dropall
+    10 x - speedx' store
+    y dup 150 > GWallLAttemptD ifg
+
+GWallLAttemptU:
+    0 speedx' store
+     47 < GWibbleTLfromL ifg
+    -8 speedy' store
+    38 top' setparam
+    GWibbleTLfromL2 top' setint
+    GThunderWallLMoveU range' setint
+    WallLAimLoop rti
+
+GWallLAttemptD:
+    0 speedx' store
+     253 > GWibbleBLfromL ifg
+     8 speedy' store
+    262 bottom' setparam
+    GWibbleBLfromL2 bottom' setint
+    GThunderWallLMoveD range' setint
+    WallLAimLoop rti
+
+GWallStallT:
+    dropall
+    10 y - speedy' store
+    x dup 150 < GWallTAttemptL ifg
+
+GWallTAttemptR:
+    0 speedy' store
+     253 > GWibbleTRfromT ifg
+    8 speedx' store
+    262 right' setparam
+    GWibbleTRfromT2 right' setint
+    GThunderWallTMoveR range' setint
+    WallTAimLoop rti
+
+GWallTAttemptL:
+    0 speedy' store
+     47 < GWibbleTLfromT ifg
+     -8 speedx' store
+    38 left' setparam
+    GWibbleTLfromT2 left' setint
+    GThunderWallTMoveL range' setint
+    WallTAimLoop rti
+
+GWallStallR:
+    dropall
+    290 x - speedx' store
+    y dup 150 < GWallRAttemptU ifg
+
+GWallRAttemptD:
+    0 speedx' store
+     253 > GWibbleBRfromR ifg
+    8 speedy' store
+    262 bottom' setparam
+    GWibbleBRfromR2 bottom' setint
+    GThunderWallRMoveD range' setint
+    WallRAimLoop rti
+
+GWallRAttemptU:
+    0 speedx' store
+     47 < GWibbleTRfromR ifg
+     -8 speedy' store
+    38 top' setparam
+    GWibbleTRfromR2 top' setint
+    GThunderWallRMoveU range' setint
+    WallRAimLoop rti
+
+GWallStallB:
+    dropall
+    290 y - speedy' store
+    x dup 150 > GWallBAttemptR ifg
+
+GWallBAttemptL:
+    0 speedy' store
+     47 < GWibbleBLfromB ifg
+    -8 speedx' store
+    38 left' setparam
+    GWibbleBLfromB2 left' setint
+    GThunderWallBMoveL range' setint
+    WallBAimLoop rti
+
+GWallBAttemptR:
+    0 speedy' store
+     253 > GWibbleBRfromB ifg
+     8 speedx' store
+    262 right' setparam
+    GWibbleBRfromB2 right' setint
+    GThunderWallBMoveR range' setint
+    WallBAimLoop rti
+
+#################### TL Wibbles     # # # # # # # # # #
+
+GWibbleTLfromL:
+    0 speedy' store
+    y 26 < GWibbleTLfromL3 ifg
+GWibbleTLfromL2:
+    -2 speedy' store
+    2 speedx' store
+    23 top' setparam
+    GWibbleTLSetT top' setint
+GWibbleTLRoot:
+    GConsiderCornerTL range' setint
+    600 range' setparam
+    GWibbleTLAimLoop rti
+
+GWibbleTLfromL3:
+    2 speedx' store
+    48 y - right' setparam
+    GWibbleTLTurnT right' setint
+    GWibbleTLRoot jump
+
+GWibbleTLSetT:
+    dropall
+    22 y - speedy' store
+    36 right' setparam
+    GWibbleTLTurnT right' setint
+    0 speedy' store
+    GWibbleTLAimLoop rti
+
+GWibbleTLfromT:
+    0 speedx' store
+    x 26 < GWibbleTLfromT3 ifg
+GWibbleTLfromT2:
+    2 speedy' store
+    -2 speedx' store
+    23 left' setparam
+    GWibbleTLSetL left' setint
+    GWibbleTLRoot jump
+
+GWibbleTLfromT3:
+    2 speedy' store
+    58 x - bottom' setparam
+    GWibbleTLTurnL bottom' setint
+    GWibbleTLRoot jump
+
+GWibbleTLSetL:
+    dropall
+    22 x - speedx' store
+    36 bottom' setparam
+    GWibbleTLTurnL bottom' setint
+    0 speedx' store
+    GWibbleTLAimLoop rti
+
+GWibbleTLTurnL:
+    dropall
+    1 speedx' store
+    -1 speedy' store
+    GWibbleTLTurnT2 top' setint
+    22 top' setparam
+    GWibbleTLTurnL2 left' setint
+    22 left' setparam
+    -1 bottom' setint
+    -1 right' setint
+    GWibbleTLAimLoop rti
+
+GWibbleTLTurnL2:
+    1 speedx' store
+    -1 speedy' store
+    182 aim' store
+    GPug jump
+
+GWibbleTLTurnT:
+    dropall
+    1 speedy' store
+    -1 speedx' store
+    GWibbleTLTurnT2 top' setint
+    22 top' setparam
+    GWibbleTLTurnL2 left' setint
+    22 left' setparam
+    -1 bottom' setint
+    -1 right' setint
+    GWibbleTLAimLoop rti
+
+GWibbleTLTurnT2:
+    1 speedy' store
+    -1 speedx' store
+    88 aim' store
+    GPug jump
+
+#################### TR Wibbles
+
+GWibbleTRfromT:
+    0 speedx' store
+    x 274 > GWibbleTRfromT3 ifg
+GWibbleTRfromT2:
+    2 speedy' store
+    2 speedx' store
+    277 right' setparam
+    GWibbleTRSetR right' setint
+GWibbleTRRoot:
+    GConsiderCornerTR range' setint
+    600 range' setparam
+    GWibbleTRAimLoop rti
+
+GWibbleTRfromT3:
+    2 speedy' store
+    -242 x + bottom' setparam
+    GWibbleTRTurnR bottom' setint
+    GWibbleTRRoot jump
+
+GWibbleTRSetR:
+    dropall
+    278 x - speedx' store
+    36 bottom' setparam
+    GWibbleTRTurnR bottom' setint
+    0 speedx' store
+    GWibbleTRAimLoop rti
+
+GWibbleTRfromR:
+    0 speedy' store
+    y 26 < GWibbleTRfromR3 ifg
+GWibbleTRfromR2:
+    -2 speedy' store
+    -2 speedx' store
+    23 top' setparam
+    GWibbleTRSetT top' setint
+    GWibbleTRRoot jump
+
+GWibbleTRfromR3:
+    -2 speedx' store
+    242 y + left' setparam
+    GWibbleTRTurnT left' setint
+    GWibbleTRRoot jump
+
+GWibbleTRSetT:
+    dropall
+    22 y - speedy' store
+    264 left' setparam
+    GWibbleTRTurnT left' setint
+    0 speedy' store
+    GWibbleTRAimLoop rti
+
+GWibbleTRTurnT:
+    dropall
+    1 speedy' store
+    1 speedx' store
+    GWibbleTRTurnR2 right' setint
+    278 right' setparam
+    GWibbleTRTurnT2 top' setint
+    22 top' setparam
+    -1 bottom' setint
+    -1 left' setint
+    GWibbleTRAimLoop rti
+
+GWibbleTRTurnT2:
+    1 speedy' store
+    1 speedx' store
+    272 aim' store
+    GPug jump
+
+GWibbleTRTurnR:
+    dropall
+    -1 speedx' store
+    -1 speedy' store
+    GWibbleTRTurnR2 right' setint
+    278 right' setparam
+    GWibbleTRTurnT2 top' setint
+    22 top' setparam
+    -1 bottom' setint
+    -1 left' setint
+    GWibbleTRAimLoop rti
+
+GWibbleTRTurnR2:
+    -1 speedx' store
+    -1 speedy' store
+    178 aim' store
+    GPug jump
+
+#################### BR Wibbles
+
+GWibbleBRfromR:
+    0 speedy' store
+    y 274 > GWibbleBRfromR3 ifg
+GWibbleBRfromR2:
+    2 speedy' store
+    -2 speedx' store
+    277 bottom' setparam
+    GWibbleBRSetB bottom' setint
+GWibbleBRRoot:
+    GConsiderCornerBR range' setint
+    600 range' setparam
+    GWibbleBRAimLoop rti
+
+GWibbleBRfromR3:
+    -2 speedx' store
+    542 y - left' setparam
+    GWibbleBRTurnB left' setint
+    GWibbleBRRoot jump
+
+GWibbleBRSetB:
+    dropall
+    278 y - speedy' store
+    264 left' setparam
+    GWibbleBRTurnB left' setint
+    0 speedy' store
+    GWibbleBRAimLoop rti
+
+GWibbleBRfromB:
+    0 speedx' store
+    x 274 > GWibbleBRfromB3 ifg
+GWibbleBRfromB2:
+    2 speedx' store
+    -2 speedy' store
+    277 right' setparam
+    GWibbleBRSetR right' setint
+    GWibbleBRRoot jump
+
+GWibbleBRfromB3:
+    -2 speedy' store
+    542 x - top' setparam
+    GWibbleBRTurnR top' setint
+    GWibbleBRRoot jump
+
+GWibbleBRSetR:
+    dropall
+    278 x - speedx' store
+    264 top' setparam
+    GWibbleBRTurnR top' setint
+    0 speedx' store
+    GWibbleBRAimLoop rti
+
+GWibbleBRTurnR:
+    dropall
+    1 speedy' store
+    -1 speedx' store
+    GWibbleBRTurnB2 bottom' setint
+    278 bottom' setparam
+    GWibbleBRTurnR2 right' setint
+    278 right' setparam
+    -1 top' setint
+    -1 left' setint
+    GWibbleBRAimLoop rti
+
+GWibbleBRTurnR2:
+    1 speedy' store
+    -1 speedx' store
+    2 aim' store
+    GPug jump
+
+GWibbleBRTurnB:
+    dropall
+    1 speedx' store
+    -1 speedy' store
+    GWibbleBRTurnB2 bottom' setint
+    278 bottom' setparam
+    GWibbleBRTurnR2 right' setint
+    278 right' setparam
+    -1 top' setint
+    -1 left' setint
+    GWibbleBRAimLoop rti
+
+GWibbleBRTurnB2:
+    1 speedx' store
+    -1 speedy' store
+    268 aim' store
+    GPug jump
+
+#################### BL Wibbles
+
+GWibbleBLfromB:
+    0 speedx' store
+    x 26 < GWibbleBLfromB3 ifg
+GWibbleBLfromB2:
+    -2 speedy' store
+    -2 speedx' store
+    23 left' setparam
+    GWibbleBLSetL left' setint
+GWibbleBLRoot:
+    GConsiderCornerBL range' setint
+    600 range' setparam
+    GWibbleBLAimLoop rti
+
+GWibbleBLfromB3:
+    -2 speedy' store
+    242 x + top' setparam
+    GWibbleBLTurnL top' setint
+    GWibbleBLRoot jump
+
+GWibbleBLSetL:
+    dropall
+    22 x - speedx' store
+    264 top' setparam
+    GWibbleBLTurnL top' setint
+    0 speedx' store
+    GWibbleBLAimLoop rti
+
+GWibbleBLfromL:
+    0 speedy' store
+    y 274 > GWibbleBLfromL3 ifg
+GWibbleBLfromL2:
+    2 speedy' store
+    2 speedx' store
+    277 bottom' setparam
+    GWibbleBLSetB bottom' setint
+    GWibbleBLRoot jump
+
+GWibbleBLfromL3:
+    2 speedx' store
+    -242 y + right' setparam
+    GWibbleBLTurnB right' setint
+    GWibbleBLRoot jump
+
+GWibbleBLSetB:
+    dropall
+    278 y - speedy' store
+    36 right' setparam
+    GWibbleBLTurnB right' setint
+    0 speedy' store
+    GWibbleBLAimLoop rti
+
+GWibbleBLTurnB:
+    dropall
+    -1 speedx' store
+    -1 speedy' store
+    GWibbleBLTurnB2 bottom' setint
+    278 bottom' setparam
+    GWibbleBLTurnL2 left' setint
+    22 left' setparam
+    -1 top' setint
+    -1 right' setint
+    GWibbleBLAimLoop rti
+
+GWibbleBLTurnB2:
+    -1 speedx' store
+    -1 speedy' store
+    92 aim' store
+    GPug jump
+
+GWibbleBLTurnL:
+    dropall
+    1 speedy' store
+    1 speedx' store
+    GWibbleBLTurnB2 bottom' setint
+    278 bottom' setparam
+    GWibbleBLTurnL2 left' setint
+    22 left' setparam
+    -1 top' setint
+    -1 right' setint
+    GWibbleBLAimLoop rti
+
+GWibbleBLTurnL2:
+    1 speedy' store
+    1 speedx' store
+    -2 aim' store
+    GPug jump
+
+{#################### Wibble Aim Loops}
+
+GWibbleTLAimLoop:
+  126 aim' 144 aim' 108 aim' 162 aim'
+    sync
+        store    store    store    store
+    robots 2 = TransitionTL ifg
+   72 aim' 198 aim'
+    sync
+        store    store
+    GWibbleTLAimLoop
+    CornerTLAimLoopMid jump
+
+GWibbleTRAimLoop:
+  216 aim' 234 aim' 198 aim' 252 aim'
+    sync
+        store    store    store    store
+    robots 2 = TransitionTR ifg
+   162 aim' 288 aim'
+    sync
+        store    store
+    GWibbleTRAimLoop
+    CornerTRAimLoopMid jump
+
+GWibbleBRAimLoop:
+  306 aim' 324 aim' 288 aim' 342 aim'
+    sync
+        store    store    store    store
+    robots 2 = TransitionBR ifg
+   252 aim' 18 aim'
+    sync
+        store    store
+    GWibbleBRAimLoop
+    CornerBRAimLoopMid jump
+
+GWibbleBLAimLoop:
+    36 aim' 54 aim'  18 aim'  72 aim'
+    sync
+        store    store    store    store
+    robots 2 = TransitionBL ifg
+   342 aim' 108 aim'
+    sync
+        store    store
+    GWibbleBLAimLoop
+    CornerBLAimLoopMid jump
+
+{#################### Start Thunders}
+
+GStartXThunder:
+    aim 180 - 90 / GThunderD GThunderU ifeg
+
+GStartYThunder:
+    aim 180 > GThunderR GThunderL ifeg
+
+GThunderL:
+    -10 speedx' store
+    energy 35 - nuke' store
+    19 left' setparam
+    GWallStallL left' setint
+    GWallStallT top' setint
+    GWallStallB bottom' setint
+    AimLoop rti
+
+GThunderU:
+    -10 speedy' store
+    energy 35 - nuke' store
+    19 top' setparam
+    GWallStallT top' setint
+    GWallStallL left' setint
+    GWallStallR right' setint
+    AimLoop rti
+
+GThunderR:
+    10 speedx' store
+    energy 35 - nuke' store
+    281 right' setparam
+    GWallStallR right' setint
+    GWallStallT top' setint
+    GWallStallB bottom' setint
+    AimLoop rti
+
+GThunderD:
+    10 speedy' store
+    energy 35 - nuke' store
+    281 bottom' setparam
+    GWallStallB bottom' setint
+    GWallStallL left' setint
+    GWallStallR right' setint
+    AimLoop rti
+
+{#################### Wall Thunders}
+
+GThunderWallLMoveD:
+    aim 120 < GThunder ifg
+    11 speedx' store
+    -4 speedy' store
+    energy 35 - nuke' store
+    277 right' setparam
+    GWallStallR right' setint
+    AimLoop rti
+
+GThunderWallLMoveU:
+    aim 60 > GThunder ifg
+    11 speedx' store
+    4 speedy' store
+    energy 35 - nuke' store
+    277 right' setparam
+    GWallStallR right' setint
+    AimLoop rti
+
+GThunderWallTMoveL:
+    aim 210 < GThunder ifg
+    11 speedy' store
+    4 speedx' store
+    energy 35 - nuke' store
+    277 bottom' setparam
+    GWallStallB bottom' setint
+    AimLoop rti
+
+GThunderWallTMoveR:
+    aim 150 > GThunder ifg
+    11 speedy' store
+    -4 speedx' store
+    energy 35 - nuke' store
+    277 bottom' setparam
+    GWallStallB bottom' setint
+    AimLoop rti
+
+GThunderWallRMoveU:
+    aim 300 < GThunder ifg
+    -11 speedx' store
+    4 speedy' store
+    energy 35 - nuke' store
+    23 left' setparam
+    GWallStallL left' setint
+    AimLoop rti
+
+GThunderWallRMoveD:
+    aim 240 > GThunder ifg
+    -11 speedx' store
+    -4 speedy' store
+    energy 35 - nuke' store
+    23 left' setparam
+    GWallStallL left' setint
+    AimLoop rti
+
+GThunderWallBMoveR:
+    aim 60 - 30 / GThunder2 ifg
+    -11 speedy' store
+    -4 speedx' store
+    energy 35 - nuke' store
+    23 top' setparam
+    GWallStallT top' setint
+    AimLoop rti
+
+GThunderWallBMoveL:
+    aim 300 - 30 / GThunder2 ifg
+    -11 speedy' store
+    4 speedx' store
+    energy 35 - nuke' store
+    23 top' setparam
+    GWallStallT top' setint
+    AimLoop rti
+
+GThunder:
+    energy 35 - nuke' store
+    nop nop
+    rti
+
+GThunder2:
+    energy 35 - nuke' store
+    rti
+
+{#################### Corner Storms}
+
+GPug:
+    1 fire' store
+    rti
+
+GConsiderCornerTL:
+    energy 135 / 5 * fire' store
+    range 55 < GCornerTLStorm ifg
+    rti
+
+GCornerTLStorm: snd4
+    aim 135 > GCornerTLThunderR ifg
+
+GCornerTLThunderD:
+    10 speedy' store
+    1 speedx' store
+    energy 35 - nuke' store
+    120 bottom' setparam
+    GWallAreaL bottom' setint
+    GThunderWallLMoveD range' setint
+    45 range' setparam
+    -1 right' setint
+    flushint
+    WallLAimLoop rti
+
+GCornerTLThunderR:
+    10 speedx' store
+    1 speedy' store
+    energy 35 - nuke' store
+    120 right' setparam
+    GWallAreaT right' setint
+    GThunderWallTMoveR range' setint
+    45 range' setparam
+    -1 bottom' setint
+    flushint
+    WallTAimLoop rti
+
+GConsiderCornerTR:
+    energy 135 / 5 * fire' store
+    range 55 < GCornerTRStorm ifg
+    rti
+
+GCornerTRStorm: snd4
+    aim 225 > GCornerTRThunderD ifg
+
+GCornerTRThunderL:
+    -10 speedx' store
+    1 speedy' store
+    energy 35 - nuke' store
+    180 left' setparam
+    GWallAreaT left' setint
+    GThunderWallTMoveL range' setint
+    45 range' setparam
+    -1 bottom' setint
+    flushint
+    WallTAimLoop rti
+
+GCornerTRThunderD:
+    10 speedy' store
+    -1 speedx' store
+    energy 35 - nuke' store
+    120 bottom' setparam
+    GWallAreaR bottom' setint
+    GThunderWallRMoveD range' setint
+    45 range' setparam
+    -1 left' setint
+    flushint
+    WallRAimLoop rti
+
+GConsiderCornerBR:
+    energy 135 / 5 * fire' store
+    range 55 < GCornerBRStorm ifg
+    rti
+
+GCornerBRStorm: snd4
+    aim 315 > GCornerBRThunderL ifg
+
+GCornerBRThunderU:
+    -10 speedy' store
+    -1 speedx' store
+    energy 35 - nuke' store
+    180 top' setparam
+    GWallAreaR top' setint
+    GThunderWallRMoveU range' setint
+    45 range' setparam
+    -1 left' setint
+    flushint
+    WallRAimLoop rti
+
+GCornerBRThunderL:
+    -10 speedx' store
+    -1 speedy' store
+    energy 35 - nuke' store
+    180 left' setparam
+    GWallAreaB left' setint
+    GThunderWallBMoveL range' setint
+    45 range' setparam
+    -1 top' setint
+    flushint
+    WallBAimLoop rti
+
+GConsiderCornerBL:
+    energy 135 / 5 * fire' store
+    range 55 < GCornerBLStorm ifg
+    rti
+
+GCornerBLStorm: snd4
+    aim 45 > GCornerBLThunderU ifg
+
+GCornerBLThunderR:
+    10 speedx' store
+    -1 speedy' store
+    energy 35 - nuke' store
+    120 right' setparam
+    GWallAreaB right' setint
+    GThunderWallBMoveR range' setint
+    45 range' setparam
+    -1 top' setint
+    flushint
+    WallBAimLoop rti
+
+GCornerBLThunderU:
+    -10 speedy' store
+    1 speedx' store
+    energy 35 - nuke' store
+    180 top' setparam
+    GWallAreaL top' setint
+    GThunderWallLMoveU range' setint
+    45 range' setparam
+    -1 right' setint
+    flushint
+    WallLAimLoop rti
+
+{#################### G to Solo transition}
+
+TransitionTL:
+    -1 speedx' store
+    -1 speedy' store
+    10 left' setparam
+    10 top' setparam
+    TransXStop left' setint
+    TransYStop top' setint
+    60 radar' setparam
+    CornerSetTLMid jump
+
+TransitionTR:
+    1 speedx' store
+    -1 speedy' store
+    290 right' setparam
+    10 top' setparam
+    TransXStop right' setint
+    TransYStop top' setint
+    60 radar' setparam
+    CornerSetTRMid jump
+
+TransitionBR:
+    1 speedx' store
+    1 speedy' store
+    290 right' setparam
+    290 bottom' setparam
+    TransXStop right' setint
+    TransYStop bottom' setint
+    60 radar' setparam
+    CornerSetBRMid jump
+
+TransitionBL:
+    -1 speedx' store
+    1 speedy' store
+    10 left' setparam
+    290 bottom' setparam
+    TransXStop left' setint
+    TransYStop bottom' setint
+    60 radar' setparam
+    CornerSetBLMid jump
+
+{#################### Transition Stops}
+
+TransXStop:
+    0 speedx' store
+    150 y - 140 / movey' store
+    flushint
+     rti
+
+TransYStop:
+    0 speedy' store
+    150 x - 140 / movex' store
+    flushint
+     rti
+
+{#################### G Shield}
+
+GShield:
+    energy shield + 20 - dup shield' store
+    6 - shield' setparam
+     rti
+
+GShieldOff:
+    radar dup GShieldStill ifg
+    drop
+    0 shield' store
+    nop nop nop nop nop
+     rti
+
+GShieldOff2:
+    0 shield' store
+    nop nop
+     rti
+
+GShieldStill:
+     23 > GShieldOff2 ifg
+    energy shield' setparam
+    nop
+     rti
+
+
+{   energy 20 - shield' store
+    GShieldDrop radar' setint
+    inton
+GShieldMid:
+    nop nop nop nop nop
+    nop nop nop nop nop
+    nop nop nop nop nop
+    nop nop nop nop nop
+    nop nop nop nop nop
+    nop nop nop nop nop
+    nop nop nop GShield radar'
+     setint
+    0 shield' store
+    nop
+TransWait:
+    nop nop nop nop
+    nop nop nop nop nop
+     rti
+
+GShieldDrop:
+    drop
+    energy shield + shield' store
+    GShieldMid rti}
+
+{#################### G Collision}
+
+GCollided:
+    GFreak range' setint
+    45 range' setparam
+    inton
+    22 aim' store   112 aim' store
+    202 aim' store  292 aim' store
+    67 aim' store   157 aim' store
+    247 aim' store  337 aim' store
+    intoff
+    150 x - 140 / movex' store
+    150 y - 140 / movey' store
+    GroupStart jump
+
+GFreak:
+    aim 1 tan GFreakX ifg
+
+GFreakY:
+    y 150 > GThunderU GThunderD ifeg
+
+GFreakX:
+    x 150 > GThunderL GThunderR ifeg
+
+#!! NoStoWarnings

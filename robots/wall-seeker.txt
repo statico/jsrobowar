@@ -1,0 +1,23 @@
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 150, Damage: 150, Shield: 0, CPU: 15, Bullets: normal
+}
+
+Start:
+    -5 speedx' store
+Loop:
+    x 30 < AtWall ifg
+    Loop jump
+
+AtWall:
+    0 speedx' store
+SetAim:
+    0 aim' store
+WallLoop:
+    aim 5 + aim' store
+    range 0 > Shoot if
+    aim 180 > SetAim WallLoop ifeg
+
+Shoot:
+    energy fire' sto
+    return

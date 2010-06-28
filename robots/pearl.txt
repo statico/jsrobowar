@@ -1,0 +1,52 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 150, Damage: 60, Shield: 0, CPU: 15, Bullets: rubber, +missiles, +tacnukes
+}
+
+{Pearl - For the Strafing
+Matthew Sakai,4/13/90 (Friday, by coincidence)
+A totally new concept}
+
+#The beginning
+begin: x 150 > ri le ife
+ri: drop
+rig: x 280 > slowr if 5 speedx' store collision help if rig jump
+le: drop
+lef: x 20 < slowl if -5 speedx' store collision help if lef jump
+slowr: x 288 > stopr if 1 speedx' store collision help if slowr jump
+slowl: x 12 < stopl if -1 speedx' store collision help if slowl jump
+# The main program
+stopr: 0 speedx' store -10 speedy' store 270 aim' store
+up: y 30 < upleft if 1 missile' store collision kilu if up jump
+left: x 30 < leftdown if 1 missile' store collision kill if left jump
+stopl: 0 speedx' store 10 speedy' store
+down: y 270 > downright if 1 missile' store collision kild if down jump
+right: x 270 > rightup if 1 missile' store collision kilr if right jump
+upleft: -1 speedy' store y 13 < ul if collision kill if upleft jump
+ul: 0 speedy' store -10 speedx' store 180 aim' store left jump
+leftdown: -1 speedx' store x 13 < ld if collision kild if leftdown jump
+ld: 0 speedx' store 10 speedy' store 90 aim' store down jump
+downright: 1 speedy' store y 288 > dr if collision kilr if downright jump
+dr: 0 speedy' store 10 speedx' store 0 aim' store right jump
+rightup: 1 speedx' store x 288 > ru if collision kilu if rightup jump
+ru: 0 speedx' store -10 speedy' store 270 aim' store up jump
+kill: energy 80 > nukl kil ife
+kilu: energy 80 > nuku kiu ife
+kilr: energy 80 > nukr kir ife
+kild: energy 80 > nukd kid ife
+kil: range killl if 270 aim' store range killl if 225 aim' store range killl if collision help if return
+kiu: range killl if 0 aim' store range killl if 315 aim' store range killl if collision help if return
+kir: range killl if 90 aim' store range killl if 45 aim' store range killl if collision help if return
+kid: range killl if 180 aim' store range killl if 135 aim' store range killl if collision help if return
+killl: range 30 > junk if collision not junk if 50 missile' store drop collision ki if return
+ki: 50 missile' store drop nop nop nop nop nop nop nop collision ki if drop return
+nukl: 6 speedx' store energy nuke' store
+nul: x 279 > ul if collision kilr if nul jump
+nuku: 6 speedy' store energy nuke' store
+nuu: y 279 > ru if collision kild if nuu jump
+nukr: -6 speedx' store energy nuke' store
+nur: x 21 < dr if collision kill if nur jump
+nukd: -6 speedy' store energy nuke' store
+nud: x 21 < ld if collision kilu if nud jump
+help: aim 298 + aim' store range killl if collision help if return
+junk: drop return

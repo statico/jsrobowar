@@ -1,0 +1,38 @@
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 100, Damage: 150, Shield: 25, CPU: 15, Bullets: rubber, +missiles
+}
+
+    BounceRight left' setint
+    BounceLeft right' setint
+    BounceDown top' setint
+    BounceUp bot' setint
+    50 top' setparam
+    50 left' setparam
+    250 right' setparam
+    250 bot' setparam
+    Shoot range' setint
+    inton
+    3 speedx' sto
+    3 speedy' sto
+Main:
+    aim 7 + aim' store
+    25 shield' store
+    Main jump
+
+BounceRight:
+    3 speedx' store
+    RTI
+BounceLeft:
+    -3 speedx' store
+    RTI
+BounceUp:
+    -3 speedy' store
+    RTI
+BounceDown:
+    3 speedy' store
+    RTI
+
+Shoot:
+    energy 2 / missile' store
+    RTI

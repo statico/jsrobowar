@@ -1,0 +1,1940 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 100, Damage: 100, Shield: 0, CPU: 30, Bullets: rubber, +missiles, +stunner
+}
+
+{
+#------------------ARACHNEE------------------#
+
+Created by :
+Jean-Francis LECHAT born the 19/05/75
+
+For :
+The Ninth International Robowar Tournament
+in January 1995.
+
+Address :
+5 rue Lavoisier
+92160 ANTONY
+FRANCE
+
+I am a strong advocater of weapons like laser, drones, stunners, mines, tacnukes. I mean all the weapons which are less used than bullets, missiles and hellbores but which enable to create some original robots and to rise the interest of the game. So, I know how to create robots with laser or drones, but it could be easier if they were enabled in the hardware store (there is a little place below 'other options' in the hardware store window).
+
+Here are some ideas for a modification to Robowar:
+In Robowar 4.1 , missiles will do twice damage. Why not for tacnukes?
+Robots are all disc of 10 pixels radius with a maximum of 9 hardware points. What about robots of 5 and 15 pixels radius, with respectively a maximum of 7 and 11 hardware points?
+Crazy mode : all shots bounce on the walls.
+
+I lacked of time to create new robots. So, I send again Jade and Arachnee. They haven't been really modified.
+
+(Brasil was the best team in competition, so...)
+}
+
+Proc0:
+    Proc4 wall' Setint
+
+Proc2:   #3
+    Proc9 collision' Setint
+    robots 2 > Proc22 Proc168 Ifeg
+
+Proc3:   #13
+    intoff
+    0 speedx' store
+    0 speedy' store
+    Dropall
+    collision Proc9 Ifg
+    wall Proc4 Ifg
+    Proc2 jump
+
+Proc4:   #31
+    X 10 < Proc5 Ifg
+    X 290 > Proc8 Ifg
+    Y 10 < Proc7 Ifg
+    0 speedy' store
+    290 Y - movey' store
+    0 shield' store
+    Proc3 jump
+
+Proc5:   #63
+    0 speedx' store
+    10 X -
+Proc6:   #70
+    movex' store
+    0 shield' store
+    Proc3 jump
+
+Proc7:   #77
+    0 speedy' store
+    10 Y - movey' store
+    0 shield' store
+    Proc3 jump
+
+Proc8:   #91
+    0 speedx' store
+    290 X - movex' store
+    0 shield' store
+    Proc3 jump
+
+Proc9:   #105
+    energy shield' store
+    0 look' store
+    30 range' Setparam
+    Proc10 range' Setint
+    inton
+    Proc29 call
+    collision Proc12 Proc3 Ifeg
+
+Proc10:   #126
+    range dup 11 < and Proc30 Ifg
+
+Proc11:   #134
+    50 missile' 25 missile' 4 stunner' 0 shield' store
+    store
+    store
+    store
+    Sync
+    range dup 30 < and Proc10 Proc3 Ifeg
+
+Proc12:   #156
+    Y 150 > dup 180 * aim' store
+    -40 * 20 + movey' 0 shield' Sync
+    store
+    store
+    range 10 > range 35 < and Proc11 Proc9 Ifeg
+
+Proc13:   #187
+    energy shield' store
+    Proc0 radar' Setint
+    rti
+
+Proc14:   #195
+    energy shield' store
+    chronon 1 + C' store
+    Proc177 range' Setint
+    rti
+
+Proc15:   #209
+    Dropall
+    energy shield' store
+    chronon 1 + C' store
+    3312 Proc33 rti
+
+Proc16:   #223
+    0 shield' store
+    Proc178 range' Setint
+    jump
+
+Proc17:   #230
+    Dropall
+    0 shield' store
+    3303 Proc33 rti
+
+Proc18:   #237
+    energy 2 + shield' store
+    Sync
+    0 shield' store
+    rti
+
+Proc19:   #248
+    drop drop
+Proc20:   #250
+    energy shield' store
+
+Proc21:   #254
+    energy shield + shield' store
+    Proc0 radar' Setint
+    inton
+    Proc29 call
+    Proc21 radar' Setint
+    Proc29 call
+    Proc20 radar' Setint
+    0 shield' store
+    rti
+
+Proc22:   #279
+    X Y > Proc23 Ifg
+    300 X - Y < Proc26 Proc27 Ifeg
+
+Proc23:   #296
+    300 Y - X < Proc25 Proc24 Ifeg
+
+Proc24:   #306
+    Y 30 < Proc58 Ifg
+    Proc25 range' Setint
+    inton
+    10 aim' store
+    350 aim' store
+    20 aim' store
+    340 aim' store
+    30 aim' store
+    330 aim' store
+    0 aim' store
+    22 top' Setparam
+    Proc58 top' Setint
+    -12 speedy' store
+    energy shield' store
+    70 range' Setparam
+    Proc42 range' Setint
+    25 radar' Setparam
+    Proc13 radar' Setint
+    Proc34 jump
+
+Proc25:   #364
+    X 270 > Proc60 Ifg
+    Proc26 range' Setint
+    inton
+    100 aim' store
+    80 aim' store
+    110 aim' store
+    70 aim' store
+    120 aim' store
+    60 aim' store
+    90 aim' store
+    278 right' Setparam
+    Proc60 right' Setint
+    12 speedx' store
+    energy shield' store
+    70 range' Setparam
+    Proc46 range' Setint
+    25 radar' Setparam
+    Proc13 radar' Setint
+    Proc36 jump
+
+Proc26:   #422
+    Y 270 > Proc62 Ifg
+    Proc27 range' Setint
+    inton
+    190 aim' store
+    170 aim' store
+    200 aim' store
+    160 aim' store
+    210 aim' store
+    150 aim' store
+    180 aim' store
+    278 bottom' Setparam
+    Proc62 bottom' Setint
+    12 speedy' store
+    energy shield' store
+    70 range' Setparam
+    Proc50 range' Setint
+    25 radar' Setparam
+    Proc13 radar' Setint
+    Proc38 rti
+
+Proc27:   #480
+    X 30 < Proc64 Ifg
+    Proc24 range' Setint
+    inton
+    280 aim' store
+    260 aim' store
+    290 aim' store
+    250 aim' store
+    300 aim' store
+    240 aim' store
+    270 aim' store
+    22 left' Setparam
+    Proc64 left' Setint
+    -12 speedx' store
+    energy shield' store
+    70 range' Setparam
+    Proc54 range' Setint
+    25 radar' Setparam
+    Proc13 radar' Setint
+    Proc40 rti
+
+Proc28:   #538
+    538
+Proc29:   #539
+    15 aim' store
+    45 aim' store
+    75 aim' store
+    105 aim' store
+    135 aim' store
+    165 aim' store
+    195 aim' store
+    225 aim' store
+    255 aim' store
+    285 aim' store
+    315 aim' store
+    345 aim' store
+
+Proc30:   #575
+    rti
+
+Proc31:   #576
+    drop rti
+
+Proc32:   #578
+    578
+Proc33:   #579
+    12 aim' store
+    84 aim' store
+    156 aim' store
+    228 aim' store
+    300 aim' store
+    348 aim' store
+    60 aim' store
+    132 aim' store
+    204 aim' store
+    276 aim' store
+    324 aim' store
+    36 aim' store
+    108 aim' store
+    180 aim' store
+    252 aim' store
+    rti
+
+Proc34:   #625
+    625 Sync
+    Proc13 radar' Setint
+    0 shield' store
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    10 aim' store
+    350 aim' store
+    20 aim' store
+    340 aim' store
+    0 aim' store
+    rti
+
+Proc35:   #673
+    673 Sync
+    0 shield' store
+    Proc13 radar' Setint
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    55 aim' store
+    35 aim' store
+    65 aim' store
+    25 aim' store
+    45 aim' store
+    rti
+
+Proc36:   #721
+    721 Sync
+    Proc13 radar' Setint
+    0 shield' store
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    100 aim' store
+    80 aim' store
+    110 aim' store
+    70 aim' store
+    90 aim' store
+    rti
+
+Proc37:   #769
+    769 Sync
+    0 shield' store
+    Proc13 radar' Setint
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    145 aim' store
+    125 aim' store
+    155 aim' store
+    115 aim' store
+    135 aim' store
+    rti
+
+Proc38:   #817
+    817 Sync
+    0 shield' store
+    Proc13 radar' Setint
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    190 aim' store
+    170 aim' store
+    200 aim' store
+    160 aim' store
+    180 aim' store
+    rti
+
+Proc39:   #865
+    865 Sync
+    0 shield' store
+    Proc13 radar' Setint
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    235 aim' store
+    215 aim' store
+    245 aim' store
+    205 aim' store
+    225 aim' store
+    rti
+
+Proc40:   #913
+    913 Sync
+    Proc13 radar' Setint
+    0 shield' store
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    280 aim' store
+    260 aim' store
+    290 aim' store
+    250 aim' store
+    270 aim' store
+    rti
+
+Proc41:   #961
+    961 Sync
+    Proc13 radar' Setint
+    0 shield' store
+    60 scan' store
+    -60 scan' store
+    100 scan' store
+    -100 scan' store
+    140 scan' store
+    -140 scan' store
+    180 scan' store
+    0 scan' store
+    325 aim' store
+    305 aim' store
+    335 aim' store
+    295 aim' store
+    315 aim' store
+    rti
+
+Proc42:   #1009
+    doppler 0 > aim 0 = and aim 180 < or Proc43 Ifg
+    278 right' Setparam
+    Proc60 right' Setint
+    Proc44 range' Setint
+    0 shield' store
+    10 speedx' store
+    Proc35 rti
+
+Proc43:   #1042
+    22 left' Setparam
+    Proc64 left' Setint
+    Proc56 range' Setint
+    0 shield' store
+    -10 speedx' store
+    Proc41 rti
+
+Proc44:   #1059
+    doppler 0 > aim 45 = and aim 45 > or Proc45 Ifg
+    Proc46 range' Setint
+    0 shield' store
+    0 speedy' store
+    Proc36 rti
+
+Proc45:   #1086
+    Proc42 range' Setint
+    0 shield' store
+    0 speedx' store
+    Proc34 rti
+
+Proc46:   #1097
+    doppler 0 < aim 90 = and aim 90 < or Proc47 Ifg
+    22 top' Setparam
+    Proc58 top' Setint
+    Proc44 range' Setint
+    0 shield' store
+    -10 speedy' store
+    Proc35 rti
+
+Proc47:   #1130
+    278 bottom' Setparam
+    1411 bottom' Setparam
+    Proc48 range' Setint
+    0 shield' store
+    10 speedy' store
+    Proc37 rti
+
+Proc48:   #1147
+    doppler 0 < aim 135 = and aim 135 < or Proc49 Ifg
+    Proc46 range' Setint
+    0 shield' store
+    0 speedy' store
+    Proc36 rti
+
+Proc49:   #1174
+    Proc50 range' Setint
+    0 shield' store
+    0 speedx' store
+    Proc38 rti
+
+Proc50:   #1185
+    doppler 0 > aim 180 = and aim 180 > or Proc51 Ifg
+    22 left' Setparam
+    Proc64 left' Setint
+    Proc52 range' Setint
+    0 shield' store
+    -10 speedx' store
+    Proc39 rti
+
+Proc51:   #1218
+    278 bottom' Setparam
+    Proc62 bottom' Setint
+    Proc48 range' Setint
+    0 shield' store
+    10 speedx' store
+    Proc37 rti
+
+Proc52:   #1235
+    doppler 0 > aim 225 = and aim 225 > or Proc53 Ifg
+    Proc54 range' Setint
+    0 shield' store
+    0 speedy' store
+    Proc40 rti
+
+Proc53:   #1262
+    Proc50 range' Setint
+    0 shield' store
+    0 speedx' store
+    Proc38 rti
+
+Proc54:   #1273
+    doppler 0 < aim 270 = and aim 270 < or Proc55 Ifg
+    278 bottom' Setparam
+    Proc62 bottom' Setint
+    Proc52 range' Setint
+    0 shield' store
+    10 speedy' store
+    Proc39 rti
+
+Proc55:   #1306
+    22 top' Setparam
+    Proc58 top' Setint
+    Proc56 range' Setint
+    0 shield' store
+    -10 speedy' store
+    Proc41 rti
+
+Proc56:   #1323
+    doppler 0 < aim 315 = and aim 315 < or Proc49 Ifg
+    Proc54 range' Setint
+    0 shield' store
+    0 speedy' store
+    Proc40 rti
+
+Proc57:   #1350
+    Proc42 range' Setint
+    0 shield' store
+    0 speedx' store
+    Proc34 rti
+
+Proc58:   #1361
+    0 shield' store
+    Y 12 < Proc59 Ifg
+    10 top' Setparam
+    Proc67 top' Setint
+    -1 speedy' store
+    Proc69 jump
+
+Proc59:   #1381
+    0 speedy' store
+    Proc69 jump
+
+Proc60:   #1386
+    0 shield' store
+    X 288 > Proc61 Ifg
+    290 right' Setparam
+    Proc66 right' Setint
+    1 speedx' store
+    Proc72 jump
+
+Proc61:   #1406
+    0 speedx' store
+    Proc72 jump
+
+Proc62:   #1411
+    0 shield' store
+    Y 288 > Proc63 Ifg
+    290 bottom' Setparam
+    Proc67 bottom' Setint
+    1 speedy' store
+    Proc75 jump
+
+Proc63:   #1431
+    0 speedy' store
+    Proc75 jump
+
+Proc64:   #1436
+    0 shield' store
+    X 12 < Proc65 Ifg
+    10 left' Setparam
+    Proc66 left' Setint
+    -1 speedx' store
+    Proc78 jump
+
+Proc65:   #1456
+    0 speedx' store
+    Proc78 jump
+
+Proc66:   #1461
+    0 shield' store
+    0 speedx' store
+    rti
+
+Proc67:   #1468
+    0 shield' store
+    0 speedy' store
+    rti
+
+Proc68:   #1475
+    0 shield' store
+    0 speedx' store
+    0 speedy' store
+    jump
+
+Proc69:   #1485
+    icon0
+    Dropall
+    speedx not Proc146 If
+    25 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc113 range' Setint
+    Proc81 right' Setint
+    Proc99 left' Setint
+    inton
+
+Proc70:   #1511
+    Proc71 call
+    range doppler xor radar and Proc162 If
+    Proc71 call
+    90 aim' store
+    range doppler xor radar and Proc166 If
+    Proc71 call
+    robots 2 > Proc70 Proc169 Ifeg
+
+Proc71:   #1547
+    180 aim' store
+    150 aim' store
+    210 aim' store
+    120 aim' store
+    240 aim' store
+    165 aim' store
+    195 aim' store
+    135 aim' store
+    225 aim' store
+    105 aim' store
+    255 aim' store
+    90 aim' store
+    270 aim' store
+    rti
+
+Proc72:   #1587
+    icon0
+    Dropall
+    speedy not Proc147 If
+    Proc81 top' Setint
+    Proc87 bottom' Setint
+    25 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc115 range' Setint
+    inton
+
+Proc73:   #1613
+    Proc74 call
+    range doppler xor radar and Proc164 If
+    Proc74 call
+    180 aim' store
+    range doppler xor radar and Proc160 If
+    Proc74 call
+    robots 2 > Proc73 Proc169 Ifeg
+
+Proc74:   #1649
+    270 aim' store
+    240 aim' store
+    300 aim' store
+    210 aim' store
+    330 aim' store
+    255 aim' store
+    285 aim' store
+    225 aim' store
+    315 aim' store
+    195 aim' store
+    345 aim' store
+    180 aim' store
+    0 aim' store
+    rti
+
+Proc75:   #1689
+    icon0
+    Dropall
+    speedx not Proc146 If
+    Proc87 right' Setint
+    Proc93 left' Setint
+    25 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc117 range' Setint
+    inton
+
+Proc76:   #1715
+    Proc77 call
+    range doppler xor radar and Proc167 If
+    Proc77 call
+    270 aim' store
+    range doppler xor radar and Proc163 If
+    Proc77 call
+    robots 2 > Proc76 Proc169 Ifeg
+
+Proc77:   #1751
+    0 aim' store
+    330 aim' store
+    30 aim' store
+    300 aim' store
+    60 aim' store
+    345 aim' store
+    15 aim' store
+    315 aim' store
+    45 aim' store
+    285 aim' store
+    75 aim' store
+    270 aim' store
+    90 aim' store
+    rti
+
+Proc78:   #1791
+    icon0
+    Dropall
+    speedy not Proc147 If
+    Proc99 top' Setint
+    Proc93 bottom' Setint
+    25 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc119 range' Setint
+    inton
+
+Proc79:   #1817
+    Proc80 call
+    range doppler xor radar and Proc161 If
+    Proc80 call
+    0 aim' store
+    range doppler xor radar and Proc165 If
+    Proc80 call
+    robots 2 > Proc79 Proc169 Ifeg
+
+Proc80:   #1853
+    90 aim' store
+    60 aim' store
+    120 aim' store
+    30 aim' store
+    150 aim' store
+    75 aim' store
+    105 aim' store
+    45 aim' store
+    135 aim' store
+    15 aim' store
+    165 aim' store
+    0 aim' store
+    180 aim' store
+    rti
+
+Proc81:   #1893
+    icon3
+    Dropall
+    Proc68 call
+    20 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc84 range' Setint
+    inton
+
+Proc82:   #1910
+    Proc83 call
+    range Proc108 If
+    Proc83 call
+    180 aim' store
+    range Proc107 If
+    Proc83 call
+    energy 100 = Proc86 Ifg
+    robots 2 > Proc82 Proc169 Ifeg
+
+Proc83:   #1940
+    255 aim' store
+    240 aim' store
+    225 aim' store
+    210 aim' store
+    195 aim' store
+    180 aim' store
+    270 aim' store
+    jump
+
+Proc84:   #1962
+    icon0
+    doppler 0 < aim 255 < and aim 210 < or dup Proc159 Proc158 Ife
+
+Proc85:   #1981
+    Proc69 Proc72 Ifeg
+
+Proc86:   #1984
+    220 aim' store
+    20 missile' store
+    Proc82 jump
+
+Proc87:   #1992
+    icon5
+    Dropall
+    Proc68 call
+    20 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc90 range' Setint
+    inton
+
+Proc88:   #2009
+    Proc89 call
+    range Proc105 If
+    Proc89 call
+    270 aim' store
+    range Proc108 If
+    Proc89 call
+    energy 100 = Proc92 Ifg
+    robots 2 > Proc88 Proc169 Ifeg
+
+Proc89:   #2039
+    345 aim' store
+    330 aim' store
+    315 aim' store
+    300 aim' store
+    285 aim' store
+    270 aim' store
+    0 aim' store
+    jump
+
+Proc90:   #2061
+    icon0
+    doppler 0 > aim 285 > and aim 345 = aim not or or dup Proc159 Proc156 Ife
+
+Proc91:   #2084
+    Proc75 Proc72 Ifeg
+
+Proc92:   #2087
+    320 aim' store
+    20 missile' store
+    Proc88 jump
+
+Proc93:   #2095
+    icon4
+    Dropall
+    Proc68 call
+    20 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc96 range' Setint
+    inton
+
+Proc94:   #2112
+    Proc95 call
+    range Proc106 If
+    Proc95 call
+    0 aim' store
+    range Proc105 If
+    Proc95 call
+    energy 100 = Proc98 Ifg
+    robots 2 > Proc94 Proc169 Ifeg
+
+Proc95:   #2142
+    75 aim' store
+    60 aim' store
+    45 aim' store
+    30 aim' store
+    15 aim' store
+    0 aim' store
+    90 aim' store
+    jump
+
+Proc96:   #2164
+    icon0
+    doppler 0 < aim 75 < and aim 30 < or dup Proc157 Proc156 Ife
+
+Proc97:   #2183
+    Proc75 Proc78 Ifeg
+
+Proc98:   #2186
+    40 aim' store
+    20 missile' store
+    Proc94 jump
+
+Proc99:   #2194
+    icon2
+    Dropall
+    Proc68 call
+    20 radar' Setparam
+    Proc20 radar' Setint
+    70 range' Setparam
+    Proc102 range' Setint
+    inton
+
+Proc100:   #2211
+    Proc101 call
+    range Proc107 If
+    Proc101 call
+    90 aim' store
+    range Proc106 If
+    Proc101 call
+    energy 100 = Proc104 Ifg
+    robots 2 > Proc100 Proc169 Ifeg
+
+Proc101:   #2241
+    165 aim' store
+    150 aim' store
+    135 aim' store
+    120 aim' store
+    105 aim' store
+    90 aim' store
+    180 aim' store
+    jump
+
+Proc102:   #2263
+    icon0
+    doppler 0 < aim 165 < and aim 120 < or dup Proc158 Proc157 Ife
+
+Proc103:   #2282
+    Proc78 Proc69 Ifeg
+
+Proc104:   #2285
+    140 aim' store
+    20 missile' store
+    Proc100 jump
+
+Proc105:   #2293
+    intoff
+    1689 radar Proc111 Ifg
+    doppler range xor 20 * missile' store
+    drop rti
+
+Proc106:   #2310
+    intoff
+    1791 radar Proc109 Ifg
+    doppler range xor 20 * missile' store
+    drop rti
+
+Proc107:   #2327
+    intoff
+    1485 radar Proc111 Ifg
+    doppler range xor 20 * missile' store
+    drop rti
+
+Proc108:   #2344
+    intoff
+    1587 radar Proc109 Ifg
+    doppler range xor 20 * missile' store
+    drop rti
+
+Proc109:   #2361
+    radar dup 25 < Proc19 Ifg
+    Sync
+    radar - dup 4 > swap 15 < and 2383 Ifg
+    drop rti
+
+Proc110:   #2383
+    0 aim' store
+    range 180 aim' store
+    range or Proc126 Ifg
+    jump
+
+Proc111:   #2397
+    radar dup 25 < Proc19 Ifg
+    Sync
+    radar - dup 4 > swap 15 < and Proc112 Ifg
+    drop rti
+
+Proc112:   #2419
+    90 aim' store
+    range 270 aim' store
+    range or Proc126 Ifg
+    jump
+
+Proc113:   #2433
+    doppler range dup 40 < and Proc230 Ifg
+    speedx 0 < Proc114 Ifg
+    aim 135 < Proc166 If
+    intoff
+    Proc121 jump
+
+Proc114:   #2458
+    aim 255 > Proc162 If
+    intoff
+    Proc121 jump
+
+Proc115:   #2467
+    doppler range dup 40 < and Proc230 Ifg
+    speedy 0 < Proc116 Ifg
+    aim 225 < aim and Proc160 If
+    intoff
+    Proc121 jump
+
+Proc116:   #2495
+    aim 315 > aim not or Proc164 If
+    intoff
+    Proc121 jump
+
+Proc117:   #2508
+    doppler range dup 40 < and Proc230 Ifg
+    speedx 0 < Proc118 Ifg
+    aim 105 < aim 45 > and Proc167 If
+    intoff
+    Proc121 jump
+
+Proc118:   #2538
+    aim 255 > aim 315 < and Proc163 If
+    intoff
+    Proc121 jump
+
+Proc119:   #2552
+    doppler range dup 40 < and Proc230 Ifg
+    speedy 0 < Proc120 Ifg
+    aim 135 > Proc161 If
+    intoff
+    Proc121 jump
+
+Proc120:   #2577
+    aim 45 < Proc165 If
+    intoff
+    Proc121 jump
+
+Proc121:   #2586
+    9 * aim + aim' store
+    energy 80 - missile' store
+    rti
+
+Proc122:   #2600
+    0 speedx' store
+    -10 speedy' store
+    22 top' Setparam
+    Proc58 top' Setint
+    Proc42 range' Setint
+    Proc34 rti
+
+Proc123:   #2617
+    0 speedy' store
+    10 speedx' store
+    278 right' Setparam
+    Proc60 right' Setint
+    Proc46 range' Setint
+    Proc36 rti
+
+Proc124:   #2634
+    0 speedx' store
+    10 speedy' store
+    278 bottom' Setparam
+    Proc62 bottom' Setint
+    Proc50 range' Setint
+    Proc38 rti
+
+Proc125:   #2651
+    0 speedy' store
+    -10 speedx' store
+    22 left' Setparam
+    Proc64 left' Setint
+    Proc54 range' Setint
+    Proc40 rti
+
+Proc126:   #2668
+    icon0
+    Proc6 range' Setint
+    25 radar' Setparam
+    Proc13 radar' Setint
+    X 150 < Proc128 Ifg
+    22 left' Setparam
+    Proc64 left' Setint
+    -10 speedx' store
+    Y 150 < Proc127 Ifg
+    22 top' Setparam
+    Proc58 top' Setint
+    -9 speedy' store
+    Proc56 range' Setint
+    Proc41 rti
+
+Proc127:   #2713
+    278 bottom' Setparam
+    Proc62 bottom' Setint
+    9 speedy' store
+    Proc52 range' Setint
+    Proc39 rti
+
+Proc128:   #2727
+    278 right' Setparam
+    Proc60 right' Setint
+    10 speedx' store
+    Y 150 < Proc129 Ifg
+    22 top' Setparam
+    Proc58 top' Setint
+    -9 speedy' store
+    Proc44 range' Setint
+    Proc35 rti
+
+Proc129:   #2756
+    278 bottom' Setparam
+    Proc62 bottom' Setint
+    9 speedy' store
+    Proc48 range' Setint
+    Proc37 rti
+
+Proc130:   #2770
+    aim 22 + aim' store
+    aim 45 / 2 * 2785 + jump
+
+Proc131:   #2785
+    Proc139 jump
+
+Proc132:   #2787
+    Proc143 jump
+
+Proc133:   #2789
+    Proc140 jump
+
+Proc134:   #2791
+    Proc141 jump
+
+Proc135:   #2793
+    Proc139 jump
+
+Proc136:   #2795
+    Proc143 jump
+
+Proc137:   #2797
+    Proc140 jump
+
+Proc138:   #2799
+    Proc141 jump
+
+Proc139:   #2801
+    X 150 < 16 * 8 - speedx' store
+    Proc145 jump
+
+Proc140:   #2813
+    Y 150 < 16 * 8 - speedy' store
+    Proc145 jump
+
+Proc141:   #2825
+    X Y < Proc142 Ifg
+    4 speedy' store
+    -4 speedx' store
+    Proc145 jump
+
+Proc142:   #2840
+    -4 speedy' store
+    4 speedx' store
+    Proc145 jump
+
+Proc143:   #2848
+    300 X - Y < Proc144 Ifg
+    4 speedy' store
+    4 speedx' store
+    Proc145 jump
+
+Proc144:   #2865
+    -4 speedy' store
+    -4 speedx' store
+    Proc145 jump
+
+Proc145:   #2873
+    20 top' Setparam
+    Proc154 top' Setint
+    280 right' Setparam
+    Proc155 right' Setint
+    280 bottom' Setparam
+    Proc152 bottom' Setint
+    20 left' Setparam
+    Proc153 left' Setint
+    200 range' Setparam
+    Proc172 range' Setint
+    25 radar' Setparam
+    Proc15 radar' Setint
+    Dropall
+    3303 Proc33 rti
+
+Proc146:   #2913
+    15 left' Setparam
+    285 right' Setparam
+    X 150 < 10 * 5 - speedx' store
+    jump
+
+Proc147:   #2930
+    15 top' Setparam
+    285 bottom' Setparam
+    Y 150 < 10 * 5 - speedy' store
+    jump
+
+Proc148:   #2947
+    X 150 < Proc149 Ifg
+    150 left' Setparam
+    Proc66 left' Setint
+    -3 speedx' store
+    jump
+
+Proc149:   #2963
+    150 right' Setparam
+    Proc66 right' Setint
+    3 speedx' store
+    jump
+
+Proc150:   #2973
+    Y 150 < Proc151 Ifg
+    150 top' Setparam
+    Proc67 top' Setint
+    -3 speedy' store
+    jump
+
+Proc151:   #2989
+    150 bottom' Setparam
+    Proc67 bottom' Setint
+    3 speedy' store
+    jump
+
+Proc152:   #2999
+    -5 speedy' store
+    speedx not Proc146 If
+    rti
+
+Proc153:   #3008
+    5 speedx' store
+    speedy not Proc147 If
+    rti
+
+Proc154:   #3017
+    5 speedy' store
+    speedx not Proc146 If
+    rti
+
+Proc155:   #3026
+    -5 speedx' store
+    speedy not Proc147 If
+    rti
+
+Proc156:   #3035
+    -5 speedy' store
+    jump
+
+Proc157:   #3039
+    5 speedx' store
+    jump
+
+Proc158:   #3043
+    5 speedy' store
+    jump
+
+Proc159:   #3047
+    -5 speedx' store
+    jump
+
+Proc160:   #3051
+    Proc0 radar' Setint
+    Proc125 range' Setint
+    inton
+    0 aim' store
+    15 aim' store
+    30 aim' store
+    intoff
+    -5 speedy' store
+    Proc115 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc161:   #3078
+    Proc0 radar' Setint
+    Proc123 range' Setint
+    inton
+    0 aim' store
+    15 aim' store
+    30 aim' store
+    intoff
+    -5 speedy' store
+    Proc119 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc162:   #3105
+    Proc0 radar' Setint
+    Proc124 range' Setint
+    inton
+    90 aim' store
+    105 aim' store
+    120 aim' store
+    intoff
+    5 speedx' store
+    Proc113 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc163:   #3132
+    Proc0 radar' Setint
+    Proc122 range' Setint
+    inton
+    90 aim' store
+    75 aim' store
+    60 aim' store
+    intoff
+    5 speedx' store
+    Proc117 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc164:   #3159
+    Proc0 radar' Setint
+    Proc125 range' Setint
+    inton
+    180 aim' store
+    195 aim' store
+    210 aim' store
+    intoff
+    5 speedy' store
+    Proc115 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc165:   #3186
+    Proc0 radar' Setint
+    Proc123 range' Setint
+    inton
+    180 aim' store
+    165 aim' store
+    150 aim' store
+    intoff
+    5 speedy' store
+    Proc119 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc166:   #3213
+    Proc0 radar' Setint
+    Proc124 range' Setint
+    inton
+    270 aim' store
+    255 aim' store
+    240 aim' store
+    intoff
+    -5 speedx' store
+    Proc113 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc167:   #3240
+    Proc0 radar' Setint
+    Proc122 range' Setint
+    inton
+    270 aim' store
+    285 aim' store
+    300 aim' store
+    intoff
+    -5 speedx' store
+    Proc117 range' Setint
+    Proc20 radar' Setint
+    rti
+
+Proc168:   #3267
+    icon0
+    200 radar' Setparam
+    Proc130 radar' Setint
+    600 range' Setparam
+    Proc217 range' Setint
+    3303 Proc33 rti
+
+Proc169:   #3283
+    icon0
+    25 radar' Setparam
+    Proc15 radar' Setint
+    200 range' Setparam
+    Proc172 range' Setint
+    Proc148 call
+    Proc150 call
+    3303 Proc33 rti
+
+Proc170:   #3303
+    look 3 + look' store
+    3303 Proc33 rti
+
+Proc171:   #3312
+    chronon C > Proc17 Ifg
+    3312 Proc33 rti
+
+Proc172:   #3322
+    doppler range dup 50 < and Proc225 Ifg
+    0 shield' store
+    energy 80 < Proc173 Ifg
+    0 speedx' store
+    0 speedy' store
+    Proc178 range' Setint
+    20 radar' Setparam
+    Proc14 radar' Setint
+
+Proc173:   #3356
+    aim look + aim' store
+    dup Proc175 Ifg
+    inton
+
+Proc174:   #3367
+    0 scan' store
+    0 look' store
+    3 look' store
+    -3 look' store
+    6 look' store
+    -6 look' store
+    9 look' store
+    -9 look' store
+    12 look' store
+    -12 look' store
+    15 look' store
+    -15 look' store
+    18 look' store
+    -18 look' store
+    24 look' store
+    -24 look' store
+    Proc216 jump
+
+Proc175:   #3417
+    0 < Proc176 Ifg
+    inton
+    0 scan' store
+    12 look' store
+    9 look' store
+    6 look' store
+    3 look' store
+    0 look' store
+    24 look' store
+    18 look' store
+    15 look' store
+    Proc174 jump
+
+Proc176:   #3451
+    inton
+    0 scan' store
+    -12 look' store
+    -9 look' store
+    -6 look' store
+    -3 look' store
+    0 look' store
+    -24 look' store
+    -18 look' store
+    -15 look' store
+    Proc174 jump
+
+Proc177:   #3481
+    chronon C > Proc16 If
+
+Proc178:   #3488
+    Dropall
+    doppler range dup 50 < and Proc226 Ifg
+    energy 70 < Proc173 Ifg
+    dup 4 * look aim + + aim' store
+    4 stunner' store
+    Sync
+    dup Proc179 Ifg
+    0 look' store
+    range not Proc215 Ifg
+    range 28 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 42 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 56 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 70 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 84 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 98 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 112 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 126 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 140 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 154 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 168 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 182 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 196 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range not Proc215 Ifg
+    range 210 < Proc211 Ifg
+    4 stunner' store
+    Sync
+    range dup 224 < and Proc211 Proc216 Ifeg
+
+Proc179:   #3745
+    dup 0 < Proc195 Ifg
+    -11 arctan 0 look' store
+    range dup 28 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    chs dup look' store
+    range Proc193 Proc194 Ife
+
+Proc180:   #3776
+    0 look' store
+    range dup 42 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc181:   #3799
+    0 look' store
+    range dup 56 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc182:   #3822
+    0 look' store
+    range dup 70 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc183:   #3845
+    0 look' store
+    range dup 84 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc184:   #3868
+    0 look' store
+    range dup 98 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc185:   #3891
+    0 look' store
+    range dup 112 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc186:   #3914
+    0 look' store
+    range dup 126 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc187:   #3937
+    0 look' store
+    range dup 140 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc188:   #3960
+    0 look' store
+    range dup 154 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    chs dup look' store
+    range Proc193 Proc194 Ife
+
+Proc189:   #3984
+    0 look' store
+    range dup 168 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc190:   #4007
+    0 look' store
+    range dup 182 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc191:   #4030
+    0 look' store
+    range dup 196 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc193 Proc194 Ife
+
+Proc192:   #4053
+    0 look' store
+    range dup 210 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    range dup 224 < and 4444 Proc215 Ifg
+
+Proc193:   #4077
+    doppler 0 > swap Ifg
+    look aim + aim' store
+    Proc215 jump
+
+Proc194:   #4092
+    swap 3 + swap jump
+
+Proc195:   #4097
+    -11 arctan 0 look' store
+    range dup 28 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    chs dup look' store
+    range Proc209 Proc210 Ife
+
+Proc196:   #4123
+    0 look' store
+    range dup 42 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc197:   #4146
+    0 look' store
+    range dup 56 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc198:   #4169
+    0 look' store
+    range dup 70 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc199:   #4192
+    0 look' store
+    range dup 84 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc200:   #4215
+    0 look' store
+    range dup 98 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc201:   #4238
+    0 look' store
+    range dup 112 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc202:   #4261
+    0 look' store
+    range dup 126 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc203:   #4284
+    0 look' store
+    range dup 140 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc204:   #4307
+    0 look' store
+    range dup 154 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    chs dup look' store
+    range Proc209 Proc210 Ife
+
+Proc205:   #4331
+    0 look' store
+    range dup 168 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc206:   #4354
+    0 look' store
+    range dup 182 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc207:   #4377
+    0 look' store
+    range dup 196 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    dup look' store
+    range Proc209 Proc210 Ife
+
+Proc208:   #4400
+    0 look' store
+    range dup 210 < and Proc211 Ifg
+    4 stunner' store
+    Sync
+    range dup 224 < and 4444 Proc215 Ifg
+
+Proc209:   #4424
+    doppler 0 < swap Ifg
+    look aim + aim' store
+    Proc215 jump
+
+Proc210:   #4439
+    swap 3 - swap jump
+
+Proc211:   #4444
+    12 stunner' store
+    Sync
+    aim dup -14 Cos speedy' store
+    14 Sin speedx' store
+    Proc0 collision' Setint
+    20 radar' Setparam
+    Proc13 radar' Setint
+    Proc0 top' Setint
+    Proc0 right' Setint
+    Proc0 bottom' Setint
+    Proc0 left' Setint
+    Proc212 range' Setint
+
+Proc212:   #4483
+    range dup 50 < and Proc213 Ifg
+    Proc176 rti
+
+Proc213:   #4493
+    aim look 6 + + aim' store
+    50 missile' 50 missile' 50 missile' 8 stunner' Proc214 range' Setint
+    Sync
+    Proc174 rti
+
+Proc214:   #4516
+    drop aim look + aim' store
+    store
+    store
+    store
+    store
+    Sync
+    Proc3 jump
+
+Proc215:   #4531
+    Proc174 rti
+
+Proc216:   #4533
+    Dropall
+    0 look' store
+    200 range' Setparam
+    Proc172 range' Setint
+    60 radar' Setparam
+    Proc130 radar' Setint
+    3303 Proc33 rti
+
+Proc217:   #4552
+    doppler range dup 60 < and Proc226 Ifg
+    Proc218 range' Setint
+    Proc173 jump
+
+Proc218:   #4567
+    Dropall
+    doppler range dup 60 < and Proc226 Ifg
+    Proc173 jump
+
+Proc219:   #4580
+    dup Proc220 Ifg
+    aim look + aim' store
+    50 missile' 25 missile' 24 stunner' aim Proc0 radar' Setint
+    Proc223 range' Setint
+    0 look' store
+    inton
+    Sync
+    6 look' store
+    -6 look' store
+    12 look' store
+    -12 look' store
+    18 look' store
+    -18 look' store
+    0 look' store
+    Proc222 jump
+
+Proc220:   #4632
+    0 > Proc221 Ifg
+    aim look + aim' store
+    50 missile' 25 missile' 24 stunner' aim Proc0 radar' Setint
+    Proc223 range' Setint
+    -24 look' store
+    inton
+    Sync
+    -18 look' store
+    -12 look' store
+    -9 look' store
+    -6 look' store
+    -3 look' store
+    0 look' store
+    Proc222 jump
+
+Proc221:   #4682
+    aim look + aim' store
+    50 missile' 25 missile' 24 stunner' aim Proc0 radar' Setint
+    Proc223 range' Setint
+    24 look' store
+    inton
+    Sync
+    18 look' store
+    12 look' store
+    9 look' store
+    6 look' store
+    3 look' store
+    0 look' store
+    Proc222 jump
+
+Proc222:   #4728
+    Proc224 range' Setint
+    Proc33 call
+    Proc3 jump
+
+Proc223:   #4735
+    drop look + aim' store
+    store
+    store
+    store
+    Sync
+    Proc3 jump
+
+Proc224:   #4747
+    drop drop doppler + aim' store
+    store
+    store
+    store
+    Sync
+    Proc3 jump
+
+Proc225:   #4760
+    Sync
+    dup 5 * aim look + + dup aim' store
+    28 stunner' store
+    + aim' store
+    50 missile' store
+    25 missile' store
+    Sync
+    Proc216 jump
+
+Proc226:   #4788
+    Proc0 radar' Setint
+    radar Proc231 Proc228 Ifeg
+
+Proc227:   #4796
+    doppler
+Proc228:   #4798
+    aim look + aim' store
+    12 stunner' store
+    4 * aim + aim' store
+    20 stunner' store
+    Proc229 range' Setint
+    Proc174 rti
+
+Proc229:   #4823
+    doppler dup Proc173 Ifg
+    50 missile' 25 missile' 28 stunner' store
+    store
+    store
+    Sync
+    Proc216 jump
+
+Proc230:   #4840
+    24 stunner' store
+    aim + aim' store
+    50 missile' store
+    25 missile' store
+    Sync
+    rti
+
+Proc231:   #4856
+    20 scan' store
+    aim dup radar dup 60 < and Proc232 Ifg
+    12 Cos movex' store
+    12 Sin movey' store
+    Proc227 range' Setint
+    Proc174 rti
+
+Proc232:   #4883
+    -12 Cos movex' store
+    -12 Sin movey' store
+    Proc227 range' Setint
+    Proc174 rti
+
+
+    {-EndCode-}

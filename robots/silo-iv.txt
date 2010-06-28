@@ -1,0 +1,16 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 100, Damage: 150, Shield: 0, CPU: 15, Bullets: rubber, +missiles
+}
+
+{An improvement without TacNuke...}
+{Matthew Sakai, 1/16/90}
+start: random aim' store 2 speedx' store 3 speedy' store
+main: x 275 > left if x 25 < right if y 275 > up if y 25 < down if collision kill if aim 17 + aim' store range 0 > shoot if main jump
+right: 2 speedx' store return
+kill: range 0 > shoot if aim 60 + aim' store collision not ec if kill jump
+down: 3 speedy' store return
+ec: drop main jump
+up: -2 speedy' store return
+shoot: 50 missile' store 50 missile' store return
+left: -1 speedx' store return

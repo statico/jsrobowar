@@ -1,0 +1,259 @@
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 60, Damage: 150, Shield: 0, CPU: 30, Bullets: rubber
+}
+
+Start:
+    x 150 < StartLeft ifg
+StartRight:
+    x 280 > StartAtRight ifg
+    #The right parameter is at the default 280
+
+    AtRight right' setint
+    5 speedx' store
+    Shoot range' setint
+    inton
+    FirstLoop jump
+
+StartLeft:
+    x 20 < StartAtLeft ifg
+    #The left parameter is at the default 20
+
+    AtLeft left' setint
+    -5 speedx' store
+    Shoot range' setint
+    inton
+    FirstLoop jump
+
+
+
+AtRight:
+    0 speedx' store
+
+StartAtRight:
+    y 150 > RightDown RightUp ifeg
+
+RightDown:
+    y 280 > AtBottomRight ifg
+    AtBottomRight bot' setint
+    5 speedy' store
+    inton
+    FirstLoop jump
+
+
+RightUp:
+    y 20 < AtTopRight ifg
+    AtTopRight top' setint
+    -5 speedy' store
+    inton
+    FirstLoop jump
+
+
+
+
+AtLeft:
+    0 speedx' store
+
+StartAtLeft:
+    y 150 > LeftDown LeftUp ifeg
+
+LeftDown:
+    y 280 > AtBottomLeft ifg
+    AtBottomLeft bot' setint
+    5 speedy' store
+    inton
+    FirstLoop jump
+
+LeftUp:
+    y 20 < AtTopLeft ifg
+    AtTopLeft top' setint
+    -5 speedy' store
+    inton
+    FirstLoop jump
+
+
+##############################################
+#   Top left corner routines
+##############################################
+
+
+AtTopLeft:
+    0 speedx' store
+    0 speedy' store
+    10 x - movex' store
+    10 y - movey' store
+    dropall
+    DodgeTopLeft radar' setint
+    70 radar' setparam
+    inton
+TopLeftLoop:
+    90 aim' store
+    120 aim' store
+    135 aim' store
+    150 aim' store
+    180 aim' store
+    TopLeftLoop jump
+
+DodgeTopLeft:
+    radar sync radar < back ifg
+    aim 135 > DodgeTLtoRight DodgeTLtoBot ifeg
+
+DodgeTLtoRight:
+    10 speedx' store
+    AtTopRight right' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+DodgeTLtoBot:
+    10 speedy' store
+    AtBottomLeft bot' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+
+##############################################
+#   Bottom left corner routines
+##############################################
+
+
+AtBottomLeft:
+    0 speedx' store
+    0 speedy' store
+    290 y - movey' store
+    10 x - movex' store
+    dropall
+    DodgeBottomLeft radar' setint
+    70 radar' setparam
+    inton
+BottomLeftLoop:
+    0 aim' store
+    30 aim' store
+    45 aim' store
+    60 aim' store
+    90 aim' store
+    BottomLeftLoop jump
+DodgeBottomLeft:
+    radar sync radar < back ifg
+    aim 45 < DodgeBLtoRight DodgeBLtoTop ifeg
+
+DodgeBLtoRight:
+    10 speedx' store
+    AtBottomRight right' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+DodgeBLtoTop:
+    -10 speedy' sto
+    AtTopLeft top' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+
+
+##############################################
+#   Top right corner routines
+##############################################
+
+
+AtTopRight:
+    0 speedx' store
+    0 speedy' store
+    290 x - movex' store
+    10 y - movey' store
+    dropall
+    DodgeTopRight radar' setint
+    70 radar' setparam
+    inton
+TopRightLoop:
+    270 aim' store
+    240 aim' store
+    225 aim' store
+    210 aim' store
+    180 aim' store
+    TopRightLoop jump
+DodgeTopRight:
+    radar sync radar < back ifg
+    aim 225 > DodgeTRtoBot DodgeTRtoLeft ifeg
+
+DodgeTRtoBot:
+    10 speedy' store
+    AtBottomRight bot' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+
+DodgeTRtoLeft:
+    -10 speedx' store
+    AtTopLeft left' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+
+
+##############################################
+#   Bottom right corner routines
+##############################################
+
+
+AtBottomRight:
+    0 speedx' store
+    0 speedy' store
+    290 y - movey' store
+    290 x - movex' store
+    dropall
+    DodgeBottomRight radar' setint
+    70 radar' setparam
+    inton
+BottomRightLoop:
+    270 aim' store
+    300 aim' store
+    315 aim' store
+    330 aim' store
+    0 aim' store
+    BottomRightLoop jump
+DodgeBottomRight:
+    radar sync radar < back ifg
+    aim 0 = aim 315 > or
+    DodgeBRtoLeft DodgeBRtoTop ifeg
+
+DodgeBRtoLeft:
+    -10 speedx' store
+    AtBottomLeft left' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+
+DodgeBRtoTop:
+    -10 speedy' store
+    AtTopRight top' setint
+    -1 radar' setint
+    inton
+    FirstLoop jump
+
+
+FirstLoop:
+    0 aim' store
+    30 aim' store
+    60 aim' store
+    90 aim' store
+    120 aim' store
+    150 aim' store
+    180 aim' store
+    210 aim' store
+    240 aim' store
+    270 aim' store
+    300 aim' store
+    330 aim' store
+    FirstLoop jump
+
+Shoot:
+    range dup 60 < and normalbullet ifg
+    energy 20 - fire' store
+    RTI
+normalbullet:
+    60 bullet' store
+    60 bullet' store
+    30 bullet' store
+    RTI
+back:
+    RTI

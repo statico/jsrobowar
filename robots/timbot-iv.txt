@@ -1,0 +1,86 @@
+{
+    Source code from RoboWar 4.5.2 archive: http://robowar.sf.net/
+    Energy: 100, Damage: 100, Shield: 0, CPU: 15, Bullets: normal
+}
+
+# TimBot IV
+# (c) 1990 Tim Seufert
+# 1/5/90
+# Still feeling slightly like a banana,
+# but if I get enough Electric Monks to 
+# believe it for me, I won't have to worry
+# anymore.
+
+randomdir:
+    random aim' store
+    random 150 > posx negx ife
+    random 150 > posy negy ife
+    main jump
+
+posx:
+    4 speedx' store
+    4 a' store
+    return
+
+negx:
+    -4 speedx' store
+    -4 a' store
+    return
+
+posy:
+    5 speedy' store
+    return
+
+negy:
+    -5 speedy' store
+    return
+
+main:
+#    energy shield' store
+    x 50 < right if
+    x 250 > left if
+    y 50 < down if
+    y 250 > up if
+    range 0 > ShootSub if
+    collision shootemup if
+    aim 11 + aim' store
+    main jump
+
+right:
+    4 speedx' store
+    return
+
+left:
+    -4 speedx' store
+    return
+
+down:
+    5 speedy' store
+    return
+
+up:
+    -5 speedy' store
+    return
+
+shootemup:
+    range 0 > DoBlowEmUp Rotate2 ife
+    collision not exit if
+    shootemup jump
+
+Rotate2:
+    aim 60 + aim' store
+    return
+
+DoBlowEmUp:
+    150 fire' store
+    nop nop nop nop nop nop nop nop nop nop
+    nop nop nop nop nop
+    return
+
+exit:
+    drop
+    return
+
+ShootSub:
+    energy fire' store
+    return

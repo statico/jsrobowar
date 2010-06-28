@@ -1,0 +1,73 @@
+{
+    From Paul Hansen's tutorial: http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html
+    Energy: 100, Damage: 150, Shield: 0, CPU: 30, Bullets: rubber, +missiles
+}
+
+    -5 speedx' store
+Firstloop:
+    270 aim' store
+    range 0 > shoot if
+    collision Colliding if
+    x 30 < AtLeft Firstloop ifeg
+
+AtLeft:
+    0 speedx' sto
+    -5 speedy' sto
+SetLeftAim:
+    0 aim' sto
+LeftLoop:
+    y 30 < AtTop ifg
+    collision Colliding if
+    range 0 > shoot if
+    aim 15 + aim' sto
+    aim 180 > SetLeftAim LeftLoop ifeg
+
+AtTop:
+    0 speedy' sto
+    5 speedx' sto
+SetTopAim:
+    90 aim' sto
+TopLoop:
+    x 270 > AtRight ifg
+    collision Colliding if
+    range 0 > shoot if
+    aim 15 + aim' sto
+    aim 270 > SetTopAim TopLoop ifeg
+
+AtRight:
+    0 speedx' sto
+    5 speedy' sto
+SetRightAim:
+    180 aim' sto
+RightLoop:
+    y 270 > AtBot ifg
+    collision Colliding if
+    range 0 > shoot if
+    aim 15 + aim' sto
+    aim 180 < SetRightAim RightLoop ifeg
+
+AtBot:
+    0 speedy' sto
+    -5 speedx' sto
+SetBotAim:
+    270 aim' sto
+BotLoop:
+    x 30 < AtLeft ifg
+    collision Colliding if
+    range 0 > shoot if
+    aim 15 + aim' sto
+    aim 270 < aim 90 > and SetBotAim BotLoop ifeg
+
+
+shoot:
+    25 missile' store
+    return
+
+colliding:
+    range 0 > blast if
+    aim 45 + aim' sto
+    collision colliding ifg
+    return
+blast:
+    75 missile' sto
+    return
