@@ -17,7 +17,8 @@
  *  along with JSRoboWar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (!window.jQuery) alert('`jQuery` object missing. jquery.js is required.');
+if (!window.$) alert('`$` object missing. jquery.js is required.');
+if (!window._) alert('`_` object missing. underscore.js is required.');
 
 $(document).ready(function() {
 
@@ -83,11 +84,14 @@ $(document).ready(function() {
   }
 
   function reveal_editor(i, errors) {
-    $('#editor h2').text(get_robot_name(i));
-    if (errors)
+    var name = get_robot_name(i);
+    $('#editor h2').text(name);
+    if (errors) {
+      alert('Error compiling ' + name + ":\n\n" + errors);
       $('#errors').show().text(errors);
-    else
+    } else {
       $('#errors').hide().text(errors);
+    }
 
     $('#editors textarea').slideUp();
     $('#editor').slideDown();

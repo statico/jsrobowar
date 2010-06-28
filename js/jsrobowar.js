@@ -21,9 +21,6 @@ if (!window.Class) alert('`Class` object missing. base.js is required.');
 if (!window.Raphael) alert('`Raphael` object missing. raphael.js is required.');
 if (!window._) alert('`_` object missing. underscore.js is required.');
 
-// TODO: Use underscore.js
-
-// TODO: Remove layers -- they're not needed.
 var LAYER_ARENA = 0;
 var LAYER_ROBOTS = 1;
 var LAYER_PROJECTILES = 2;
@@ -84,6 +81,16 @@ var Game = Class.extend({
 
     var w = this.arena.width;
     var h = this.arena.height;
+
+    // Initialize interrupt parameter defaults with arena dimensions.
+    _.each(this.robots, function(robot) {
+      var params = robot.interrupts.params;
+      params['RIGHT'] = w - 20;
+      params['BOTTOM'] = h - 20;
+      params['RADAR'] = w * 2;
+      params['RANGE'] = w * 2;
+    });
+
     var self = this;
     var loop;
     loop = function() {
@@ -96,7 +103,6 @@ var Game = Class.extend({
       for (var i = 0, robot; robot = self.robots[i]; i++) {
         var x = robot.x, y = robot.y, r = robot.radius;
         robot.wall = (x < r || y < r || x > w - r || y > h - r);
-        // XXX Not sure if the above is correct. Should be <=/=> ?
 
         // Save the current X and Y of the robot in case one tries to move while touching.
         robot.old_x = x;
@@ -157,7 +163,6 @@ var Game = Class.extend({
         }
       }
 
-      // TODO: Change this when COLLISION interrupt is implemented.
       if (any_colliding) SoundEffects.play_collision();
 
       self.scoreboard.update();
@@ -189,7 +194,7 @@ var Game = Class.extend({
   },
 
   remove_robot: function(given) {
-    // TODO: Optimize. (Duh.)
+    // TODO: Optimize.
     var index;
     for (var i = 0; i < this.robots.length; i++) {
       if (this.robots[i] == given) index = i;
@@ -228,7 +233,7 @@ var Game = Class.extend({
   },
 
   remove_projectile: function(given, animate) {
-    // TODO: Optimize. (Duh.)
+    // TODO: Optimize.
     var index;
     for (var i = 0; i < this.projectiles.length; i++) {
       if (this.projectiles[i] == given) index = i;
@@ -605,7 +610,6 @@ var ProjectileView = Actor.extend({
     var dy = this.projectile.y - this.old_y;
 
     this.el.translate(dx, dy);
-    //this.XXX.circle(this.projectile.x, this.projectile.y, 1).attr({fill: '#0f0', stroke: null});
 
     this.old_x = this.projectile.x;
     this.old_y = this.projectile.y;
@@ -995,7 +999,7 @@ var InterruptQueue = Class.extend({
         DAMAGE: 150,
         SHIELD: 25,
         TOP: 20,
-        BOTTOM: 280,  // TODO: Get data from arena.
+        BOTTOM: 280,
         LEFT: 20,
         RIGHT: 280,
         RADAR: 600,
@@ -1039,9 +1043,9 @@ var InterruptQueue = Class.extend({
 
   add: function(name) {
     name = this.normalize(name);
-    // TODO: Use a priority queue. Duh.
+    // TODO: Use a priority queue.
     this.queue.unshift(name);
-    this.queue = unique(this.queue);
+    this.queue = _.uniq(this.queue);
     this.queue = this.queue.sort(function(a, b) { return INTERRUPTS[a] - INTERRUPTS[b] });
   },
 
@@ -1102,6 +1106,7 @@ var Robot = Class.extend({
     this.starting_damage = 100;
     this.bullet_type = 'NORMAL';
     this.set_trace(false);
+    this.arena = null;  // Set later by Game.add_robot().
 
     this.registers = {};
     this.vector = [];
@@ -1112,8 +1117,7 @@ var Robot = Class.extend({
 
     this.probe_variable = new Variable('DAMAGE');
     this.history_index;
-    this.history = [];
-    for (var i = 1; i <= 50; i++) this.history[i] = 0;
+    this.history = _.range(50);
 
     this.aim = 90;
     this.scan = 0;
@@ -1139,11 +1143,7 @@ var Robot = Class.extend({
   },
 
   debug_stack: function() {
-    var output = [];
-    for (var i = 0; i < this.stack.length; i++) {
-      output.push(this.stack[i].toString());
-    }
-    return output;
+    return _.map(this.stack, function(i) {i.toString()});
   },
 
   take_damage: function(amount) {
@@ -1163,7 +1163,7 @@ var Robot = Class.extend({
 
     var dx = a.x - b.x;
     var dy = a.y - b.y;
-    return Math.sqrt( (dx * dx) + (dy * dy) ) - a.radius - b.radius - 1; // TODO: is 1 ok?
+    return Math.sqrt( (dx * dx) + (dy * dy) ) - a.radius - b.radius - 1;
   },
 
   is_touching: function(other) {
@@ -1213,7 +1213,7 @@ var Robot = Class.extend({
   },
 
   set_speed: function(axis, value) {
-    value = parseInt(Math.max(-20, Math.min(20, value))); // TODO warn here?
+    value = parseInt(Math.max(-20, Math.min(20, value)));
     switch (axis) {
       case 'x':
         var difference = Math.abs(this.vx - value) * 2;
@@ -1330,7 +1330,6 @@ var Robot = Class.extend({
           this.shield = value;
           this.energy = Math.min(this.energy + gain, this.max_energy);
         }
-        // TODO: storing energy in shield, decays at 2 pts per chronon
         return;
       case 'SIGNAL':
         throw new Error('Teamplay not yet implemented');
@@ -1415,7 +1414,7 @@ var Robot = Class.extend({
       case 'ICON9':
         return 0;
       case 'ID':
-        throw new Error('TODO: get_variable(' + name + ')');
+        return _.indexOf(this.arena.robots, this);
       case 'KILLS':
         throw new Error('TODO: get_variable(' + name + ')');
       case 'LEFT':
@@ -1593,8 +1592,9 @@ var Robot = Class.extend({
       } catch (e) {
         var line = this.program.line_numbers[this.last_ptr];
         var instruction = this.program.instructions[this.last_ptr];
-        console.error(this.name, 'error on line ' + line + ', at ' + instruction + ' - ' + e);
-        console.log(e.stack);
+        var message = this.name + ' error on line ' + line + ', at ' + instruction;
+        alert(message + "\n\n" + e);
+        console.error(message + ' - ' + e);
         this.is_running = false;
       }
     }
@@ -1647,7 +1647,6 @@ var Robot = Class.extend({
   },
 
   push: function(value) {
-    // TODO: Truncate decimals.
     if (value == undefined)
       throw new Error('undefined pushed onto the stack');
     this.stack.push(value);
@@ -2013,7 +2012,6 @@ var SoundEffects = (function() {
   }
 
   function make_play_callback(name) {
-    // TODO: Fix audio to be less terrible.
     return function() {
       if (enabled) {
         load(name).play();
@@ -2048,13 +2046,6 @@ function deg2rad(degrees) {
 
 function rad2deg(radians) {
   return parseInt(radians * (180 / Math.PI));
-}
-
-function unique(seq) {
-  var o = {}, a = [];
-  for (var i = 0; i < seq.length; i++) o[seq[i]] = 1;
-  for (var e in o) a.push(e);
-  return a;
 }
 
 function pad(str, length) {

@@ -15,6 +15,7 @@
   <script type="text/javascript" src="js/jsrobowar.js"></script>
   <script type="text/javascript" src="js/gui.js"></script>
 
+  <!-- Tidbit form Dive Into HTML5 -->
   <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
@@ -43,7 +44,7 @@
           <button id="start">Battle</button>
           <button id="stop">Halt</button>
           <br/>
-          <input type="checkbox" id="sound"/>
+          <input type="checkbox" id="sound" autocomplete="off"/>
           <label for="sound">Enable sound</label>
         </div>
       </div>
@@ -85,7 +86,7 @@
 
     <h2>About RoboWar</h2>
     <p>
-      RoboWar is an environment where virtual robots fight to the death using
+      RoboWar is an virtual arena where programmed robots fight to the death using
       a variety of weapons and techniques. The robots are programmed using a <a
       href="http://en.wikipedia.org/wiki/Stack-oriented_programming_language">stack-oriented
       programming language</a> called RoboTalk. The robots are also configured
@@ -96,18 +97,25 @@
       According to <a href="http://en.wikipedia.org/wiki/RoboWar">Wikipedia's
       article on RoboWar</a>, "25 RoboWar tournaments were held in the past
       between 1989 until roughly 2003, when tournaments became intermittent and
-      many of the major coders moved on."
+      many of the major coders moved on." You can still download the original
+      RoboWar application and pit tournament-winning robots against each other.
+      A random selection of those robots have been made available JSRoboWar.
     </p>
 
     <h2>About JSRoboWar</h2>
     <p>
       JSRoboWar is a from-scratch port of RoboWar to JavaScript. JSRoboWar
       supports most of the functionality of the original except for teamplay,
-      custom icons and sounds, and lasers (which are deprecated anyway).
+      custom icons and sounds, lasers (which are deprecated anyway), debugging,
+      and a Hardware Depot (every bot has the same large feature set).
+      It uses the <a href="http://raphaeljs.com/">Raphaël JavaScript
+      Library</a> to draw to an HTML5 canvas.
     </p>
     <p>
-      JSRoboWar uses the <a href="http://raphaeljs.com/">Raphaël JavaScript
-      Library</a> to draw to an HTML5 canvas.
+      I wrote JSRoboWar as a programming exercise. I'm not devoting a lot of
+      time to developing it, but feel free to <a
+        href="http://github.com/statico/jsrobowar">fork it on GitHub</a> and
+      send me patches.
     </p>
 
     <h2>Links of Interest</h2>

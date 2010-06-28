@@ -3,6 +3,8 @@ JSRoboWar
 
 To see it in action, go to [http://statico.github.com/jsrobowar/](http://statico.github.com/jsrobowar/).
 
+I wrote JSRoboWar as a programming exercise. I'm not devoting a lot of time to developing it, but feel free to fork it and send me patches.
+
 Code layout:
 
 * `js/jsrobowar.js` -- The core JSRoboWar engine.
@@ -14,3 +16,5 @@ Code layout:
 * `robots/` -- A selection of robots from [the original RoboWar application](http://robowar.sf.net/) and [Paul Hansen's RoboWar Tutorial](http://www.stanford.edu/~pch/robowar/tutorial/Tutorial.html).
 * `sounds/` -- Sounds from [the original RoboWar application](http://robowar.sf.net/).
 * `LICENSE` -- The license for this source code.
+
+I've tried hard to give credit where it's due. Let me know if I've missed something.
