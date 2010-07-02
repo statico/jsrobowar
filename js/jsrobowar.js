@@ -170,7 +170,7 @@ var Game = Class.extend({
       if (self.robots.length > 1) {
         // Keep going if more than one bot is alive.
         var elapsed = new Date() - start_time;
-        var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed));
+        var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed - 1));
         self.next_loop = setTimeout(loop, delay);
       } else {
         // Game has ended.
