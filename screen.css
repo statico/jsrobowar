@@ -18,7 +18,7 @@ button, label, input, select {
   cursor: pointer;
 }
 
-#container, nav, footer {
+#container, #nav, #footer {
   width: 590px;
   margin: 0 auto;
   background: #fff;
@@ -30,55 +30,55 @@ button, label, input, select {
   border-width: 0px 2px 2px 2px;
 }
 
-nav {
+#nav {
   padding: 0.5em 1em;
   background: #666;
   border: 2px solid #666;
 }
-nav, nav a {
+#nav, #nav a {
   color: #fff;
 }
-nav h1 {
+#nav h1 {
   font-size: 100%;
 }
-nav ul, nav li {
+#nav ul, #nav li {
   display: inline;
   padding: 0;
   margin: 0;
   list-style-type: none;
 }
-nav a, nav h1 {
+#nav a, #nav h1 {
   display: inline;
   padding: 0.5em 1em;
 }
 
-nav a[href="#play"] {
+#nav a[href="#play"] {
   background: #f99;
 }
-nav a[href="#docs"] {
+#nav a[href="#docs"] {
   background: #6c6;
 }
-nav a[href="#about"] {
+#nav a[href="#about"] {
   background: #99f;
 }
 
-nav.play {
+#nav.play {
   border-bottom: 8px solid #f99;
 }
-nav.docs {
+#nav.docs {
   border-bottom: 8px solid #6c6;
 }
-nav.about {
+#nav.about {
   border-bottom: 8px solid #99f;
 }
 
-footer {
+#footer {
   background: transparent;
   font-size: small;
   text-align: center;
   margin-top: 1em;
 }
-footer, footer a {
+#footer, #footer a {
   color: #333;
 }
 
@@ -87,8 +87,11 @@ footer, footer a {
 }
 #arena {
   padding: 0;
-  border: 10px inset #ccc;
+  border-width: 10px;
+  border-style: solid; /* 'inset' looks washed-out on Firefox */
+  border-color: #555 #ccc #ccc #555;
   margin-right: 1em;
+  line-height: 0; /* Extra space appears otherwise */
 }
 #controls {
   text-align: center;

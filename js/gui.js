@@ -31,7 +31,7 @@ $(document).ready(function() {
   var current_section;
 
   function set_section(name) {
-    $('nav').attr('class', name);
+    $('#nav').attr('class', name);
     $('section#' + name).show();
     $('section#' + current_section).hide();
     current_section = name;
@@ -40,7 +40,7 @@ $(document).ready(function() {
   $('#container > section').hide();
   set_section(document.location.hash.replace(/\W/g, '') || 'play');
 
-  $('nav li a').click(function() {
+  $('#nav li a').click(function() {
     var name = $(this).attr('href').substr(1);
     set_section(name);
     document.location.hash = name;
