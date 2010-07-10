@@ -18,19 +18,152 @@
  */
 
 if (!window.Class) alert('`Class` object missing. base.js is required.');
-if (!window.Raphael) alert('`Raphael` object missing. raphael.js is required.');
 if (!window._) alert('`_` object missing. underscore.js is required.');
+if (!window.Raphael)
+    alert('`Raphael` object missing. raphael.js is required.');
 
+/* ----------------------------------------------------------------------------
+ * CONSTANTS
+ * ------------------------------------------------------------------------- */
+
+// Layers are just groupings of views to control draw order. They also provide
+// a way to associate views and models. E.g., every actor in the ROBOTS layer
+// will always have a `robot` property.
 var LAYER_ARENA = 0;
 var LAYER_ROBOTS = 1;
 var LAYER_PROJECTILES = 2;
+
+// An enumeration of every supported operator. Values are arbitrary, but
+// synonyms should have the same value.
+var OPERATIONS = {
+  '+': 1,
+  '-': 2,
+  '*': 3,
+  '/': 4,
+  '=': 5,
+  '!': 6,
+  '>': 7,
+  '<': 8,
+  ABS: 9,
+  AND: 10,
+  ARCCOS: 11,
+  ARCSIN: 12,
+  ARCTAN: 13,
+  BEEP: 14,
+  CALL: 15,
+  CHS: 16,
+  COS: 17,
+  COSINE: 17,
+  DEBUG: 18,
+  DEBUGGER: 18,
+  DIST: 19,
+  DROP: 20,
+  DROPALL: 21,
+  DUPLICATE: 22,
+  DUP: 22,
+  FLUSHINT: 23,
+  IF: 25,
+  IFE: 26,
+  IFG: 27,
+  IFEG: 28,
+  INTOFF: 29,
+  INTON: 30,
+  JUMP: 31,
+  MAX: 32,
+  MIN: 33,
+  MOD: 34,
+  NOP: 35,
+  NOT: 36,
+  OR: 37,
+  PRINT: 38,
+  RECALL: 54,
+  RETURN: 39,
+  ROLL: 40,
+  RTI: 41,
+  SETINT: 42,
+  SETPARAM: 43,
+  SIN: 44,
+  SINE: 44,
+  STO: 46,
+  STORE: 46,
+  SQRT: 47,
+  SWAP: 48,
+  SYNC: 49,
+  TAN: 50,
+  TANGENT: 50,
+  VSTORE: 51,
+  VRECALL: 52,
+  XOR: 53,
+  EOR: 53,
+};
+
+// An enumeration of all supported interrupts. Values are each interrupt's
+// priority level.
+var INTERRUPTS = {
+  COLLISION: 1,
+  WALL: 2,
+  DAMAGE: 3,
+  SHIELD: 4,
+  TOP: 5,
+  BOTTOM: 6,
+  LEFT: 7,
+  RIGHT: 8,
+  RADAR: 9,
+  RANGE: 10,
+  TEAMMATES: 11,
+  ROBOTS: 12,
+  SIGNAL: 13,
+  CHRONON: 14,
+};
+
+// Statistics provided by the Probes feature. (Robots can probe one another.)
+// These are defined in robowar.pdf under 'HISTORY'
+var HISTORY_ELEMENTS = {
+  NUM_BATTLES: 1,
+  PREV_BATTLE_KILLS: 2,
+  ALL_BATTLE_KILLS: 3,
+  PREV_BATTLE_POINTS: 4,
+  ALL_BATTLE_POINTS: 5,
+  LAST_BATTLE_TIMED_OUT: 6,
+  LAST_BATTLE_TEAMMATES_ALIVE: 7,
+  ALL_BATTLE_TEAMMATES_ALIVE: 8,
+  LAST_BATTLE_DAMAGE_REMAINING: 9,
+  LAST_BATTLE_CHRONONS: 10,
+  ALL_BATTLE_CHRONONS: 11,
+};
+
+/* ----------------------------------------------------------------------------
+ * HELPERS
+ * ------------------------------------------------------------------------- */
+
+function fix360(value) {
+  value %= 360;
+  return (value < 0) ? 360 + value : value;
+}
+
+function deg2rad(degrees) {
+  return degrees * (Math.PI / 180);
+}
+
+function rad2deg(radians) {
+  return parseInt(radians * (180 / Math.PI));
+}
+
+function pad(str, length) {
+  while (str.length < length)
+    str = str + ' ';
+  return str;
+}
+
+/* ----------------------------------------------------------------------------
+ * CONTROLLERS
+ * ------------------------------------------------------------------------- */
 
 var Game = Class.extend({
 
   init: function(arena_el, scoreboard_el) {
     this.paper = Raphael(arena_el, 300, 300);
     this.scoreboard = new Scoreboard(scoreboard_el, this);
-
     this.clear();
   },
 
@@ -59,7 +192,8 @@ var Game = Class.extend({
   add_robot: function(robot) {
     robot.arena = this.arena;
 
-    // Position randomly but away from the edges and not on top of another robot.
+    // Position randomly but away from the edges and not on top of another
+    // robot.
     var w = this.arena.width;
     var h = this.arena.height;
     var overlap = true;
@@ -104,10 +238,12 @@ var Game = Class.extend({
         var x = robot.x, y = robot.y, r = robot.radius;
         robot.wall = (x < r || y < r || x > w - r || y > h - r);
 
-        // Save the current X and Y of the robot in case one tries to move while touching.
+        // Save the current X and Y of the robot in case one tries to move
+        // while touching.
         robot.old_x = x;
         robot.old_y = y;
 
+        // Let the robot process its instructions.
         robot.step();
 
         if (!robot.is_running) {
@@ -163,6 +299,7 @@ var Game = Class.extend({
         }
       }
 
+      // Only play one collision sound per chronon, but even that's a lot.
       if (any_colliding) SoundEffects.play_collision();
 
       self.scoreboard.update();
@@ -170,7 +307,8 @@ var Game = Class.extend({
       if (self.robots.length > 1) {
         // Keep going if more than one bot is alive.
         var elapsed = new Date() - start_time;
-        var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed - 4));
+        var delay = Math.max(1,
+            Math.min(self.speed, self.speed - elapsed - 4));
         self.next_loop = setTimeout(loop, delay);
       } else {
         // Game has ended.
@@ -228,11 +366,14 @@ var Game = Class.extend({
       p instanceof TacNuke ? new TacNukeView(this.paper, p) :
       p instanceof Mine ? new MineView(this.paper, p) :
       p instanceof Stunner ? new StunnerView(this.paper, p) :
-      (function() { throw new Error("Can't make view for projectils: " + p) })();
+      null;
+    if (actor == null)
+      throw new Error("Can't make view for projectils: " + p);
     this.actors[LAYER_PROJECTILES].push(actor);
   },
 
   remove_projectile: function(given, animate) {
+    // Remove the projectile from the projectiles array.
     // TODO: Optimize.
     var index;
     for (var i = 0; i < this.projectiles.length; i++) {
@@ -243,26 +384,34 @@ var Game = Class.extend({
     }
     this.projectiles.splice(index, 1);
 
+    // Remove the projectile view from the actors layer.
     index = undefined;
     var actors = this.actors[LAYER_PROJECTILES];
     for (var i = 0; i < actors.length; i++) {
       if (actors[i].projectile == given) index = i;
     }
     if (index == undefined) {
-      throw new Error("Couldn't remove unknown ProjectileView for: " + given);
+      throw new Error(
+          "Couldn't remove unknown AbstractProjectile for: " + given);
     }
+    var actor = actors[index];
+    actors.splice(index, 1);
 
+    // Play a projectile's animation if it's collided with something.
+    // Otherwise, just get rid of it.
     if (animate) {
-      actors[index].animated_remove();
+      actor.animated_remove();
       SoundEffects.play_hit();
     } else {
-      actors[index].remove();
+      actor.remove();
     }
-
-    actors.splice(index, 1);
   },
 
 });
+
+/* ----------------------------------------------------------------------------
+ * MODELS
+ * ------------------------------------------------------------------------- */
 
 var Arena = Class.extend({
 
@@ -300,9 +449,11 @@ var Arena = Class.extend({
         c = rob.x;
         d = rob.y;
         t = m*(c-a) + n*(d-b);
-        if (t > 0 && Math.abs((m+n)*t+a+b-c-d) < 20) {  // First a crude Manhatten Metric check
+        // First a crude Manhatten Metric check
+        if (t > 0 && Math.abs((m+n)*t+a+b-c-d) < 20) {
           var radius_squared = rob.radius * rob.radius;
-          if ( (m*t+a-c)*(m*t+a-c) + (n*t+b-d)*(n*t+b-d) < (radius_squared-8)) { // in sights
+          if ((m*t+a-c)*(m*t+a-c) + (n*t+b-d)*(n*t+b-d) < (radius_squared-8)) {
+            // in sights
             if (dist == 0 || t < dist) {
               dist = parseInt(t);
               target = rob;
@@ -458,19 +609,6 @@ var Arena = Class.extend({
 
 });
 
-var Actor = Class.extend({
-  init: function(paper) {},
-  update: function() {},
-  remove: function() {
-    if (this.el) this.el.remove();
-  },
-  animated_remove: function() {
-    var self = this;
-    var attr = {scale: 3, opacity: 0};
-    this.el.animate(attr, 500, function() {self.remove()});
-  },
-});
-
 var Projectile = Class.extend({
 
   init: function() {
@@ -623,226 +761,6 @@ var ExplosiveBullet = Projectile.extend({
 
 });
 
-var ProjectileView = Actor.extend({
-
-  init: function(paper, projectile) {
-    this.paper = paper; // Do not use except for debugging.
-    this.projectile = projectile;
-
-    this.el = this.get_element();
-
-    this.old_x = this.projectile.x;
-    this.old_y = this.projectile.y;
-    this.old_harmful = this.projectile.is_harmful();
-  },
-
-  get_element: function() {
-    var p = this.projectile;
-    return this.paper.circle(p.x, p.y, p.radius).attr(this.get_attr());
-  },
-
-  get_attr: function() {
-    return {fill: 'black', stroke: null};
-  },
-
-  update: function() {
-    var dx = this.projectile.x - this.old_x;
-    var dy = this.projectile.y - this.old_y;
-
-    this.el.translate(dx, dy);
-
-    this.old_x = this.projectile.x;
-    this.old_y = this.projectile.y;
-
-    // This can probably be optimized -- check if method exists first.
-    var current = this.projectile.is_harmful();
-    if (this.old_harmful != current) {
-      this.old_harmful = current;
-      this.update_harmfulness(current);
-    }
-  },
-
-  update_harmfulness: function(value) {},
-
-  animated_remove: function() {
-    var self = this;
-    this.el.attr({scale: 2, fill: 'orange', stroke: 'none'});
-    var attr = {scale: 7, opacity: 0};
-    this.el.animate(attr, 200, function() {self.remove()});
-  },
-
-});
-
-var MissileView = ProjectileView.extend({
-  get_element: function() {
-    var p = this.projectile;
-    var x1 = p.x - p.speedx;
-    var y1 = p.y - p.speedy;
-    var x2 = p.x + p.speedx;
-    var y2 = p.y + p.speedy;
-
-    var line = this.paper.path('M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2);
-    line.attr({stroke: 'black', 'stroke-width': '1px'});
-    return line;
-  },
-  get_attr: function() {
-    return {fill: 'white', stroke: 'black'};
-  },
-  animated_remove: function() {
-    var p = this.projectile;
-    this.el.remove();
-    this.el = this.paper.circle(p.x, p.y, p.radius * 2);
-    this._super();
-  },
-});
-
-var MineView = ProjectileView.extend({
-  get_element: function() {
-    var p = this.projectile;
-    this.outer = this.paper.circle(p.x, p.y, p.radius);
-    this.outer.attr({fill: 'green', stroke: 'black', 'stroke-width': '1px'});
-    this.inner = this.paper.circle(p.x, p.y, p.radius * 0.4);
-    this.inner.attr({fill: 'black', stroke: 'none'});
-    return this.paper.set(this.outer, this.inner);
-  },
-  update_harmfulness: function(is_harmful) {
-    this.outer.attr({fill: 'white'});
-  },
-});
-
-var TacNukeView = ProjectileView.extend({
-  get_attr: function() {
-    return {fill: 'yellow', stroke: 'none'};
-  },
-  update: function() {
-    this._super();
-    this.el.attr('r', this.projectile.radius);
-  },
-  animated_remove: function() {
-    var self = this;
-    this.el.animate({opacity: 0}, 200, function() {self.remove()});
-  },
-});
-
-var StunnerView = ProjectileView.extend({
-  get_attr: function() {
-    return {fill: 'yellow', stroke: 'none'};
-  },
-});
-
-var HellboreView = ProjectileView.extend({
-  get_attr: function() {
-    return {fill: 'cyan', stroke: 'black'};
-  },
-});
-
-var RubberBulletView = ProjectileView.extend({
-  get_attr: function() {
-    return {fill: 'white', stroke: 'black'};
-  },
-});
-
-var NormalBulletView = ProjectileView.extend({
-  get_attr: function() {
-    return {fill: 'black', stroke: null};
-  },
-});
-
-var ExplosiveBulletView = ProjectileView.extend({
-
-  get_attr: function() {
-    return {fill: 'red', stroke: 'black'};
-  },
-
-  update: function() {
-    this._super();
-    if (this.projectile.exploded) {
-      this.el.attr({
-        fill: 'orange',
-        r: this.projectile.radius,
-        stroke: 'none',
-      });
-    }
-  },
-
-  animated_remove: function() {
-    var self = this;
-    this.el.animate({opacity: 0}, 200, function() {self.remove()});
-  },
-
-});
-
-
-var ArenaView = Actor.extend({
-  init: function(paper, arena) {
-    this.el = paper
-      .rect(0, 0, paper.width, paper.height)
-      .attr({ fill: '#666', stroke: '#666' });
-  },
-});
-
-var OPERATIONS = {
-  '+': 1,
-  '-': 2,
-  '*': 3,
-  '/': 4,
-  '=': 5,
-  '!': 6,
-  '>': 7,
-  '<': 8,
-  ABS: 9,
-  AND: 10,
-  ARCCOS: 11,
-  ARCSIN: 12,
-  ARCTAN: 13,
-  BEEP: 14,
-  CALL: 15,
-  CHS: 16,
-  COS: 17,
-  COSINE: 17,
-  DEBUG: 18,
-  DEBUGGER: 18,
-  DIST: 19,
-  DROP: 20,
-  DROPALL: 21,
-  DUPLICATE: 22,
-  DUP: 22,
-  FLUSHINT: 23,
-  IF: 25,
-  IFE: 26,
-  IFG: 27,
-  IFEG: 28,
-  INTOFF: 29,
-  INTON: 30,
-  JUMP: 31,
-  MAX: 32,
-  MIN: 33,
-  MOD: 34,
-  NOP: 35,
-  NOT: 36,
-  OR: 37,
-  PRINT: 38,
-  RECALL: 54,
-  RETURN: 39,
-  ROLL: 40,
-  RTI: 41,
-  SETINT: 42,
-  SETPARAM: 43,
-  SIN: 44,
-  SINE: 44,
-  STO: 46,
-  STORE: 46,
-  SQRT: 47,
-  SWAP: 48,
-  SYNC: 49,
-  TAN: 50,
-  TANGENT: 50,
-  VSTORE: 51,
-  VRECALL: 52,
-  XOR: 53,
-  EOR: 53,
-};
-
 var Instruction = Class.extend({});
 
 var Operator = Instruction.extend({
@@ -965,70 +883,6 @@ var Program = Class.extend({
 
 });
 
-var RobotView = Actor.extend({
-
-  init: function(paper, robot) {
-    this.robot = robot;
-
-    var x = robot.x;
-    var y = robot.y;
-
-    this.body = paper.circle(x, y, robot.radius);
-    this.body.attr({ stroke: robot.color, 'stroke-width': '2px' });
-
-    this.turret = paper.path('M' + x + ' ' + y + 'L' + x + ' ' + (y - robot.radius));
-    this.turret.attr({ stroke: 'white', 'stroke-width': '2px' });
-
-    this.el = paper.set();
-    this.el.push(this.body);
-    this.el.push(this.turret);
-
-    this.old_x = x;
-    this.old_y = y;
-  },
-
-  update: function() {
-    var dx = this.robot.x - this.old_x;
-    var dy = this.robot.y - this.old_y;
-    this.el.translate(dx, dy);
-    this.turret.rotate(this.robot.aim, this.robot.x, this.robot.y);
-
-    this.old_x = this.robot.x;
-    this.old_y = this.robot.y;
-
-    if (this.robot.energy <= 0) {
-      this.body.attr('fill', 'red');
-    } else {
-      this.body.attr('fill', 'none');
-    }
-  },
-
-  animated_remove: function() {
-    var self = this;
-    var attr = {scale: 2, opacity: 0, fill: 'white'};
-    this.el.animate(attr, 1000, function() {self.remove()});
-  },
-
-});
-
-var INTERRUPTS = {
-  // Values are each interrupt's priority level.
-  COLLISION: 1,
-  WALL: 2,
-  DAMAGE: 3,
-  SHIELD: 4,
-  TOP: 5,
-  BOTTOM: 6,
-  LEFT: 7,
-  RIGHT: 8,
-  RADAR: 9,
-  RANGE: 10,
-  TEAMMATES: 11,
-  ROBOTS: 12,
-  SIGNAL: 13,
-  CHRONON: 14,
-};
-
 var InterruptQueue = Class.extend({
 
   init: function() {
@@ -1115,21 +969,6 @@ var InterruptQueue = Class.extend({
   },
 
 });
-
-// These are defined in robowar.pdf under 'HISTORY'
-var HISTORY_ELEMENTS = {
-  NUM_BATTLES: 1,
-  PREV_BATTLE_KILLS: 2,
-  ALL_BATTLE_KILLS: 3,
-  PREV_BATTLE_POINTS: 4,
-  ALL_BATTLE_POINTS: 5,
-  LAST_BATTLE_TIMED_OUT: 6,
-  LAST_BATTLE_TEAMMATES_ALIVE: 7,
-  ALL_BATTLE_TEAMMATES_ALIVE: 8,
-  LAST_BATTLE_DAMAGE_REMAINING: 9,
-  LAST_BATTLE_CHRONONS: 10,
-  ALL_BATTLE_CHRONONS: 11,
-};
 
 var Robot = Class.extend({
 
@@ -1958,6 +1797,269 @@ var Robot = Class.extend({
 
 });
 
+/* ----------------------------------------------------------------------------
+ * VIEWS
+ * ------------------------------------------------------------------------- */
+
+// Note that with RaphaelJS (and, presumably, whatever engine Raphael is
+// abstracting), we cannot simply move objects to a new coordinate. They must
+// be moved (translated) a relative distance.
+
+var AbstractActor = Class.extend({
+
+  // Constructor.
+  init: function(paper) {},
+
+  // Redraw the element.
+  update: function() {},
+
+  // Remove the element from the canvas.
+  remove: function() {
+    if (this.el) this.el.remove();
+  },
+
+  // Remove the element from the canvas, but all snazzy-like!
+  animated_remove: function() {
+    var self = this;
+    var attr = {scale: 3, opacity: 0};
+    this.el.animate(attr, 500, function() {self.remove()});
+  },
+
+});
+
+var ArenaView = AbstractActor.extend({
+
+  init: function(paper, arena) {
+    // The original RoboWar arena was white, but it was also in a tiny window.
+    // I chose a neutral background so that the arena can be surrounded by
+    // beveled CSS border to feel more like a sunken pit of doom.
+    this.el = paper
+      .rect(0, 0, paper.width, paper.height)
+      .attr({ fill: '#666', stroke: '#666' });
+  },
+
+});
+
+var RobotView = AbstractActor.extend({
+
+  init: function(paper, robot) {
+    this.robot = robot;
+
+    var x = robot.x;
+    var y = robot.y;
+
+    this.body = paper.circle(x, y, robot.radius);
+    this.body.attr({ stroke: robot.color, 'stroke-width': '2px' });
+
+    this.turret = paper.path(
+      'M' + x + ' ' +
+      y + 'L' + x + ' ' +
+      (y - robot.radius));
+    this.turret.attr({ stroke: 'white', 'stroke-width': '2px' });
+
+    this.el = paper.set();
+    this.el.push(this.body);
+    this.el.push(this.turret);
+
+    this.old_x = x;
+    this.old_y = y;
+  },
+
+  update: function() {
+    var dx = this.robot.x - this.old_x;
+    var dy = this.robot.y - this.old_y;
+    this.el.translate(dx, dy);
+    this.turret.rotate(this.robot.aim, this.robot.x, this.robot.y);
+
+    this.old_x = this.robot.x;
+    this.old_y = this.robot.y;
+
+    if (this.robot.energy <= 0) {
+      this.body.attr('fill', 'red');
+    } else {
+      this.body.attr('fill', 'none');
+    }
+  },
+
+  animated_remove: function() {
+    var self = this;
+    var attr = {scale: 2, opacity: 0, fill: 'white'};
+    this.el.animate(attr, 1000, function() {self.remove()});
+  },
+
+});
+
+var AbstractProjectile = AbstractActor.extend({
+
+  init: function(paper, projectile) {
+    this.paper = paper; // Do not use except for debugging.
+    this.projectile = projectile;
+
+    this.el = this.get_element();
+
+    this.old_x = this.projectile.x;
+    this.old_y = this.projectile.y;
+    this.old_harmful = this.projectile.is_harmful();
+  },
+
+  update: function() {
+    var dx = this.projectile.x - this.old_x;
+    var dy = this.projectile.y - this.old_y;
+
+    this.el.translate(dx, dy);
+
+    this.old_x = this.projectile.x;
+    this.old_y = this.projectile.y;
+
+    var current = this.projectile.is_harmful();
+    if (this.old_harmful != current) {
+      this.old_harmful = current;
+      this.update_harmfulness(current);
+    }
+  },
+
+  animated_remove: function() {
+    var self = this;
+    this.el.attr({scale: 2, fill: 'orange', stroke: 'none'});
+    var attr = {scale: 7, opacity: 0};
+    this.el.animate(attr, 200, function() {self.remove()});
+  },
+
+  // Returns a new element to draw on the canvas.
+  get_element: function() {
+    var p = this.projectile;
+    return this.paper.circle(p.x, p.y, p.radius).attr(this.get_attr());
+  },
+
+  // Returns some attributes. AbstractProjectile defines reasonable defaults.
+  get_attr: function() {
+    return {fill: 'black', stroke: null};
+  },
+
+  // This method will be called on subclasses if their harmfulness (rather, the
+  // return value of is_harmful()) changes.
+  update_harmfulness: function(value) {},
+
+});
+
+var MissileView = AbstractProjectile.extend({
+
+  get_element: function() {
+    var p = this.projectile;
+    var x1 = p.x - p.speedx;
+    var y1 = p.y - p.speedy;
+    var x2 = p.x + p.speedx;
+    var y2 = p.y + p.speedy;
+
+    var line = this.paper.path('M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2);
+    line.attr({stroke: 'black', 'stroke-width': '1px'});
+    return line;
+  },
+
+  get_attr: function() {
+    return {fill: 'white', stroke: 'black'};
+  },
+
+  animated_remove: function() {
+    var p = this.projectile;
+    this.el.remove();
+    this.el = this.paper.circle(p.x, p.y, p.radius * 2);
+    this._super();
+  },
+
+});
+
+var MineView = AbstractProjectile.extend({
+
+  get_element: function() {
+    var p = this.projectile;
+    this.outer = this.paper.circle(p.x, p.y, p.radius);
+    this.outer.attr({fill: 'green', stroke: 'black', 'stroke-width': '1px'});
+    this.inner = this.paper.circle(p.x, p.y, p.radius * 0.4);
+    this.inner.attr({fill: 'black', stroke: 'none'});
+    return this.paper.set(this.outer, this.inner);
+  },
+
+  update_harmfulness: function(is_harmful) {
+    this.outer.attr({fill: 'white'});
+  },
+
+});
+
+var TacNukeView = AbstractProjectile.extend({
+
+  get_attr: function() {
+    return {fill: 'yellow', stroke: 'none'};
+  },
+
+  update: function() {
+    this._super();
+    this.el.attr('r', this.projectile.radius);
+  },
+
+  animated_remove: function() {
+    var self = this;
+    this.el.animate({opacity: 0}, 200, function() {self.remove()});
+  },
+
+});
+
+var StunnerView = AbstractProjectile.extend({
+
+  get_attr: function() {
+    return {fill: 'yellow', stroke: 'none'};
+  },
+
+});
+
+var HellboreView = AbstractProjectile.extend({
+
+  get_attr: function() {
+    return {fill: 'cyan', stroke: 'black'};
+  },
+
+});
+
+var RubberBulletView = AbstractProjectile.extend({
+
+  get_attr: function() {
+    return {fill: 'white', stroke: 'black'};
+  },
+
+});
+
+var NormalBulletView = AbstractProjectile.extend({
+
+  get_attr: function() {
+    return {fill: 'black', stroke: null};
+  },
+
+});
+
+var ExplosiveBulletView = AbstractProjectile.extend({
+
+  get_attr: function() {
+    return {fill: 'red', stroke: 'black'};
+  },
+
+  update: function() {
+    this._super();
+    if (this.projectile.exploded) {
+      this.el.attr({
+        fill: 'orange',
+        r: this.projectile.radius,
+        stroke: 'none',
+      });
+    }
+  },
+
+  animated_remove: function() {
+    var self = this;
+    this.el.animate({opacity: 0}, 200, function() {self.remove()});
+  },
+
+});
+
 var Scoreboard = Class.extend({
 
   init: function(scoreboard_el, game) {
@@ -1973,32 +2075,51 @@ var Scoreboard = Class.extend({
 
   start: function() {
     var p = this.paper;
+    p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
 
     var PAD = 12;
     var y = PAD;
-    var attr = {fill: 'black', 'text-anchor': 'start', 'font-size': PAD + 'px'};
 
-    var bg = p.rect(0, 0, p.width, p.height).attr({ fill: 'white', stroke: null });
+    function text(x, y, opt_str, opt_attr) {
+      return p
+        .text(x, y, opt_str || '')
+        .attr({
+            'fill': 'black',
+            'text-anchor': 'start',
+          'font-size': PAD + 'px'})
+        .attr(opt_attr || {});
+    }
 
-    var title = p.text(PAD, y, 'JSRoboWar').attr(attr).attr('font-size', '20px');
-    y += PAD * 2;
+    function advance(rows) {
+      y += PAD * rows;
+    }
 
-    this.counter = p.text(PAD, y, 'Chronons: 0').attr(attr);
-    y += PAD * 2;
+    // Draw the title.
+    var title = text(PAD, y, 'JSRoboWar', {'font-size': '20px'});
+    advance(2);
 
+    // Draw the current Chronon number.
+    this.counter = text(PAD, y, 'Chronons: 0');
+    advance(2);
+
+    // Draw a box in the robot's color with a few fields.
     var labels = [];
     for (var i = 0, robot; robot = this.game.robots[i]; i++) {
-      p.rect(0, y - PAD, p.width, PAD * 4).attr({fill: robot.color, stroke: null});
+      p.rect(0, y - PAD, p.width, PAD * 4)
+          .attr({fill: robot.color, stroke: null});
+
       labels.push({
         robot: robot,
-        name: p.text(PAD, y + PAD * 0, robot.name).attr(attr).attr('font-weight', 'bold'),
-        energy: p.text(PAD, y + PAD * 1, '').attr(attr),
-        damage: p.text(p.width / 2, y + PAD * 1, '').attr(attr),
-        shield: p.text(PAD, y + PAD * 2, '').attr(attr),
-        status: p.text(p.width / 2, y + PAD * 2, '').attr(attr),
+        name: text(PAD, y + PAD * 0, robot.name, {'font-weight': 'bold'}),
+        energy: text(PAD, y + PAD * 1),
+        damage: text(p.width / 2, y + PAD * 1),
+        shield: text(PAD, y + PAD * 2),
+        status: text(p.width / 2, y + PAD * 2),
       });
-      y += PAD * 4;
+
+      advance(4);
     }
+
     this.labels = labels;
   },
 
@@ -2030,7 +2151,18 @@ var Scoreboard = Class.extend({
 
 });
 
+/* ----------------------------------------------------------------------------
+ * SOUND
+ * ------------------------------------------------------------------------- */
+
+// Sound is really, really glitchy. It works well in Safari 5 and it's glitchy
+// in Chrome 5.
+
 var SoundEffects = (function() {
+
+  // This constructs an object with `play_*` methods, where each of those
+  // methods plays the sound. It also provides an `enable(value)` method which
+  // can be used to enable and disable sound entirely.
 
   var enabled = true;
 
@@ -2075,21 +2207,3 @@ var SoundEffects = (function() {
 
 })();
 
-function fix360(value) {
-  value %= 360;
-  return (value < 0) ? 360 + value : value;
-}
-
-function deg2rad(degrees) {
-  return degrees * (Math.PI / 180);
-}
-
-function rad2deg(radians) {
-  return parseInt(radians * (180 / Math.PI));
-}
-
-function pad(str, length) {
-  while (str.length < length)
-    str = str + ' ';
-  return str;
-}

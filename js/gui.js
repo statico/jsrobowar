@@ -17,6 +17,10 @@
  *  along with JSRoboWar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// TODO: Hardware Depot
+// TODO: Game speed adjustment
+// TODO: Integrated debugger
+
 if (!window.$) alert('`$` object missing. jquery.js is required.');
 if (!window._) alert('`_` object missing. underscore.js is required.');
 
