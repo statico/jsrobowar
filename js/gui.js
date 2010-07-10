@@ -139,7 +139,8 @@ $(document).ready(function() {
         var path = 'robots/' + name + '.txt';
         textarea.val('(Loading ' + path + ')');
         textarea.attr('disabled', 'disabled');
-        textarea.load(path, function() {
+        $.get(path, function(src) {
+          textarea.val(src);
           textarea.attr('disabled', null);
         });
         // TODO: Hardware depot
@@ -177,7 +178,6 @@ $(document).ready(function() {
 
       var select = $('#choice' + i);
       var robot = new Robot(get_robot_name(i), ROBOT_COLORS[i], program);
-      // TODO: Hardware store
       game.add_robot(robot);
     });
   };

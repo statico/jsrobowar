@@ -170,11 +170,6 @@ var Game = Class.extend({
   clear: function() {
     this.paper.clear();
 
-    this.actors = [];
-    this.actors[LAYER_ARENA] = [new ArenaView(this.paper, arena)];
-    this.actors[LAYER_ROBOTS] = [];
-    this.actors[LAYER_PROJECTILES] = [];
-
     this.robots = [];
     this.projectiles = [];
     this.chronons = 0;
@@ -183,6 +178,11 @@ var Game = Class.extend({
     this.scoreboard.clear();
 
     this.arena = new Arena(this, this.paper.width, this.paper.height);
+
+    this.actors = [];
+    this.actors[LAYER_ARENA] = [new ArenaView(this.paper, this.arena)];
+    this.actors[LAYER_ROBOTS] = [];
+    this.actors[LAYER_PROJECTILES] = [];
   },
 
   destroy: function() {
@@ -2155,8 +2155,8 @@ var Scoreboard = Class.extend({
  * SOUND
  * ------------------------------------------------------------------------- */
 
-// Sound is really, really glitchy. It works well in Safari 5 and it's glitchy
-// in Chrome 5.
+// Sound is really, really glitchy. It works well in Safari 5, it's glitchy in
+// Chrome 5, and it's just plain slow in Firefox.
 
 var SoundEffects = (function() {
 
