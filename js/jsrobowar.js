@@ -170,7 +170,7 @@ var Game = Class.extend({
       if (self.robots.length > 1) {
         // Keep going if more than one bot is alive.
         var elapsed = new Date() - start_time;
-        var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed - 1));
+        var delay = Math.max(1, Math.min(self.speed, self.speed - elapsed - 4));
         self.next_loop = setTimeout(loop, delay);
       } else {
         // Game has ended.
@@ -273,14 +273,60 @@ var Arena = Class.extend({
     this.height = height;
   },
 
-  find_nearest_object: function(observer, direction, objects) {
+  find_nearest_robot: function(observer, direction) {
+    // A port of RoboWar 4.5.2's Engine/Projectile.c distance()
+    var dist = 0, target;
+    var m, n, t;  // x=mt + x', y=nt + y'
+    var a, b, c, d;  // Coordinates of robots.
+
+    /*
+       Range algorithm:  see what robots intersect line of sight.
+
+        t = distance along line of sight closest to target being checked
+        m = cos (angle)
+        n = sin (angle)
+
+        1) Compute t, distance along aim vector
+        2) Use crude check to see if target is in general area
+    */
+
+    m = Math.cos(deg2rad(fix360(direction + 270)));
+    n = -Math.sin(deg2rad(fix360(direction - 270)));
+    a = observer.x;
+    b = observer.y;
+
+    for (var i = 0, rob; rob = this.robots[i]; i++) {
+      if (rob.is_running && rob != observer) {
+        c = rob.x;
+        d = rob.y;
+        t = m*(c-a) + n*(d-b);
+        if (t > 0 && Math.abs((m+n)*t+a+b-c-d) < 20) {  // First a crude Manhatten Metric check
+          var radius_squared = rob.radius * rob.radius;
+          if ( (m*t+a-c)*(m*t+a-c) + (n*t+b-d)*(n*t+b-d) < (radius_squared-8)) { // in sights
+            if (dist == 0 || t < dist) {
+              dist = parseInt(t);
+              target = rob;
+            }
+          }
+        }
+      }
+    }
+
+    // TODO: Teamplay.
+    //if (who->team && who->team == rob[target].team)
+    //  dist = 0; /* Don't shoot own team member */
+
+    return {object: target, distance: dist};
+  },
+
+  find_nearest_projectile: function(observer, direction) {
     // A port of RoboWar 4.5.2's Engine/Projectile.c radar()
     var theta, range, close = Number.MAX_VALUE, close_obj;
     var x = observer.x;
     var y = observer.y;
     var scan = fix360(direction);
 
-    for (var i = 0, cur; cur = objects[i]; i++) {
+    for (var i = 0, cur; cur = this.game.projectiles[i]; i++) {
       if (cur == observer) continue;
 
       theta = parseInt((450 - rad2deg(Math.atan2(y-cur.y, cur.x-x))) % 360);
@@ -295,17 +341,11 @@ var Arena = Class.extend({
       }
     }
 
-    if (close == Number.MAX_VALUE) result = 0;
-    else result = Math.sqrt(close);
+    if (close == Number.MAX_VALUE)
+      result = 0;
+    else
+      result = parseInt(Math.sqrt(close));
     return {object: close_obj, distance: result};
-  },
-
-  find_nearest_robot: function(observer, direction) {
-    return this.find_nearest_object(observer, direction, this.robots);
-  },
-
-  find_nearest_projectile: function(observer, direction) {
-    return this.find_nearest_object(observer, direction, this.game.projectiles);
   },
 
   do_range: function(robot) {
