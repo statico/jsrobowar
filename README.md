@@ -17,4 +17,4 @@ Code layout:
 * `sounds/` -- Sounds from [the original RoboWar application](http://robowar.sf.net/).
 * `LICENSE` -- The license for this source code.
 
-I've tried hard to give credit where it's due. Let me know if I've missed something.
+I've tried hard to give credit where it's due. Let me know if I've missed something!
