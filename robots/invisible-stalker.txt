@@ -22,5 +22,5 @@ ngy: random -60 / 1 - speedy' store return
 psx: random 60 / 1 + speedx' store return
 psy: random 60 / 1 + speedy' store return
 shoot: 20 missile' store return
-run:speedx chs speedx' store speedy chs speedy' store return
+run: speedx chs speedx' store speedy chs speedy' store return
 junk: speedx chs speedx' store return
