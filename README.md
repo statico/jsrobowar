@@ -1,7 +1,7 @@
 JSRoboWar
 =========
 
-To see it in action, go to [http://statico.github.io/jsrobowar/](http://statico.github.com/jsrobowar/).
+To see it in action, go to [http://statico.github.io/jsrobowar/](http://statico.github.io/jsrobowar/).
 
 I wrote JSRoboWar as a programming exercise. I'm not devoting a lot of time to developing it, but feel free to fork it and send me patches.
 
